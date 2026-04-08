@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { submitInquiryAction } from "@/app/[locale]/inquiry/actions";
+import { submitInquiryAction } from "@/app/[locale]/(marketing)/contact/actions";
 import type { InquiryFormValues } from "@/lib/inquiry-schema";
 import { inquiryFormSchema } from "@/lib/inquiry-schema";
 import { Button } from "@/components/ui/button";

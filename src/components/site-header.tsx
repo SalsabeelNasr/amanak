@@ -50,7 +50,7 @@ function NavLinks({
     >
       {linkItem("/", t("home"))}
       {linkItem(ROUTES.treatments, t("treatments"))}
-      {linkItem(ROUTES.inquiry, t("inquiry"))}
+      {linkItem(ROUTES.contactUs, t("contactUs"))}
     </nav>
   );
 }
@@ -65,8 +65,10 @@ export function SiteHeader() {
       <div className="mx-auto flex min-h-14 max-w-6xl items-center gap-3 px-4 sm:px-6">
         <Link
           href="/"
+          data-amanak-wordmark
           className={cn(
             wordmarkFont.variable,
+            /* font-wordmark + data attr: logo always Saira Stencil; exempt from locale --font-sans (Roboto/IBM order). */
             "shrink-0 font-wordmark text-xl font-black leading-none tracking-tight text-brand-wordmark [font-synthesis-weight:auto] transition-colors hover:text-brand-wordmark/85 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background sm:text-2xl",
           )}
           prefetch={false}

@@ -149,11 +149,11 @@ export default async function TreatmentDetailPage({ params }: Props) {
                   </div>
                 )}
                 <Link
-                  href={ROUTES.inquiry}
+                  href={ROUTES.contactUs}
                   className={cn(buttonVariants({ size: "lg" }), "w-full rounded-full font-bold shadow-lg shadow-primary/20")}
                   prefetch={false}
                 >
-                  {t("inquiryCta")}
+                  {t("contactCta")}
                 </Link>
                 <Link
                   href={ROUTES.treatments}

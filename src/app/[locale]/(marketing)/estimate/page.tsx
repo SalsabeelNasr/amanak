@@ -12,7 +12,7 @@ export default async function EstimatePlaceholderPage() {
       <h1 className="text-3xl font-semibold text-foreground">{t("title")}</h1>
       <p className="text-lg text-muted-foreground">{t("lead")}</p>
       <Link
-        href={ROUTES.inquiry}
+        href={ROUTES.contactUs}
         className={cn(buttonVariants({ size: "lg" }))}
         prefetch={false}
       >

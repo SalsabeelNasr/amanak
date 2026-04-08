@@ -5,8 +5,7 @@ import { NextIntlClientProvider } from "next-intl";
 import { getMessages, getTranslations, setRequestLocale } from "next-intl/server";
 import type { ReactNode } from "react";
 import { routing } from "@/i18n/routing";
-import { SiteFooter } from "@/components/site-footer";
-import { SiteHeader } from "@/components/site-header";
+import { SessionProvider } from "@/lib/mock-session";
 import "../globals.css";
 
 const ibmPlexSansArabic = IBM_Plex_Sans_Arabic({
@@ -38,6 +37,24 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: t("title"),
     description: t("description"),
+    icons: {
+      icon: [
+        { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+        { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+        { url: "/favicon.png", type: "image/png" },
+      ],
+      apple: [{ url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
+      other: [
+        {
+          rel: "android-chrome-192x192",
+          url: "/android-chrome-192x192.png",
+        },
+        {
+          rel: "android-chrome-512x512",
+          url: "/android-chrome-512x512.png",
+        },
+      ],
+    },
   };
 }
 
@@ -57,11 +74,7 @@ export default async function LocaleLayout({ children, params }: Props) {
         className={`${ibmPlexSansArabic.variable} ${roboto.variable} min-h-screen antialiased`}
       >
         <NextIntlClientProvider locale={locale} messages={messages}>
-          <div className="flex min-h-screen flex-col">
-            <SiteHeader />
-            <main className="flex-1">{children}</main>
-            <SiteFooter />
-          </div>
+          <SessionProvider>{children}</SessionProvider>
         </NextIntlClientProvider>
       </body>
     </html>

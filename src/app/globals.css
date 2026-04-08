@@ -124,9 +124,16 @@
 }
 
 @layer base {
-  /* English (ltr): Roboto as primary; Arabic (rtl): IBM Plex first via @theme --font-sans */
+  /*
+   * English (ltr): Roboto first for UI/body via --font-sans. Arabic (rtl): IBM Plex first from @theme.
+   * Header wordmark is exempt: it uses --font-wordmark-family (Saira Stencil One), not this stack.
+   */
   html[dir="ltr"] {
     --font-sans: var(--font-roboto), var(--font-ibm-plex-arabic), ui-sans-serif, system-ui, sans-serif;
+  }
+
+  [data-amanak-wordmark] {
+    font-family: var(--font-wordmark-family), ui-sans-serif, system-ui, sans-serif;
   }
   * {
     @apply border-border outline-ring/50;

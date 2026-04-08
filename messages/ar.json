@@ -6,10 +6,13 @@
   "nav": {
     "home": "الرئيسية",
     "treatments": "العلاجات",
-    "inquiry": "طلب استشارة",
+    "contactUs": "تواصل معنا",
     "estimate": "احسب رحلتك",
     "openMenu": "فتح القائمة",
-    "locale": { "ar": "العربية", "en": "English" }
+    "locale": {
+      "ar": "العربية",
+      "en": "English"
+    }
   },
   "hospitals": {
     "pageTitle": "تفاصيل المستشفى",
@@ -29,7 +32,7 @@
     "pageLead": "اطلع على المسارات التي ننسّقها في مصر.. من المراجعة الأولى حتى السفر والمتابعة.",
     "viewTreatment": "التفاصيل",
     "viewAll": "جميع العلاجات",
-    "inquiryCta": "اطلب استشارة",
+    "contactCta": "تواصل معنا",
     "doctorsLabel": "كبار الأطباء",
     "successRateLabel": "نسب النجاح",
     "techniquesLabel": "التقنيات الحديثة",
@@ -411,5 +414,95 @@
         "title": "استشاري الطب النفسي ومدير مستشفى بهمان"
       }
     }
+  },
+  "auth": {
+    "patientLogin": "دخول كمريض",
+    "backofficeLogin": "دخول الموظفين",
+    "adminLogin": "دخول كمسؤول",
+    "backToHome": "العودة للصفحة الرئيسية",
+    "crmLabel": "Amanak CRM",
+    "crmTitle": "دخول لوحة التحكم",
+    "portalWelcome": "أهلاً بك في أمانك",
+    "portalSubtitle": "سجّل دخولك لمتابعة رحلتك العلاجية",
+    "mockNote": "هذا النموذج تجريبي — سيتم ربطه بالمصادقة الفعلية في المرحلة الثانية",
+    "logout": "تسجيل الخروج"
+  },
+  "portal": {
+    "personalInfo": "معلوماتي الشخصية",
+    "fullName": "الاسم الكامل",
+    "phone": "رقم الهاتف",
+    "country": "الدولة",
+    "clientType": "نوع العميل",
+    "documents": "مستنداتي",
+    "noDocs": "لم يتم رفع أي مستندات بعد",
+    "journey": "مسيرتي العلاجية",
+    "quotation": "عرض السعر",
+    "noQuotation": "لا توجد عروض أسعار بعد",
+    "approveQuote": "قبول العرض",
+    "rejectQuote": "رفض العرض",
+    "uploadDoc": "رفع المستند",
+    "docVerified": "موثّق",
+    "docUploaded": "مُرفق",
+    "docPending": "بانتظار الرفع",
+    "mandatory": "إلزامي",
+    "optional": "اختياري",
+    "total": "الإجمالي",
+    "downpayment": "الدفعة المقدمة",
+    "accepted": "تم القبول",
+    "rejected": "مرفوض",
+    "rejectReason": "سبب الرفض",
+    "rejectReasonPlaceholder": "يرجى ذكر سبب الرفض...",
+    "confirm": "تأكيد",
+    "cancel": "إلغاء"
+  },
+  "crm": {
+    "dashboard": "لوحة التحكم",
+    "leads": "العملاء",
+    "openMenu": "فتح القائمة",
+    "kpis": {
+      "newLeads": "عملاء جدد",
+      "waitlistVolume": "قائمة الانتظار",
+      "docsMissingCases": "مستندات ناقصة",
+      "avgConsultantReview": "متوسط مراجعة الاستشاري",
+      "ordersCreated": "طلبات تم إنشاؤها",
+      "postTreatmentCheckins": "متابعات ما بعد العلاج"
+    },
+    "conversionFunnel": "مسار التحويل",
+    "funnel": {
+      "leadCreated": "تم إنشاء العميل",
+      "assigned": "تم التعيين",
+      "docsComplete": "مستندات مكتملة",
+      "quotationGenerated": "عرض سعر",
+      "contractSigned": "توقيع العقد",
+      "inTreatment": "تحت العلاج"
+    },
+    "rejectionReasons": "أسباب الرفض",
+    "rejection": {
+      "priceHigh": "السعر مرتفع",
+      "medicalNotFeasible": "غير ممكن طبياً",
+      "patientUnresponsive": "العميل غير متجاوب"
+    },
+    "filterByStatus": "تصفية بالحالة",
+    "filterByCountry": "تصفية بالدولة",
+    "allStatuses": "جميع الحالات",
+    "patientName": "اسم المريض",
+    "country": "الدولة",
+    "treatment": "العلاج",
+    "status": "الحالة",
+    "clientType": "نوع العميل",
+    "lastUpdated": "آخر تحديث",
+    "actions": "إجراءات",
+    "view": "عرض",
+    "noResults": "لا توجد نتائج",
+    "availableActions": "الإجراءات المتاحة",
+    "statusHistory": "سجل الحالة",
+    "noHistory": "لا يوجد سجل",
+    "noActions": "الحالة النهائية — لا توجد إجراءات",
+    "addNote": "إضافة ملاحظة (مطلوب)",
+    "confirm": "تأكيد",
+    "cancel": "إلغاء",
+    "updated": "تم تحديث الحالة",
+    "activeQuotation": "عرض السعر الحالي",
+    "assignedCs": "موظف الخدمة المخصص"
   }
 }

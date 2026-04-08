@@ -6,10 +6,13 @@
   "nav": {
     "home": "Home",
     "treatments": "Treatments",
-    "inquiry": "Request consultation",
+    "contactUs": "Contact Us",
     "estimate": "Plan your trip",
     "openMenu": "Open menu",
-    "locale": { "ar": "العربية", "en": "English" }
+    "locale": {
+      "ar": "العربية",
+      "en": "English"
+    }
   },
   "hospitals": {
     "pageTitle": "Hospital details",
@@ -29,7 +32,7 @@
     "pageLead": "Explore the pathways we coordinate in Egypt.. from the first review to travel and follow-up.",
     "viewTreatment": "Learn more",
     "viewAll": "View all treatments",
-    "inquiryCta": "Request a consultation",
+    "contactCta": "Contact Us",
     "doctorsLabel": "Leading Doctors",
     "successRateLabel": "Success rate",
     "techniquesLabel": "Modern Techniques",
@@ -411,5 +414,95 @@
         "title": "Consultant Psychiatrist and Director of Behman Hospital"
       }
     }
+  },
+  "auth": {
+    "patientLogin": "Login as Patient",
+    "backofficeLogin": "Staff login",
+    "adminLogin": "Login as Admin",
+    "backToHome": "Back to home",
+    "crmLabel": "Amanak CRM",
+    "crmTitle": "Backoffice Login",
+    "portalWelcome": "Welcome to Amanak",
+    "portalSubtitle": "Sign in to continue your medical journey",
+    "mockNote": "This is a mock form — it will be wired to real authentication in phase 2",
+    "logout": "Logout"
+  },
+  "portal": {
+    "personalInfo": "My Personal Info",
+    "fullName": "Full name",
+    "phone": "Phone",
+    "country": "Country",
+    "clientType": "Client type",
+    "documents": "My Documents",
+    "noDocs": "No documents uploaded yet",
+    "journey": "My Journey",
+    "quotation": "Quotation",
+    "noQuotation": "No quotation yet",
+    "approveQuote": "Approve quote",
+    "rejectQuote": "Reject quote",
+    "uploadDoc": "Upload",
+    "docVerified": "Verified",
+    "docUploaded": "Uploaded",
+    "docPending": "Pending",
+    "mandatory": "Required",
+    "optional": "Optional",
+    "total": "Total",
+    "downpayment": "Down payment",
+    "accepted": "Accepted",
+    "rejected": "Rejected",
+    "rejectReason": "Rejection reason",
+    "rejectReasonPlaceholder": "Please provide a reason...",
+    "confirm": "Confirm",
+    "cancel": "Cancel"
+  },
+  "crm": {
+    "dashboard": "Dashboard",
+    "leads": "Leads",
+    "openMenu": "Open menu",
+    "kpis": {
+      "newLeads": "New Leads",
+      "waitlistVolume": "Wait List Volume",
+      "docsMissingCases": "Docs Missing Cases",
+      "avgConsultantReview": "Avg Consultant Review",
+      "ordersCreated": "Orders Created",
+      "postTreatmentCheckins": "Post-Treatment Check-ins"
+    },
+    "conversionFunnel": "Conversion Funnel",
+    "funnel": {
+      "leadCreated": "Lead Created",
+      "assigned": "Assigned",
+      "docsComplete": "Docs Complete",
+      "quotationGenerated": "Quotation Generated",
+      "contractSigned": "Contract Signed",
+      "inTreatment": "In Treatment"
+    },
+    "rejectionReasons": "Rejection Reasons",
+    "rejection": {
+      "priceHigh": "Price too high",
+      "medicalNotFeasible": "Medical not feasible",
+      "patientUnresponsive": "Patient unresponsive"
+    },
+    "filterByStatus": "Filter by status",
+    "filterByCountry": "Filter by country",
+    "allStatuses": "All statuses",
+    "patientName": "Patient",
+    "country": "Country",
+    "treatment": "Treatment",
+    "status": "Status",
+    "clientType": "Type",
+    "lastUpdated": "Updated",
+    "actions": "Actions",
+    "view": "View",
+    "noResults": "No results",
+    "availableActions": "Available actions",
+    "statusHistory": "Status history",
+    "noHistory": "No history",
+    "noActions": "Terminal state — no actions",
+    "addNote": "Add a note (required)",
+    "confirm": "Confirm",
+    "cancel": "Cancel",
+    "updated": "Status updated",
+    "activeQuotation": "Active quotation",
+    "assignedCs": "Assigned CS"
   }
 }
