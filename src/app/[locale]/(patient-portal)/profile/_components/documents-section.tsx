@@ -46,50 +46,56 @@ export function DocumentsSection({
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{t("documents")}</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-2">
-        {docs.length === 0 && (
-          <p className="text-sm text-muted-foreground">{t("noDocs")}</p>
-        )}
-        {docs.map((doc) => {
-          const Icon = iconFor(doc.type);
-          return (
-            <div
-              key={doc.id}
-              className="flex items-center gap-3 rounded-md border border-border/60 bg-card p-3"
-            >
-              <Icon className="size-5 shrink-0 text-muted-foreground" aria-hidden />
-              <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-medium text-foreground">
-                  {doc.name}
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  {doc.mandatory ? t("mandatory") : t("optional")}
-                </p>
-              </div>
+    <div className="grid gap-4 sm:grid-cols-2">
+      {docs.length === 0 && (
+        <p className="text-sm text-muted-foreground col-span-full text-center py-8 bg-card rounded-2xl border border-dashed border-border">
+          {t("noDocs")}
+        </p>
+      )}
+      {docs.map((doc) => {
+        const Icon = iconFor(doc.type);
+        return (
+          <div
+            key={doc.id}
+            className="group flex items-center gap-4 rounded-2xl border border-border/50 bg-card p-4 hover:shadow-md hover:border-primary/20 transition-all duration-200"
+          >
+            <div className="size-12 shrink-0 rounded-xl bg-primary/5 flex items-center justify-center group-hover:bg-primary/10 transition-colors">
+              <Icon className="size-6 text-primary/60 group-hover:text-primary transition-colors" aria-hidden />
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-sm font-bold text-foreground">
+                {doc.name}
+              </p>
+              <p className="text-[10px] uppercase font-bold tracking-wider text-muted-foreground mt-0.5">
+                {doc.mandatory ? t("mandatory") : t("optional")}
+              </p>
+            </div>
+            <div className="shrink-0">
               {doc.status === "verified" && (
-                <Badge variant="default">{t("docVerified")}</Badge>
+                <Badge className="bg-emerald-500/10 text-emerald-600 border-transparent text-[10px] px-2 py-0">
+                  {t("docVerified")}
+                </Badge>
               )}
               {doc.status === "uploaded" && (
-                <Badge variant="secondary">{t("docUploaded")}</Badge>
+                <Badge variant="secondary" className="text-[10px] px-2 py-0">
+                  {t("docUploaded")}
+                </Badge>
               )}
               {doc.status === "pending" && (
                 <Button
                   type="button"
                   variant="outline"
                   size="sm"
+                  className="h-8 text-[10px] font-bold uppercase tracking-wider rounded-lg hover:bg-primary hover:text-primary-foreground transition-all"
                   onClick={() => handleUpload(doc.id)}
                 >
                   {t("uploadDoc")}
                 </Button>
               )}
             </div>
-          );
-        })}
-      </CardContent>
-    </Card>
+          </div>
+        );
+      })}
+    </div>
   );
 }

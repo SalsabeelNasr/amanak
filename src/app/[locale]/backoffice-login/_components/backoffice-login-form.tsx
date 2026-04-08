@@ -24,7 +24,7 @@ export function BackofficeLoginForm() {
       <CardContent className="space-y-4 py-6">
         <Button
           type="button"
-          variant="outline"
+          variant="default"
           size="lg"
           className="w-full"
           onClick={handleLogin}

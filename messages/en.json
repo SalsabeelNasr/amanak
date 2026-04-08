@@ -352,6 +352,50 @@
     "lead": "This URL is reserved for the future pricing & itinerary tool. Landing CTAs already point here so we can ship the wizard later without changing links.",
     "goInquiry": "Go to consultation form"
   },
+  "consultationBooking": {
+    "metaTitle": "Book a free consultation",
+    "metaDescription": "Choose a time for a call with an Amanak medical travel consultant.",
+    "title": "Book your free consultation call",
+    "lead": "Pick a date and time that suit you. Add your contact details and we will call you to discuss your medical journey to Egypt.",
+    "selectDateTime": "Select a date & time",
+    "duration": "30 min",
+    "meetingFormat": "Phone call",
+    "timeZoneLabel": "Time zone",
+    "slotConfirm": "Confirm",
+    "detailsHeading": "Your details",
+    "localTimeNote": "Times are shown in your local time zone.",
+    "consultant": {
+      "heading": "Your consultant",
+      "subheading": "Medical travel advisor",
+      "name": "Mohamed Mostafa",
+      "title": "Medical travel consultant",
+      "initials": "MM"
+    },
+    "slotsHeading": "Available times",
+    "noSlotsDay": "No times on this day. Please choose another date.",
+    "fields": {
+      "fullName": "Full name",
+      "email": "Email",
+      "phone": "Phone / WhatsApp"
+    },
+    "submit": "Confirm booking",
+    "success": "Your call is booked. Reference: {id}",
+    "errors": {
+      "required": "Required",
+      "minName": "Name is too short",
+      "minPhone": "Enter a valid number",
+      "emailInvalid": "Invalid email",
+      "emailRequired": "Email is required",
+      "slotRequired": "Please select a time slot",
+      "slotUnavailable": "This time is no longer available. Please choose another slot."
+    }
+  },
+  "contact": {
+    "metaTitle": "Contact us",
+    "metaDescription": "Reach the Amanak team with questions about medical travel to Egypt, hospitals, treatments, or planning your care.",
+    "title": "Contact us",
+    "lead": "Tell us what you need and we will respond as soon as possible."
+  },
   "inquiry": {
     "title": "Consultation request",
     "lead": "Share your details and our team will contact you.",
@@ -426,7 +470,8 @@
     "portalWelcome": "Welcome to Amanak",
     "portalSubtitle": "Sign in to continue your medical journey",
     "mockNote": "This is a mock form — it will be wired to real authentication in phase 2",
-    "logout": "Logout"
+    "logout": "Logout",
+    "crmSubtitle": "Staff console for managing leads and cases"
   },
   "portal": {
     "personalInfo": "My Personal Info",
@@ -454,11 +499,20 @@
     "rejectReason": "Rejection reason",
     "rejectReasonPlaceholder": "Please provide a reason...",
     "confirm": "Confirm",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "tabOverview": "Overview",
+    "tabActivity": "Activity",
+    "tabQuotes": "Quotes",
+    "tabFiles": "Files",
+    "profileTabsAria": "Profile sections",
+    "currentStatus": "Current status",
+    "treatment": "Treatment",
+    "lastUpdated": "Last updated"
   },
   "crm": {
     "dashboard": "Dashboard",
     "leads": "Leads",
+    "crmNavAria": "CRM navigation",
     "openMenu": "Open menu",
     "kpis": {
       "newLeads": "New Leads",
@@ -483,6 +537,7 @@
       "medicalNotFeasible": "Medical not feasible",
       "patientUnresponsive": "Patient unresponsive"
     },
+    "totalLeads": "Total Leads",
     "filterByStatus": "Filter by status",
     "filterByCountry": "Filter by country",
     "allStatuses": "All statuses",
@@ -494,6 +549,7 @@
     "lastUpdated": "Updated",
     "actions": "Actions",
     "view": "View",
+    "viewDetails": "View Details",
     "noResults": "No results",
     "availableActions": "Available actions",
     "statusHistory": "Status history",
@@ -504,6 +560,18 @@
     "cancel": "Cancel",
     "updated": "Status updated",
     "activeQuotation": "Active quotation",
-    "assignedCs": "Assigned CS"
+    "assignedCs": "Assigned CS",
+    "tabOverview": "Overview",
+    "tabActivity": "Activity",
+    "tabQuotes": "Quotes",
+    "tabFiles": "Files",
+    "leadDetailTabsAria": "Lead sections",
+    "currentStatus": "Current status",
+    "lastUpdatedDetail": "Last updated",
+    "noActiveQuotation": "No active quotation",
+    "dashTabOverview": "Summary",
+    "dashTabPipeline": "Pipeline",
+    "dashTabRejections": "Rejections",
+    "dashboardTabsAria": "Dashboard sections"
   }
 }

@@ -19,7 +19,7 @@ export async function FinalCta() {
           </p>
           <div className="pt-4">
             <Link
-              href={ROUTES.leadEntry}
+              href={ROUTES.bookConsultation}
               className={cn(
                 buttonVariants({ size: "lg", variant: "secondary" }),
                 "min-h-12 px-10 text-base rounded-full shadow-xl hover:shadow-2xl transition-all"

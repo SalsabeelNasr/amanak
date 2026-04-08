@@ -40,6 +40,27 @@ export type InquiryPayload = {
   message: string;
 };
 
+export type ConsultationSlot = {
+  id: string;
+  /** UTC instant, ISO-8601 */
+  startsAt: string;
+};
+
+export type ConsultantProfile = {
+  id: string;
+  nameKey: string;
+  titleKey: string;
+  /** Optional public path under `/public` — swap when asset exists */
+  imageSrc?: string;
+};
+
+export type BookConsultationPayload = {
+  slotId: string;
+  fullName: string;
+  email: string;
+  phone: string;
+};
+
 // ─── Auth & portals ──────────────────────────────────────────────
 
 export type LeadStatus =

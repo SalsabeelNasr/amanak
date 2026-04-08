@@ -352,6 +352,50 @@
     "lead": "هذه الصفحة جاهزة لاستقبال أداة تقدير التكلفة والرحلة في خطّة لاحقة.. روابط الصفحة الرئيسية تشير هنا مسبقاً.",
     "goInquiry": "انتقل إلى نموذج طلب الاستشارة"
   },
+  "consultationBooking": {
+    "metaTitle": "احجز استشارتك المجانية",
+    "metaDescription": "اختر موعداً للاتصال بمستشار أمانك للسياحة العلاجية.",
+    "title": "احجز مكالمة استشارتك المجانية",
+    "lead": "اختر التاريخ والوقت المناسبين لك، وأضف بيانات التواصل، وسنتصل بك لمناقشة رحلتك العلاجية إلى مصر.",
+    "selectDateTime": "اختر التاريخ والوقت",
+    "duration": "٣٠ دقيقة",
+    "meetingFormat": "مكالمة هاتفية",
+    "timeZoneLabel": "المنطقة الزمنية",
+    "slotConfirm": "تأكيد",
+    "detailsHeading": "بياناتك",
+    "localTimeNote": "الأوقات معروضة بتوقيت جهازك المحلي.",
+    "consultant": {
+      "heading": "مستشارك",
+      "subheading": "مستشار السياحة العلاجية",
+      "name": "محمد مصطفى",
+      "title": "مستشار السياحة العلاجية",
+      "initials": "MM"
+    },
+    "slotsHeading": "الأوقات المتاحة",
+    "noSlotsDay": "لا توجد أوقات في هذا اليوم. يرجى اختيار تاريخ آخر.",
+    "fields": {
+      "fullName": "الاسم الكامل",
+      "email": "البريد الإلكتروني",
+      "phone": "الهاتف / واتساب"
+    },
+    "submit": "تأكيد الحجز",
+    "success": "تم تأكيد المكالمة. المرجع: {id}",
+    "errors": {
+      "required": "مطلوب",
+      "minName": "الاسم قصير جداً",
+      "minPhone": "أدخل رقماً صالحاً",
+      "emailInvalid": "البريد غير صالح",
+      "emailRequired": "البريد الإلكتروني مطلوب",
+      "slotRequired": "يرجى اختيار وقت للمكالمة",
+      "slotUnavailable": "هذا الوقت لم يعد متاحاً. يرجى اختيار وقت آخر."
+    }
+  },
+  "contact": {
+    "metaTitle": "تواصل معنا",
+    "metaDescription": "تواصل مع فريق أمانك لأي استفسار عن السياحة العلاجية في مصر والمستشفيات والعلاجات أو ترتيب رحلتك.",
+    "title": "تواصل معنا",
+    "lead": "اكتب لنا ما تحتاجه وسنرد عليك في أقرب وقت."
+  },
   "inquiry": {
     "title": "طلب استشارة",
     "lead": "أرسل بياناتك وسيتواصل فريق أمانك معك.",
@@ -426,7 +470,8 @@
     "portalWelcome": "أهلاً بك في أمانك",
     "portalSubtitle": "سجّل دخولك لمتابعة رحلتك العلاجية",
     "mockNote": "هذا النموذج تجريبي — سيتم ربطه بالمصادقة الفعلية في المرحلة الثانية",
-    "logout": "تسجيل الخروج"
+    "logout": "تسجيل الخروج",
+    "crmSubtitle": "لوحة تحكم الموظفين لإدارة العملاء والحالات"
   },
   "portal": {
     "personalInfo": "معلوماتي الشخصية",
@@ -454,11 +499,20 @@
     "rejectReason": "سبب الرفض",
     "rejectReasonPlaceholder": "يرجى ذكر سبب الرفض...",
     "confirm": "تأكيد",
-    "cancel": "إلغاء"
+    "cancel": "إلغاء",
+    "tabOverview": "نظرة عامة",
+    "tabActivity": "النشاط",
+    "tabQuotes": "عروض الأسعار",
+    "tabFiles": "الملفات",
+    "profileTabsAria": "أقسام الملف الشخصي",
+    "currentStatus": "الحالة الحالية",
+    "treatment": "العلاج",
+    "lastUpdated": "آخر تحديث"
   },
   "crm": {
     "dashboard": "لوحة التحكم",
     "leads": "العملاء",
+    "crmNavAria": "تنقل لوحة التحكم",
     "openMenu": "فتح القائمة",
     "kpis": {
       "newLeads": "عملاء جدد",
@@ -483,6 +537,7 @@
       "medicalNotFeasible": "غير ممكن طبياً",
       "patientUnresponsive": "العميل غير متجاوب"
     },
+    "totalLeads": "إجمالي العملاء",
     "filterByStatus": "تصفية بالحالة",
     "filterByCountry": "تصفية بالدولة",
     "allStatuses": "جميع الحالات",
@@ -494,6 +549,7 @@
     "lastUpdated": "آخر تحديث",
     "actions": "إجراءات",
     "view": "عرض",
+    "viewDetails": "عرض التفاصيل",
     "noResults": "لا توجد نتائج",
     "availableActions": "الإجراءات المتاحة",
     "statusHistory": "سجل الحالة",
@@ -504,6 +560,18 @@
     "cancel": "إلغاء",
     "updated": "تم تحديث الحالة",
     "activeQuotation": "عرض السعر الحالي",
-    "assignedCs": "موظف الخدمة المخصص"
+    "assignedCs": "موظف الخدمة المخصص",
+    "tabOverview": "نظرة عامة",
+    "tabActivity": "النشاط",
+    "tabQuotes": "عروض الأسعار",
+    "tabFiles": "الملفات",
+    "leadDetailTabsAria": "أقسام العميل",
+    "currentStatus": "الحالة الحالية",
+    "lastUpdatedDetail": "آخر تحديث",
+    "noActiveQuotation": "لا يوجد عرض سعر نشط",
+    "dashTabOverview": "ملخص",
+    "dashTabPipeline": "المسار",
+    "dashTabRejections": "الرفض",
+    "dashboardTabsAria": "أقسام لوحة التحكم"
   }
 }

@@ -60,7 +60,7 @@ export function InquiryForm({ treatments }: { treatments: TreatmentOption[] }) {
 
   return (
     <Card className="border-border shadow-sm">
-      <CardContent className="p-6 sm:p-8">
+      <CardContent className="p-6 text-start sm:p-8">
         {submittedId ? (
           <p className="text-center font-medium text-primary" role="status">
             {t("success")}
@@ -72,6 +72,7 @@ export function InquiryForm({ treatments }: { treatments: TreatmentOption[] }) {
               <Input
                 id="fullName"
                 autoComplete="name"
+                className="text-start"
                 aria-invalid={!!form.formState.errors.fullName}
                 {...form.register("fullName")}
               />
@@ -89,6 +90,8 @@ export function InquiryForm({ treatments }: { treatments: TreatmentOption[] }) {
                 type="tel"
                 autoComplete="tel"
                 inputMode="tel"
+                className="text-start"
+                dir="auto"
                 aria-invalid={!!form.formState.errors.phone}
                 {...form.register("phone")}
               />
@@ -105,6 +108,8 @@ export function InquiryForm({ treatments }: { treatments: TreatmentOption[] }) {
                 id="email"
                 type="email"
                 autoComplete="email"
+                className="text-start"
+                dir="ltr"
                 aria-invalid={!!form.formState.errors.email}
                 {...form.register("email")}
               />
@@ -123,7 +128,7 @@ export function InquiryForm({ treatments }: { treatments: TreatmentOption[] }) {
                 render={({ field }) => (
                   <select
                     id="treatmentSlug"
-                    className="flex h-10 w-full rounded-lg border border-input bg-background px-3 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+                    className="flex h-10 w-full rounded-lg border border-input bg-background px-3 text-start text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
                     {...field}
                   >
                     <option value="">{t("treatmentPlaceholder")}</option>
@@ -142,7 +147,8 @@ export function InquiryForm({ treatments }: { treatments: TreatmentOption[] }) {
               <textarea
                 id="message"
                 rows={4}
-                className="flex min-h-24 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+                className="flex min-h-24 w-full rounded-lg border border-input bg-background px-3 py-2 text-start text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+                dir="auto"
                 aria-invalid={!!form.formState.errors.message}
                 {...form.register("message")}
               />
@@ -153,14 +159,16 @@ export function InquiryForm({ treatments }: { treatments: TreatmentOption[] }) {
               ) : null}
             </div>
 
-            <Button
-              type="submit"
-              className="min-h-11 w-full sm:w-auto"
-              disabled={form.formState.isSubmitting}
-              data-testid="inquiry-submit"
-            >
+            <div className="flex w-full flex-col sm:block">
+              <Button
+                type="submit"
+                className="min-h-11 w-full sm:w-auto"
+                disabled={form.formState.isSubmitting}
+                data-testid="inquiry-submit"
+              >
               {t("submit")}
-            </Button>
+              </Button>
+            </div>
           </form>
         )}
       </CardContent>

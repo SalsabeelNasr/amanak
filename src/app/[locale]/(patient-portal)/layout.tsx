@@ -10,6 +10,8 @@ import { useSession } from "@/lib/mock-session";
 import { wordmarkFont } from "@/lib/wordmark-font";
 import { cn } from "@/lib/utils";
 
+const LOGOUT_TO_HOME_KEY = "amanak_logout_to_home";
+
 export default function PatientPortalLayout({
   children,
 }: {
@@ -20,14 +22,26 @@ export default function PatientPortalLayout({
   const t = useTranslations("auth");
 
   useEffect(() => {
-    if (!session.isAuthenticated || session.user.role !== "patient") {
-      router.replace(ROUTES.login);
+    if (session.isAuthenticated && session.user.role === "patient") return;
+    try {
+      if (typeof window !== "undefined" && sessionStorage.getItem(LOGOUT_TO_HOME_KEY) === "1") {
+        sessionStorage.removeItem(LOGOUT_TO_HOME_KEY);
+        return;
+      }
+    } catch {
+      /* ignore */
     }
+    router.replace(ROUTES.login);
   }, [session, router]);
 
   function handleLogout() {
+    try {
+      sessionStorage.setItem(LOGOUT_TO_HOME_KEY, "1");
+    } catch {
+      /* ignore */
+    }
     logout();
-    router.replace(ROUTES.login);
+    router.replace("/");
   }
 
   if (!session.isAuthenticated || session.user.role !== "patient") {
@@ -35,7 +49,7 @@ export default function PatientPortalLayout({
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-background">
+    <div className="flex min-h-screen flex-col bg-background" data-amanak-app-ui>
       <header className="sticky top-0 z-40 border-b border-border/80 bg-card/90 backdrop-blur supports-backdrop-filter:bg-card/80">
         <div className="mx-auto flex min-h-14 max-w-6xl items-center gap-3 px-4 sm:px-6">
           <Link

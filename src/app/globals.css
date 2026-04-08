@@ -7,9 +7,11 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-ibm-plex-arabic), var(--font-roboto), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-roboto), var(--font-ibm-plex-arabic), ui-sans-serif, system-ui, sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  --font-heading: var(--font-sans);
+  --font-heading: var(--font-roboto), var(--font-ibm-plex-arabic), ui-sans-serif, system-ui, sans-serif;
+  --font-roboto-family: var(--font-roboto), ui-sans-serif, system-ui, sans-serif;
+  --font-ibm-plex-arabic-family: var(--font-ibm-plex-arabic), ui-sans-serif, system-ui, sans-serif;
   /* Wordmark only: define --font-wordmark-family on the logo element (see wordmark-font.ts) */
   --font-wordmark: var(--font-wordmark-family), ui-sans-serif, system-ui, sans-serif;
   --color-sidebar-ring: var(--sidebar-ring);
@@ -125,11 +127,16 @@
 
 @layer base {
   /*
-   * English (ltr): Roboto first for UI/body via --font-sans. Arabic (rtl): IBM Plex first from @theme.
-   * Header wordmark is exempt: it uses --font-wordmark-family (Saira Stencil One), not this stack.
+   * English (ltr) marketing & general: Roboto first. Arabic (rtl): IBM Plex first from @theme.
+   * CRM, patient portal, and staff/patient login: English uses Roboto via [data-amanak-app-ui] so
+   * --font-heading matches body. Logo/wordmark stays Saira Stencil on [data-amanak-wordmark] only.
    */
   html[dir="ltr"] {
-    --font-sans: var(--font-roboto), var(--font-ibm-plex-arabic), ui-sans-serif, system-ui, sans-serif;
+    font-family: var(--font-roboto-family) !important;
+  }
+
+  html[dir="rtl"] {
+    font-family: var(--font-ibm-plex-arabic-family) !important;
   }
 
   [data-amanak-wordmark] {
@@ -143,6 +150,9 @@
   }
   html {
     @apply font-sans;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading;
   }
 }
 

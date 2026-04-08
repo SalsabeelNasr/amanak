@@ -50,8 +50,7 @@ function NavLinks({
     >
       {linkItem("/", t("home"))}
       {linkItem(ROUTES.treatments, t("treatments"))}
-      {linkItem(ROUTES.contactUs, t("contactUs"))}
-      {linkItem(ROUTES.login, t("login"))}
+      {linkItem(ROUTES.leadEntry, t("estimate"))}
     </nav>
   );
 }
@@ -63,32 +62,33 @@ export function SiteHeader() {
 
   return (
     <header className="sticky top-0 z-40 border-b border-border/80 bg-card/90 pt-[env(safe-area-inset-top,0px)] backdrop-blur supports-backdrop-filter:bg-card/80">
-      <div className="mx-auto flex min-h-14 max-w-6xl items-center gap-3 px-4 sm:px-6">
+      {/* Grid mirrors in RTL: logo column moves to inline-end, actions to inline-start (mirror of LTR). */}
+      <div className="mx-auto grid min-h-14 w-full max-w-6xl grid-cols-[auto_1fr_auto] items-center gap-3 px-4 sm:px-6">
         <Link
           href="/"
           data-amanak-wordmark
           className={cn(
             wordmarkFont.variable,
             /* font-wordmark + data attr: logo always Saira Stencil; exempt from locale --font-sans (Roboto/IBM order). */
-            "shrink-0 font-wordmark text-xl font-black leading-none tracking-tight text-brand-wordmark [font-synthesis-weight:auto] transition-colors hover:text-brand-wordmark/85 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background sm:text-2xl",
+            "shrink-0 justify-self-start font-wordmark text-xl font-black leading-none tracking-tight text-brand-wordmark [font-synthesis-weight:auto] transition-colors hover:text-brand-wordmark/85 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background sm:text-2xl",
           )}
           prefetch={false}
         >
           Amanak
         </Link>
 
-        <div className="hidden min-w-0 flex-1 justify-center md:flex">
+        <div className="hidden min-w-0 justify-self-center md:flex">
           <NavLinks />
         </div>
 
-        <div className="ms-auto flex shrink-0 items-center gap-2 sm:gap-3">
+        <div className="flex shrink-0 items-center justify-end gap-2 sm:gap-3">
           <LocaleSwitcher />
           <Link
-            href={ROUTES.leadEntry}
+            href={ROUTES.login}
             className={cn(buttonVariants({ size: "sm" }))}
             prefetch={false}
           >
-            {t("estimate")}
+            {t("login")}
           </Link>
 
           <div className="md:hidden">

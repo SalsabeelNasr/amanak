@@ -18,6 +18,8 @@ import { ROUTES } from "@/lib/routes";
 import { useSession } from "@/lib/mock-session";
 import { cn } from "@/lib/utils";
 
+const LOGOUT_TO_HOME_KEY = "amanak_logout_to_home";
+
 function NavItems({
   closeSheet = false,
   onLogout,
@@ -41,7 +43,7 @@ function NavItems({
         href={href}
         prefetch={false}
         className={cn(
-          "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+          "flex min-h-11 items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
           active
             ? "bg-primary/10 text-primary"
             : "text-muted-foreground hover:bg-muted hover:text-foreground",
@@ -58,14 +60,14 @@ function NavItems({
   }
 
   return (
-    <nav className="flex flex-col gap-1">
+    <nav className="flex flex-col gap-1" aria-label={t("crmNavAria")}>
       {items.map((it) => linkItem(it.href, it.label, it.Icon))}
       <div className="my-2 h-px bg-border" />
       <Button
         type="button"
         variant="ghost"
         size="sm"
-        className="justify-start gap-3"
+        className="min-h-11 justify-start gap-3 px-3"
         onClick={onLogout}
       >
         <LogOut className="size-4" aria-hidden />
@@ -84,14 +86,26 @@ export default function CrmLayout({ children }: { children: ReactNode }) {
   const sheetSide = locale === "ar" ? "right" : "left";
 
   useEffect(() => {
-    if (!session.isAuthenticated || session.user.role !== "admin") {
-      router.replace(ROUTES.backofficeLogin);
+    if (session.isAuthenticated && session.user.role === "admin") return;
+    try {
+      if (typeof window !== "undefined" && sessionStorage.getItem(LOGOUT_TO_HOME_KEY) === "1") {
+        sessionStorage.removeItem(LOGOUT_TO_HOME_KEY);
+        return;
+      }
+    } catch {
+      /* ignore */
     }
+    router.replace(ROUTES.backofficeLogin);
   }, [session, router]);
 
   function handleLogout() {
+    try {
+      sessionStorage.setItem(LOGOUT_TO_HOME_KEY, "1");
+    } catch {
+      /* ignore */
+    }
     logout();
-    router.replace(ROUTES.backofficeLogin);
+    router.replace("/");
   }
 
   if (!session.isAuthenticated || session.user.role !== "admin") {
@@ -99,56 +113,68 @@ export default function CrmLayout({ children }: { children: ReactNode }) {
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-background lg:flex-row">
-      {/* Mobile top bar */}
-      <header className="sticky top-0 z-40 border-b border-border/80 bg-card/90 backdrop-blur lg:hidden">
-        <div className="flex min-h-14 items-center gap-3 px-4">
-          <span className="text-sm font-semibold text-foreground">
+    <div
+      className="flex min-h-screen flex-col bg-background lg:flex-row"
+      data-amanak-app-ui
+    >
+      {/* Mobile: menu on logical start (matches sheet edge); title center; locale on end */}
+      <header className="sticky top-0 z-40 border-b border-border/80 bg-card/95 pt-[env(safe-area-inset-top,0px)] backdrop-blur-md supports-backdrop-filter:bg-card/90 lg:hidden">
+        <div className="flex min-h-14 max-w-full items-center gap-2 px-4 pe-[max(1rem,env(safe-area-inset-right))] ps-[max(1rem,env(safe-area-inset-left))]">
+          <Sheet>
+            <SheetTrigger
+              className={cn(
+                buttonVariants({ variant: "outline", size: "icon" }),
+                "size-11 shrink-0 touch-manipulation",
+              )}
+              aria-controls="crm-mobile-nav"
+            >
+              <Menu className="size-5" aria-hidden />
+              <span className="sr-only">{tCrm("openMenu")}</span>
+            </SheetTrigger>
+            <SheetContent
+              side={sheetSide}
+              className="w-[min(100vw-1rem,20rem)] gap-0 border-border/80 p-0 sm:max-w-sm"
+              id="crm-mobile-nav"
+            >
+              <SheetHeader className="border-b border-border p-4 text-start">
+                <SheetTitle className="text-start text-base">
+                  {tAuth("crmLabel")}
+                </SheetTitle>
+              </SheetHeader>
+              <div className="p-4 pe-[max(1rem,env(safe-area-inset-right))] ps-[max(1rem,env(safe-area-inset-left))]">
+                <NavItems closeSheet onLogout={handleLogout} />
+              </div>
+            </SheetContent>
+          </Sheet>
+
+          <span className="min-w-0 flex-1 truncate text-start text-sm font-semibold text-foreground">
             {tAuth("crmLabel")}
           </span>
-          <div className="ms-auto flex items-center gap-2">
+
+          <div className="-me-1 flex min-h-11 shrink-0 items-center justify-center rounded-lg px-2 py-1">
             <LocaleSwitcher />
-            <Sheet>
-              <SheetTrigger
-                className={cn(
-                  buttonVariants({ variant: "outline", size: "icon-sm" }),
-                )}
-                aria-controls="crm-mobile-nav"
-              >
-                <Menu className="size-4" aria-hidden />
-                <span className="sr-only">{tCrm("openMenu")}</span>
-              </SheetTrigger>
-              <SheetContent side={sheetSide} className="gap-0 p-0" id="crm-mobile-nav">
-                <SheetHeader className="border-b border-border p-4 text-start">
-                  <SheetTitle className="text-start">
-                    {tAuth("crmLabel")}
-                  </SheetTitle>
-                </SheetHeader>
-                <div className="p-4">
-                  <NavItems closeSheet onLogout={handleLogout} />
-                </div>
-              </SheetContent>
-            </Sheet>
           </div>
         </div>
       </header>
 
-      {/* Desktop sidebar */}
-      <aside className="sticky top-0 hidden h-screen w-56 shrink-0 border-e border-border/80 bg-card lg:flex lg:flex-col">
-        <div className="flex items-center gap-3 border-b border-border px-4 py-4">
-          <span className="text-sm font-semibold text-foreground">
+      {/* Desktop: sidebar on logical start; border on logical end */}
+      <aside className="sticky top-0 hidden h-svh min-h-0 w-56 shrink-0 border-e border-border/80 bg-card lg:flex lg:flex-col">
+        <div className="flex items-center gap-2 border-b border-border px-3 py-4 sm:px-4">
+          <span className="min-w-0 flex-1 truncate text-start text-sm font-semibold text-foreground">
             {tAuth("crmLabel")}
           </span>
-          <div className="ms-auto">
+          <div className="flex shrink-0 items-center rounded-lg px-1 py-0.5">
             <LocaleSwitcher />
           </div>
         </div>
-        <div className="flex-1 overflow-y-auto p-3">
+        <div className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden p-3">
           <NavItems onLogout={handleLogout} />
         </div>
       </aside>
 
-      <main className="flex-1 overflow-y-auto">{children}</main>
+      <main className="min-h-0 flex-1 overflow-y-auto pb-[env(safe-area-inset-bottom,0px)]">
+        {children}
+      </main>
     </div>
   );
 }

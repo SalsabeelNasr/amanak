@@ -26,7 +26,7 @@ export async function LandingHero() {
             </div>
             <div className="flex flex-wrap items-center gap-4">
               <Link
-                href={ROUTES.leadEntry}
+                href={ROUTES.bookConsultation}
                 className={cn(buttonVariants({ size: "lg" }), "min-h-12 px-8 text-base rounded-full shadow-lg shadow-primary/20 hover:shadow-xl transition-all")}
                 prefetch={false}
               >
