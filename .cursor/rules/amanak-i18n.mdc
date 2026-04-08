@@ -1,0 +1,49 @@
+---
+description: Amanak i18n — next-intl messages, no locale detection, NEXT_LOCALE cookie.
+globs:
+  - "messages/**/*.json"
+  - "src/i18n/**/*.ts"
+  - "src/middleware.ts"
+alwaysApply: false
+---
+
+# Amanak internationalization (`next-intl`)
+
+## Source of truth
+
+- **Arabic (`ar`)** is the canonical product copy; **English (`en`)** mirrors key structure under the same paths in `messages/en.json`.
+- **No user-facing strings** in React except technical identifiers / `aria` where required — everything else uses message keys.
+
+## Keys & structure
+
+- Organize by domain: `meta.*`, `nav.*`, `landing.*`, `destinations.*`, `hospitals.*`, `treatments.*`, `estimate.*`, `inquiry.*`, `footer.*`.
+- For ICU/plurals, use `next-intl` plural rules when counts appear in UI (not required for current static copy).
+
+## Locale selection (strict)
+
+- **Default locale is always `ar`**: middleware redirects `/` → `/ar` — **never** infer locale from `Accept-Language`, `negotiateLocale`, `@formatjs/intl-localematcher`, or similar.
+- The **only** user-controlled switch is the **locale toggle** in the header. Persistence uses the cookie name **`NEXT_LOCALE`** via `next-intl` middleware configuration.
+
+## Navigation helpers
+
+- Import `Link`, `useRouter`, `usePathname` from **`@/i18n/navigation`**, not `next/link` directly, so paths include the active locale.
+- **Locale switch pattern**:
+
+  ```tsx
+  const pathname = usePathname();
+  <Link href={pathname} locale={otherLocale}>...</Link>
+  ```
+
+## Server components
+
+- Use `getTranslations` / `getMessages` from `next-intl/server` in server components and `generateMetadata`.
+- Call **`setRequestLocale(locale)`** in `[locale]/layout.tsx` for static rendering compatibility (see layout file).
+
+## Do / Don’t
+
+- **Do** keep slugs and ids stable (`diabetic_foot`, `joint-replacement`) so API/CMS swaps don’t require renaming message paths.
+- **Don’t** hardcode `/ar` or `/en` prefixes in links; prefer i18n `Link` + locale prop or pathname-relative hrefs.
+
+## Testing
+
+- Playwright smoke asserts **visible Arabic** copy on `/ar` and **URL change** after switching to `ar` from `en`.

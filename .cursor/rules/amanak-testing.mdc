@@ -1,0 +1,46 @@
+---
+description: Amanak testing — Vitest + RTL, Playwright smoke, per-feature expectations.
+globs:
+  - "**/*.{test,spec}.{ts,tsx}"
+  - "vitest.config.ts"
+  - "playwright.config.ts"
+  - "e2e/**/*.ts"
+alwaysApply: false
+---
+
+# Amanak testing
+
+## Tooling
+
+- **Unit / integration**: `vitest` + React Testing Library (`happy-dom`). Setup: `vitest.setup.ts` imports `@testing-library/jest-dom/vitest`.
+- **E2E**: Playwright (`e2e/smoke.spec.ts`). Default `webServer` runs `pnpm dev --port 3000` (reuse existing server locally when not in CI).
+
+## Commands
+
+```bash
+pnpm test        # vitest run
+pnpm test:watch  # vitest dev
+pnpm exec playwright install   # once per machine (Firefox/Chromium/WebKit)
+pnpm test:e2e    # playwright test (defaults to Firefox; PLAYWRIGHT_BROWSER=chromium to override)
+```
+
+## Per-feature expectations
+
+| Feature | Unit / RTL | E2E |
+|--------|------------|-----|
+| Inquiry validation (`inquiryFormSchema`) | Required | Part of inquiry submit flow |
+| Locale routing + switcher | Optional focused test | `en` → `ar` link updates URL |
+| Mobile drawer | Sheet behavior RTL side | Open menu → navigate to inquiry |
+| Landing composition | Optional | Landing heading visible on `/ar` |
+| Mock submit | — | Success copy after POST client journey |
+
+## Playwright conventions
+
+- Prefer **`data-testid`** only where accessibility labels are ambiguous across locales (`nav-menu-trigger`, `inquiry-submit`).
+- Use **`getByRole` + accessible names** in the user’s language when stable (Arabic labels on `/ar` inquiry form).
+
+## Do / Don’t
+
+- **Do** add a unit test when introducing non-trivial Zod/schema logic or pricing-like pure functions (future).
+- **Do** extend smoke e2e when adding a new critical journey (e.g. `/estimate` wizard later).
+- **Don’t** rely on production APIs in Playwright for this prototype; keep mocks deterministic.

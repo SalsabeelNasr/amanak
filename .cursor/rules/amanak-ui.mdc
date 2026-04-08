@@ -1,0 +1,46 @@
+---
+description: Amanak UI — shadcn, RTL, mobile drawer, design tokens (no arbitrary hex in JSX).
+globs:
+  - "src/components/**/*.tsx"
+  - "src/app/**/*.tsx"
+alwaysApply: false
+---
+
+# Amanak UI / shadcn
+
+## Defaults
+
+- Build on **shadcn/ui** primitives under `src/components/ui/`. Prefer `cn()` + shared tokens over forking primitive internals.
+- **Colors**: use theme tokens only (`bg-primary`, `text-muted-foreground`, `border-border`, CSS variables in `globals.css`). **Do not** use arbitrary hex in JSX (e.g. `bg-[#00a4f4]`) unless there is a one-off documented exception tied to a token gap.
+- **RTL first**: verify layouts in `ar` (`dir="rtl"`). Use logical properties where it matters (`ms-*`, `me-*`, `ps-*`, `pe-*`, `start`/`end`) instead of hard-coding `left`/`right` for asymmetric spacing.
+
+## Mobile navigation
+
+- **Below `md`**: primary nav lives in a **Sheet** drawer, not a crowded horizontal row.
+- **Sheet `side` must follow locale** so the panel opens from the “start” edge in both modes:
+
+  ```tsx
+  const sheetSide = locale === "ar" ? "right" : "left";
+  <SheetContent side={sheetSide}>...</SheetContent>
+  ```
+
+- **Sticky top bar** must always expose: brand, **locale switcher**, **menu trigger** (with `aria-expanded` reflecting open state), and the **primary CTA** (`ROUTES.leadEntry`) so language/menu never require opening the drawer first.
+- **Touch targets**: keep interactive controls at least ~44×44px where possible (`min-h-11`, `size="icon"` variants, padded links).
+- **Motion**: keep transitions subtle; respect `prefers-reduced-motion` (global rule in `globals.css`).
+
+## Internationalization in UI
+
+- No user-visible copy in components: use `next-intl` (`useTranslations` / `getTranslations`) and keys in `messages/*.json`.
+- `Link`, `useRouter`, `usePathname` for in-app navigation: import from `@/i18n/navigation` so locale prefix stays correct.
+
+## Do / Don’t
+
+- **Do** compose marketing sections as small server components plus minimal client islands (header, forms, Sheet).
+- **Do** use `next/image` with meaningful `sizes` and `priority` only for above-the-fold LCP candidates.
+- **Don’t** add a second ad-hoc blue palette in components; extend `globals.css` / Tailwind theme if a new semantic is needed.
+- **Don’t** hardcode `/ar/...` or locale-less internal paths in JSX; use `Link` + pathnames without locale prefix OR `ROUTES.*`.
+
+## Testing expectations (UI)
+
+- Drawer: open/close does not trap focus permanently; primary links close the sheet on navigate.
+- Critical marketing headings and primary CTAs render in both `ar` and `en` without layout breakage.

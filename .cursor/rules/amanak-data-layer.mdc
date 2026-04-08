@@ -1,0 +1,39 @@
+---
+description: Amanak data — repository pattern, DTOs, mocks, env flag.
+globs:
+  - "src/lib/api/**/*.ts"
+  - "src/types/**/*.ts"
+alwaysApply: false
+---
+
+# Amanak data layer
+
+## Shape
+
+- **DTOs** live in `src/types/` (or `src/types/index.ts`). They mirror future REST shapes (`Destination`, `Hospital`, `Treatment`, `InquiryPayload`).
+- **Repositories** are modules under `src/lib/api/` exporting **named async functions** (e.g. `listDestinations`, `getHospitalBySlug`, `listTreatments`, `submitInquiry`).
+- **No direct `fetch` in UI**: pages/components call repository functions (or server actions that call repositories). Later, swap mock internals with HTTP clients without renaming exports.
+
+## Mock behavior
+
+- Support **`simulateDelay?: boolean`** (and optional duration) via `applyMockDelay` for realistic loading states and tests.
+- **`NEXT_PUBLIC_USE_MOCK_API`**: document in `.env.local.example`. `submitInquiry` warns if mocks are off but UI still calls the stub.
+
+## Validation
+
+- **`zod`** validates external/user payloads (forms). Keep schemas next to forms or under `src/lib/*-schema.ts` when shared.
+- Prefer **typed outputs** from repositories; throw or return `Result` types consistently once API errors are standardized.
+
+## Catalog entities
+
+- **`Treatment`** (and future `PackageTier`, `LogisticsAddon`) are centralized for landing copy, inquiry selects, and the future `/estimate` wizard. **Do not** duplicate specialty lists in JSX — read from `listTreatments()` or i18n keys keyed by stable ids/slugs.
+
+## Do / Don’t
+
+- **Do** keep seed data small and pagination-ready for list routes.
+- **Don’t** import UI components into `src/lib/api/*`.
+
+## Testing expectations
+
+- Unit-test pure mappers and Zod schemas.
+- E2E uses mock submit path (server action → `submitInquiry`).

@@ -1,0 +1,49 @@
+---
+description: Amanak Next.js App Router — RSC default, file naming, performance, routing.
+globs:
+  - "src/app/**/*.{ts,tsx}"
+  - "src/**/*.{ts,tsx}"
+alwaysApply: false
+---
+
+# Amanak frontend (Next.js App Router)
+
+## Server vs client
+
+- **`page.tsx` MUST NOT** start with `'use client'`. Pages are server components by default.
+- **Only leaf components** that need interactivity are client: header + Sheet drawer, locale switcher, forms, small widgets.
+- Mark client files explicitly with `'use client'` at the top; keep client bundles small.
+
+## Routing & locales
+
+- User-facing routes live under `src/app/[locale]/...`. The **URL always includes** the locale (`localePrefix: "always"`).
+- **`/` redirects to `/ar`** unconditionally (see `src/middleware.ts`) — no `Accept-Language` / negotiator logic.
+- Internal links: **`Link` from `@/i18n/navigation`**. Paths are **without** the locale segment (e.g. `href={ROUTES.inquiry}` where `ROUTES.inquiry === "/inquiry"`).
+- **Flag during review**: hardcoded paths like `href="/estimate"` or `href="/ar/inquiry"` in JSX — prefer `ROUTES.*` + i18n `Link`.
+
+## Lead entry contract
+
+- **All high-intent CTAs** (hero, final CTA, header primary button) target **`ROUTES.leadEntry`** (`"/estimate"`), which is a **placeholder** until the quotation wizard lands. Real v1 capture is **`/[locale]/inquiry`**.
+
+## Performance
+
+- **Default to RSC** for data fetching with mock repos (`@/lib/api/*`) in server components.
+- **Images**: `next/image`, correct `sizes`, `priority` only for LCP hero.
+- **Fonts**: `next/font` with `display: "swap"` and limited subsets/weights.
+- **Code splitting**: `dynamic()` for heavy or rare client modules when they would bloat the landing.
+
+## File organization
+
+- **Landing sections**: `src/components/landing/*` composed by `[locale]/page.tsx`.
+- **Shared chrome**: `SiteHeader`, `SiteFooter`, `LocaleSwitcher`.
+- Colocate small helpers next to features when it improves clarity; shared utilities go under `src/lib/`.
+
+## Do / Don’t
+
+- **Do** keep mock data access in repositories under `src/lib/api/` (async functions returning DTOs).
+- **Don’t** embed large JSON or fetch calls inline in presentational components without going through the data layer.
+
+## Testing expectations
+
+- Smoke e2e covers: Arabic landing → mobile drawer → inquiry mock submit; English desktop → locale switch to Arabic (`playwright` + `e2e/smoke.spec.ts`).
+- Unit/integration tests target schemas, pure helpers, and small components (`vitest`).
