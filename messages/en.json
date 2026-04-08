@@ -12,7 +12,8 @@
     "locale": {
       "ar": "العربية",
       "en": "English"
-    }
+    },
+    "login": "Login"
   },
   "hospitals": {
     "pageTitle": "Hospital details",

@@ -51,6 +51,7 @@ function NavLinks({
       {linkItem("/", t("home"))}
       {linkItem(ROUTES.treatments, t("treatments"))}
       {linkItem(ROUTES.contactUs, t("contactUs"))}
+      {linkItem(ROUTES.login, t("login"))}
     </nav>
   );
 }
