@@ -2,12 +2,12 @@
 
 import { Menu } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
-import { useState } from "react";
 import { Link } from "@/i18n/navigation";
 import { ROUTES } from "@/lib/routes";
 import { buttonVariants } from "@/components/ui/button";
 import {
   Sheet,
+  SheetClose,
   SheetContent,
   SheetHeader,
   SheetTitle,
@@ -19,14 +19,27 @@ import { LocaleSwitcher } from "@/components/locale-switcher";
 
 function NavLinks({
   className,
-  onNavigate,
+  closeSheet = false,
 }: {
   className?: string;
-  onNavigate?: () => void;
+  /** When true, each link closes the mobile sheet via `SheetClose` (uncontrolled drawer). */
+  closeSheet?: boolean;
 }) {
   const t = useTranslations("nav");
   const linkClass =
     "rounded-md px-3 py-3 text-base font-medium text-foreground hover:bg-muted md:py-2 md:text-sm";
+
+  function linkItem(href: string, label: string) {
+    const inner = (
+      <Link href={href} className={linkClass} prefetch={false}>
+        {label}
+      </Link>
+    );
+    if (closeSheet) {
+      return <SheetClose nativeButton={false} render={inner} />;
+    }
+    return inner;
+  }
 
   return (
     <nav
@@ -35,25 +48,9 @@ function NavLinks({
         className,
       )}
     >
-      <Link href="/" className={linkClass} onClick={onNavigate} prefetch={false}>
-        {t("home")}
-      </Link>
-      <Link
-        href={ROUTES.treatments}
-        className={linkClass}
-        onClick={onNavigate}
-        prefetch={false}
-      >
-        {t("treatments")}
-      </Link>
-      <Link
-        href={ROUTES.inquiry}
-        className={linkClass}
-        onClick={onNavigate}
-        prefetch={false}
-      >
-        {t("inquiry")}
-      </Link>
+      {linkItem("/", t("home"))}
+      {linkItem(ROUTES.treatments, t("treatments"))}
+      {linkItem(ROUTES.inquiry, t("inquiry"))}
     </nav>
   );
 }
@@ -62,7 +59,6 @@ export function SiteHeader() {
   const t = useTranslations("nav");
   const locale = useLocale();
   const sheetSide = locale === "ar" ? "right" : "left";
-  const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
     <header className="sticky top-0 z-40 border-b border-border/80 bg-card/90 pt-[env(safe-area-inset-top,0px)] backdrop-blur supports-backdrop-filter:bg-card/80">
@@ -93,12 +89,11 @@ export function SiteHeader() {
           </Link>
 
           <div className="md:hidden">
-            <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
+            <Sheet>
               <SheetTrigger
                 className={cn(
                   buttonVariants({ variant: "outline", size: "icon-sm" }),
                 )}
-                aria-expanded={mobileOpen}
                 aria-controls="mobile-navigation"
                 data-testid="nav-menu-trigger"
               >
@@ -110,7 +105,7 @@ export function SiteHeader() {
                   <SheetTitle className="text-start">{t("openMenu")}</SheetTitle>
                 </SheetHeader>
                 <div className="p-4">
-                  <NavLinks onNavigate={() => setMobileOpen(false)} />
+                  <NavLinks closeSheet />
                 </div>
               </SheetContent>
             </Sheet>

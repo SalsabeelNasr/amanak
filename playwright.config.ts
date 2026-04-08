@@ -3,7 +3,8 @@ import { defineConfig } from "@playwright/test";
 function pickBrowser(): "chromium" | "firefox" | "webkit" {
   const b = process.env.PLAYWRIGHT_BROWSER;
   if (b === "chromium" || b === "webkit" || b === "firefox") return b;
-  return "firefox";
+  /** Chromium: mobile Sheet (Base UI dialog) opens reliably in e2e; Firefox often never mounts the popup. */
+  return "chromium";
 }
 
 export default defineConfig({
