@@ -46,16 +46,14 @@ function WidgetSection({
   );
 }
 
-export async function CrmDashboard() {
+export async function CrmInsights() {
   const t = await getTranslations("crm");
   const max = FUNNEL[0].count;
 
   return (
-    <div className="mx-auto max-w-6xl space-y-6 p-4 sm:space-y-8 sm:p-8">
-      <header className="space-y-2 border-b border-border/40 pb-6 sm:pb-8">
-        <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-          {t("dashboard")}
-        </h1>
+    <div className="mx-auto max-w-7xl space-y-4 p-4 sm:p-8">
+      <header className="flex flex-col gap-2 border-b border-border/40 pb-4 sm:flex-row sm:items-end sm:justify-between">
+        <h1 className="amanak-app-page-title">{t("insights")}</h1>
       </header>
 
       <div className="grid auto-rows-min gap-4 sm:gap-6">
@@ -78,9 +76,7 @@ export async function CrmDashboard() {
           <WidgetSection className="lg:col-span-7 xl:col-span-8">
             <div className="flex items-center gap-2 border-b border-border/40 pb-4">
               <BarChart3 className="size-4 shrink-0 text-primary" aria-hidden />
-              <h2 className="text-sm font-bold uppercase tracking-wider text-foreground">
-                {t("conversionFunnel")}
-              </h2>
+              <h2 className="amanak-app-panel-title">{t("conversionFunnel")}</h2>
             </div>
             <div className="mt-5 space-y-3">
               {FUNNEL.map((row) => {
@@ -108,9 +104,7 @@ export async function CrmDashboard() {
           <WidgetSection className="lg:col-span-5 xl:col-span-4">
             <div className="flex items-center gap-2 border-b border-border/40 pb-4">
               <ShieldAlert className="size-4 shrink-0 text-primary" aria-hidden />
-              <h2 className="text-sm font-bold uppercase tracking-wider text-foreground">
-                {t("rejectionReasons")}
-              </h2>
+              <h2 className="amanak-app-panel-title">{t("rejectionReasons")}</h2>
             </div>
             <ul className="mt-5 space-y-2 text-sm">
               {REJECTION_REASONS.map((reason) => (

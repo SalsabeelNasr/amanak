@@ -50,6 +50,18 @@ function generateMockSlots(from: Date, to: Date): ConsultationSlot[] {
   return out;
 }
 
+/** Resolve a generated slot id to its instant (CRM validation; does not book the slot). */
+export function resolveConsultationSlotById(
+  slotId: string,
+): ConsultationSlot | undefined {
+  const now = new Date();
+  const from = new Date(
+    Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()),
+  );
+  const to = new Date(from.getTime() + 400 * 86_400_000);
+  return generateMockSlots(from, to).find((s) => s.id === slotId);
+}
+
 export async function getConsultantProfile(options?: {
   simulateDelay?: boolean;
 }): Promise<ConsultantProfile> {

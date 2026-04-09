@@ -44,7 +44,7 @@ export function QuotationSection({
     <div className="bg-card rounded-2xl border border-border/50 shadow-sm overflow-hidden">
       <div className="px-6 py-4 border-b border-border/40 bg-muted/5 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Badge variant="outline" className="text-[10px] font-bold tracking-widest border-primary/20 text-primary uppercase">
+          <Badge variant="outline" className="text-xs font-semibold border-primary/20 text-primary">
             {current.packageTier}
           </Badge>
         </div>
@@ -75,14 +75,14 @@ export function QuotationSection({
           ))}
           <div className="flex items-center justify-between border-t border-border/40 pt-6 mt-4">
             <div>
-              <p className="text-[10px] uppercase font-bold tracking-wider text-muted-foreground mb-1">{t("total")}</p>
+              <p className="amanak-app-field-label mb-1">{t("total")}</p>
               <p className="text-3xl font-bold tracking-tight text-primary">
                 ${current.totalUSD.toLocaleString()}
               </p>
             </div>
             {current.downpaymentRequired && current.downpaymentUSD && (
               <div className="text-end">
-                <p className="text-[10px] uppercase font-bold tracking-wider text-muted-foreground mb-1">{t("downpayment")}</p>
+                <p className="amanak-app-field-label mb-1">{t("downpayment")}</p>
                 <p className="text-lg font-bold text-foreground">
                   ${current.downpaymentUSD.toLocaleString()}
                 </p>
@@ -92,7 +92,7 @@ export function QuotationSection({
         </div>
 
         <div className="rounded-xl bg-muted/30 border border-border/20 p-4">
-          <p className="text-[10px] uppercase font-bold tracking-wider text-muted-foreground mb-2">Terms & Conditions</p>
+          <p className="amanak-app-field-label mb-2">Terms & Conditions</p>
           <p className="text-xs text-muted-foreground leading-relaxed">
             {current.termsAndConditions}
           </p>
@@ -103,7 +103,7 @@ export function QuotationSection({
             <Button 
               type="button" 
               size="lg" 
-              className="flex-1 rounded-xl shadow-md shadow-primary/10 hover:shadow-lg hover:shadow-primary/20 transition-all font-bold uppercase tracking-wider text-xs"
+              className="flex-1 rounded-xl shadow-md shadow-primary/10 hover:shadow-lg hover:shadow-primary/20 transition-all text-sm font-semibold"
               onClick={handleAccept}
             >
               {t("approveQuote")}
@@ -112,7 +112,7 @@ export function QuotationSection({
               type="button"
               variant="outline"
               size="lg"
-              className="flex-1 rounded-xl font-bold uppercase tracking-wider text-xs hover:bg-destructive/5 hover:text-destructive hover:border-destructive/30 transition-all"
+              className="flex-1 rounded-xl text-sm font-semibold hover:bg-destructive/5 hover:text-destructive hover:border-destructive/30 transition-all"
               onClick={() => setShowRejectForm(true)}
             >
               {t("rejectQuote")}
@@ -123,7 +123,7 @@ export function QuotationSection({
         {showActions && showRejectForm && (
           <div className="space-y-4 pt-4 border-t border-border/40 animate-in slide-in-from-bottom-2">
             <div className="space-y-2">
-              <Label htmlFor="reject-reason" className="text-[10px] uppercase font-bold tracking-wider text-muted-foreground">
+              <Label htmlFor="reject-reason" className="amanak-app-field-label">
                 {t("rejectReason")}
               </Label>
               <textarea
@@ -139,7 +139,7 @@ export function QuotationSection({
                 type="button"
                 variant="destructive"
                 size="sm"
-                className="flex-1 rounded-lg font-bold uppercase tracking-wider text-[10px]"
+                className="flex-1 rounded-lg text-sm font-medium"
                 onClick={handleReject}
                 disabled={!reason.trim()}
               >
@@ -149,7 +149,7 @@ export function QuotationSection({
                 type="button"
                 variant="ghost"
                 size="sm"
-                className="flex-1 rounded-lg font-bold uppercase tracking-wider text-[10px]"
+                className="flex-1 rounded-lg text-sm font-medium"
                 onClick={() => setShowRejectForm(false)}
               >
                 {t("cancel")}

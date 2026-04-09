@@ -153,13 +153,31 @@ export type LeadTaskCompletedReason =
   | "user"
   | "status_transition"
   | "quotation_sent"
-  | "lead_rejected";
+  | "lead_rejected"
+  /** User marked a system task complete; it triggered applyTransition. */
+  | "task_drove_transition";
 
 export type LeadTaskResolution =
   | "open"
   | "completed_manual"
   | "completed_rule"
   | "cancelled";
+
+/** User-facing task creation categories (not pipeline `LeadTaskTemplateKey`). */
+export type LeadTaskCreationTypeId =
+  | "collect_medical_files"
+  | "payment_proof"
+  | "internal_follow_up"
+  | "custom";
+
+export type LeadTaskAttachment = {
+  id: string;
+  slotId: string;
+  fileName: string;
+  sizeBytes: number;
+  uploadedAt: string;
+  mockUrl?: string;
+};
 
 export type LeadTask = {
   id: string;
@@ -179,9 +197,13 @@ export type LeadTask = {
   resolution?: LeadTaskResolution;
   /** Reserved for future transition gating; mock does not enforce. */
   blocking?: boolean;
+  /** CRM manual task creation flow only. */
+  creationTypeId?: LeadTaskCreationTypeId;
+  creationFields?: Record<string, string>;
+  attachments?: LeadTaskAttachment[];
 };
 
-export type LeadConversationChannel = "whatsapp" | "email" | "call";
+export type LeadConversationChannel = "whatsapp" | "email" | "call" | "sms";
 
 export type LeadConversationDirection = "inbound" | "outbound" | "internal";
 
@@ -198,6 +220,8 @@ export type LeadConversationWhatsApp = LeadConversationBase & {
   body: string;
   messageId?: string;
   attachmentHint?: string;
+  /** References {@link Quotation.id} on the same lead (outbound compose). */
+  attachedQuotationIds?: string[];
 };
 
 export type LeadConversationEmail = LeadConversationBase & {
@@ -208,10 +232,25 @@ export type LeadConversationEmail = LeadConversationBase & {
   from: string;
   to: string;
   threadId?: string;
+  attachmentHint?: string;
+  attachedQuotationIds?: string[];
 };
+
+export type LeadConversationSms = LeadConversationBase & {
+  channel: "sms";
+  body: string;
+  /** Patient phone the SMS was sent to (mock). */
+  toPhone?: string;
+  attachmentHint?: string;
+  attachedQuotationIds?: string[];
+};
+
+export type LeadConversationCallKind = "manual_log" | "app_placed";
 
 export type LeadConversationCall = LeadConversationBase & {
   channel: "call";
+  /** How the call row was created: written after the fact vs placed via the app. */
+  callKind?: LeadConversationCallKind;
   transcript: string;
   durationSec?: number;
   recordingUrl?: string;
@@ -221,7 +260,44 @@ export type LeadConversationCall = LeadConversationBase & {
 export type LeadConversationItem =
   | LeadConversationWhatsApp
   | LeadConversationEmail
+  | LeadConversationSms
   | LeadConversationCall;
+
+export type LeadAppointmentKind =
+  | "treatment"
+  | "online_meeting"
+  | "team_consultation";
+
+type LeadAppointmentBase = {
+  id: string;
+  leadId: string;
+  startsAt: string;
+  createdAt: string;
+  createdByUserId?: string;
+  notes?: string;
+};
+
+export type LeadTreatmentAppointment = LeadAppointmentBase & {
+  kind: "treatment";
+  locationLabel: string;
+};
+
+export type LeadOnlineMeetingAppointment = LeadAppointmentBase & {
+  kind: "online_meeting";
+  meetingUrl: string;
+  title?: string;
+};
+
+export type LeadTeamConsultationAppointment = LeadAppointmentBase & {
+  kind: "team_consultation";
+  slotId?: string;
+  linkedTaskId: string;
+};
+
+export type LeadAppointment =
+  | LeadTreatmentAppointment
+  | LeadOnlineMeetingAppointment
+  | LeadTeamConsultationAppointment;
 
 export type Quotation = {
   id: string;
@@ -230,6 +306,9 @@ export type Quotation = {
   doctorId?: string;
   hospitalId?: string;
   hotelName?: string;
+  /** BR-4.1 transport line item context (mock v1). */
+  transportMode?: { ar: string; en: string };
+  transportRouteCount?: number;
   items: QuotationItem[];
   totalUSD: number;
   status:
@@ -257,13 +336,15 @@ export type Lead = {
   clientType: "b2c" | "b2b" | "g2b";
   status: LeadStatus;
   statusHistory: StatusHistoryEntry[];
-  assignedCsId?: string;
+  /** CRM lead owner (e.g. primary CS). Task rows use {@link LeadTask.assigneeId} separately. */
+  ownerId?: string;
   assignedConsultantId?: string;
   documents: LeadDocument[];
   quotations: Quotation[];
   activeQuotationId?: string;
   notes?: string;
   tasks: LeadTask[];
+  appointments: LeadAppointment[];
   createdAt: string;
   updatedAt: string;
 };

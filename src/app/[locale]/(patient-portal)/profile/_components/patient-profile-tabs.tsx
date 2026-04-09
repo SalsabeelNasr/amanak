@@ -83,9 +83,7 @@ export function PatientProfileTabs({ lead }: { lead: Lead }) {
         <div className="min-h-[12rem]">
           <TabsContent value="overview" className="space-y-6 animate-in fade-in duration-200">
             <section className="rounded-2xl border border-border/50 bg-card p-5 shadow-sm sm:p-6">
-              <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-                {t("currentStatus")}
-              </p>
+              <p className="amanak-app-field-label">{t("currentStatus")}</p>
               <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <Badge
                   className={cn(
@@ -107,24 +105,13 @@ export function PatientProfileTabs({ lead }: { lead: Lead }) {
             <section className="rounded-2xl border border-border/50 bg-card p-5 shadow-sm sm:p-6">
               <div className="flex items-center gap-2 border-b border-border/40 pb-4">
                 <User className="size-4 text-primary" aria-hidden />
-                <h2 className="text-sm font-bold uppercase tracking-wider">
-                  {t("personalInfo")}
-                </h2>
+                <h2 className="amanak-app-panel-title">{t("personalInfo")}</h2>
               </div>
               <dl className="mt-5 space-y-4 text-sm">
                 <div className="flex gap-3">
-                  <User className="mt-0.5 size-4 shrink-0 text-muted-foreground" aria-hidden />
-                  <div>
-                    <dt className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-                      {t("fullName")}
-                    </dt>
-                    <dd className="mt-0.5 font-semibold text-foreground">{lead.patientName}</dd>
-                  </div>
-                </div>
-                <div className="flex gap-3">
                   <Phone className="mt-0.5 size-4 shrink-0 text-muted-foreground" aria-hidden />
                   <div>
-                    <dt className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                    <dt className="amanak-app-field-label">
                       {t("phone")}
                     </dt>
                     <dd className="mt-0.5 font-semibold text-foreground">{lead.patientPhone}</dd>
@@ -133,7 +120,7 @@ export function PatientProfileTabs({ lead }: { lead: Lead }) {
                 <div className="flex gap-3">
                   <Globe className="mt-0.5 size-4 shrink-0 text-muted-foreground" aria-hidden />
                   <div>
-                    <dt className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                    <dt className="amanak-app-field-label">
                       {t("country")}
                     </dt>
                     <dd className="mt-0.5 font-semibold text-foreground">{lead.patientCountry}</dd>
@@ -142,7 +129,7 @@ export function PatientProfileTabs({ lead }: { lead: Lead }) {
                 <div className="flex gap-3">
                   <Stethoscope className="mt-0.5 size-4 shrink-0 text-muted-foreground" aria-hidden />
                   <div>
-                    <dt className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                    <dt className="amanak-app-field-label">
                       {t("treatment")}
                     </dt>
                     <dd className="mt-0.5 font-semibold text-foreground">{lead.treatmentSlug}</dd>
@@ -151,11 +138,11 @@ export function PatientProfileTabs({ lead }: { lead: Lead }) {
                 <div className="flex gap-3">
                   <Shield className="mt-0.5 size-4 shrink-0 text-muted-foreground" aria-hidden />
                   <div>
-                    <dt className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                    <dt className="amanak-app-field-label">
                       {t("clientType")}
                     </dt>
                     <dd className="mt-1">
-                      <Badge variant="secondary" className="text-[10px] font-bold uppercase tracking-tight">
+                      <Badge variant="secondary" className="text-xs font-medium">
                         {lead.clientType}
                       </Badge>
                     </dd>
@@ -176,7 +163,7 @@ export function PatientProfileTabs({ lead }: { lead: Lead }) {
           </TabsContent>
 
           <TabsContent value="files" className="animate-in fade-in duration-200">
-            <DocumentsSection initialDocuments={lead.documents} />
+            <DocumentsSection leadId={lead.id} initialDocuments={lead.documents} />
           </TabsContent>
         </div>
       </Tabs>

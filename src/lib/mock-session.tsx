@@ -10,20 +10,7 @@ import {
 } from "react";
 import type { MockSession, MockUser } from "@/types";
 
-export const MOCK_USERS: MockUser[] = [
-  {
-    id: "patient_1",
-    name: "أحمد محمد",
-    role: "patient",
-    email: "ahmed@example.com",
-  },
-  {
-    id: "admin_1",
-    name: "Admin Amanak",
-    role: "admin",
-    email: "admin@amanak.com",
-  },
-];
+export { MOCK_USERS } from "./mock-users";
 
 type SessionContextValue = {
   session: MockSession;

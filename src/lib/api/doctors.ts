@@ -79,3 +79,7 @@ export async function getDoctorsByIds(
   await applyMockDelay(options?.simulateDelay);
   return DOCTORS.filter((d) => ids.includes(d.id));
 }
+
+export function listDoctorIdsSync(): string[] {
+  return DOCTORS.map((d) => d.id);
+}

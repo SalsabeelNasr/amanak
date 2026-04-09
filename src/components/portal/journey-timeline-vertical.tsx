@@ -1,5 +1,7 @@
 "use client";
 
+/** Funnel timeline: fixed ORDERED_STATES; per-stage dates are taken from `lead.statusHistory` (append-only transition log). */
+
 import { useLocale } from "next-intl";
 import {
   ORDERED_STATES,
@@ -17,13 +19,23 @@ function formatDate(iso: string, locale: string): string {
   });
 }
 
-export function JourneyTimelineVertical({ lead }: { lead: Lead }) {
+export function JourneyTimelineVertical({ 
+  lead, 
+  isExpanded = true 
+}: { 
+  lead: Lead; 
+  isExpanded?: boolean;
+}) {
   const locale = useLocale();
   const langKey = locale === "ar" ? "ar" : "en";
   const isRejected = lead.status === "rejected";
   const currentIndex = isRejected
     ? getStateIndex("consultant_review_ready")
     : getStateIndex(lead.status);
+
+  const visibleStates = isExpanded 
+    ? ORDERED_STATES 
+    : ORDERED_STATES.slice(0, currentIndex + 1);
 
   function timestampForState(state: string): string | undefined {
     const entry = lead.statusHistory.find((h) => h.to === state);
@@ -33,11 +45,11 @@ export function JourneyTimelineVertical({ lead }: { lead: Lead }) {
   return (
     <div className="space-y-1">
       <ol className="space-y-0">
-        {ORDERED_STATES.map((state, idx) => {
+        {visibleStates.map((state, idx) => {
           const completed = idx < currentIndex;
           const current = idx === currentIndex && !isRejected;
           const ts = timestampForState(state);
-          const isLast = idx === ORDERED_STATES.length - 1;
+          const isLast = idx === visibleStates.length - 1;
 
           return (
             <li key={state} className="flex gap-4">
@@ -63,7 +75,7 @@ export function JourneyTimelineVertical({ lead }: { lead: Lead }) {
                   />
                 ) : null}
               </div>
-              <div className={cn("min-w-0 flex-1 pb-8", isLast && "pb-0")}>
+              <div className={cn("min-w-0 flex-1 pb-8", isLast && !isExpanded && "pb-0", isLast && isExpanded && "pb-0")}>
                 <p
                   className={cn(
                     "text-sm font-medium leading-snug",

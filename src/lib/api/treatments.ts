@@ -173,3 +173,8 @@ export async function getTreatmentBySlug(
   await applyMockDelay(options?.simulateDelay);
   return TREATMENTS.find((t) => t.slug === slug);
 }
+
+/** Sync read for quotation wizard / pricing (no mock delay). */
+export function getTreatmentBySlugSync(slug: string): Treatment | undefined {
+  return TREATMENTS.find((t) => t.slug === slug);
+}

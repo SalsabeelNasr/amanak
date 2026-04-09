@@ -14,7 +14,7 @@
   --font-ibm-plex-arabic-family: var(--font-ibm-plex-arabic), ui-sans-serif, system-ui, sans-serif;
   /* Wordmark only: define --font-wordmark-family on the logo element (see wordmark-font.ts) */
   --font-wordmark: var(--font-wordmark-family), ui-sans-serif, system-ui, sans-serif;
-  --color-sidebar-ring: var(--sidebar-ring);
+  --sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-accent: var(--sidebar-accent);
@@ -22,6 +22,9 @@
   --color-sidebar-primary: var(--sidebar-primary);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar: var(--sidebar);
+  --color-app-canvas: var(--app-canvas);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
   --color-chart-5: var(--chart-5);
   --color-chart-4: var(--chart-4);
   --color-chart-3: var(--chart-3);
@@ -88,6 +91,17 @@
   --sidebar-border: oklch(0.97 0 0);
   --sidebar-ring: #034cb6;
   --brand-wordmark: #034cb6;
+  --app-canvas: oklch(0.985 0 0);
+  --success: oklch(0.627 0.194 149.214);
+  --success-foreground: oklch(0.985 0 0);
+  /* Dialog shells: max-widths at sm+; heights cap long forms */
+  --dialog-max-w-xs: 18.75rem;
+  --dialog-max-w-sm: 25rem;
+  --dialog-max-w-md: 28rem;
+  --dialog-max-w-lg: 32rem;
+  --dialog-max-w-xl: 48rem;
+  --dialog-max-height: min(90vh, 720px);
+  --dialog-max-height-tall: min(92vh, 800px);
 }
 
 .dark {
@@ -123,6 +137,9 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
+  --app-canvas: oklch(0.12 0 0);
+  --success: oklch(0.627 0.194 149.214);
+  --success-foreground: oklch(0.985 0 0);
 }
 
 @layer base {
@@ -153,6 +170,45 @@
   }
   h1, h2, h3, h4, h5, h6 {
     @apply font-heading;
+  }
+}
+
+/*
+ * Typography scale: marketing (landing) uses larger rhythm; app surfaces (CRM, portal) use a denser
+ * scale derived from the same steps (display → section → card → body → label).
+ * Prefer sentence / title case in copy — avoid all-caps UI labels except where data is shown as-is (e.g. lead name).
+ */
+@layer components {
+  .amanak-marketing-hero-title {
+    @apply text-balance text-4xl font-bold tracking-tight text-foreground sm:text-5xl md:text-6xl;
+  }
+  .amanak-marketing-hero-subtitle {
+    @apply text-pretty text-lg text-muted-foreground sm:text-xl/8;
+  }
+  .amanak-marketing-section-title {
+    @apply text-balance text-3xl font-bold text-foreground sm:text-4xl;
+  }
+  .amanak-marketing-section-lead {
+    @apply text-pretty text-lg text-muted-foreground leading-relaxed;
+  }
+  .amanak-marketing-card-title {
+    @apply text-xl font-bold text-foreground;
+  }
+
+  .amanak-app-page-title {
+    @apply text-2xl font-bold tracking-tight text-foreground sm:text-3xl;
+  }
+  .amanak-app-panel-title {
+    @apply text-sm font-semibold tracking-tight text-foreground/90;
+  }
+  .amanak-app-field-label {
+    @apply text-xs font-medium text-muted-foreground;
+  }
+  .amanak-app-meta {
+    @apply text-xs text-muted-foreground;
+  }
+  .amanak-app-value {
+    @apply text-base font-medium text-foreground;
   }
 }
 

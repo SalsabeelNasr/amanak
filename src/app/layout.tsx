@@ -26,12 +26,13 @@ export default async function RootLayout({
   const dir = locale === "ar" ? "rtl" : "ltr";
 
   return (
-    <html lang={locale} dir={dir} suppressHydrationWarning>
-      <body
-        className={`${ibmPlexSansArabic.variable} ${roboto.variable} min-h-screen antialiased`}
-      >
-        {children}
-      </body>
+    <html
+      lang={locale}
+      dir={dir}
+      suppressHydrationWarning
+      className={`${ibmPlexSansArabic.variable} ${roboto.variable}`}
+    >
+      <body className="min-h-screen antialiased">{children}</body>
     </html>
   );
 }

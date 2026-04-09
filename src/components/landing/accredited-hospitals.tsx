@@ -94,7 +94,7 @@ export async function AccreditedHospitals() {
           <div className="lg:col-span-2">
             <div className="relative rounded-3xl border border-border bg-card shadow-sm overflow-hidden">
               <div className="bg-muted/30 px-6 py-4 border-b border-border">
-                <h3 className="font-bold text-sm uppercase tracking-wider text-foreground/70">
+                <h3 className="text-sm font-semibold tracking-tight text-foreground/80">
                   {t("tableCaption")}
                 </h3>
               </div>

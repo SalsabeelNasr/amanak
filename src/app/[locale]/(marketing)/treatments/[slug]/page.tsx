@@ -103,7 +103,7 @@ export default async function TreatmentDetailPage({ params }: Props) {
             <div className="rounded-3xl border border-border bg-card p-8 shadow-sm space-y-6">
               {treatment.successRateKey && (
                 <div className="space-y-2">
-                  <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary/60">
+                  <p className="text-xs font-semibold text-primary/70">
                     {t("successRateLabel")}
                   </p>
                   <div className="flex items-center gap-3">
@@ -117,7 +117,7 @@ export default async function TreatmentDetailPage({ params }: Props) {
 
               {treatment.techniquesKey && (
                 <div className="space-y-3 pt-6 border-t border-border/50">
-                  <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary/60">
+                  <p className="text-xs font-semibold text-primary/70">
                     {t("techniquesLabel")}
                   </p>
                   <p className="text-sm font-medium text-foreground leading-relaxed">
@@ -128,7 +128,7 @@ export default async function TreatmentDetailPage({ params }: Props) {
 
               {treatment.hospitalsKey && (
                 <div className="space-y-3 pt-6 border-t border-border/50">
-                  <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary/60">
+                  <p className="text-xs font-semibold text-primary/70">
                     {t("hospitalsLabel")}
                   </p>
                   <p className="text-sm text-muted-foreground leading-relaxed">
@@ -140,7 +140,7 @@ export default async function TreatmentDetailPage({ params }: Props) {
               <div className="pt-8 space-y-3">
                 {treatment.priceUSD && (
                   <div className="flex flex-col gap-1 pb-4 mb-4 border-b border-border/50">
-                    <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary/60">
+                    <span className="text-xs font-semibold text-primary/70">
                       {t("priceLabel")}
                     </span>
                     <span className="text-3xl font-black text-foreground">

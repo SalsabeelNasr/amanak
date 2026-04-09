@@ -318,7 +318,7 @@ export function ConsultationBookingForm({ initialSlots, consultant }: Props) {
                     ),
                     weekdays: "w-full gap-0.5",
                     weekday:
-                      "flex-1 text-[0.65rem] font-medium uppercase tracking-wider text-muted-foreground sm:text-[0.7rem]",
+                      "flex-1 text-[0.65rem] font-medium text-muted-foreground sm:text-[0.7rem]",
                     week: "mt-2 flex w-full gap-0.5 sm:mt-2.5 sm:gap-1",
                     day: "flex-1 p-0 text-center text-sm",
                     day_button: cn(

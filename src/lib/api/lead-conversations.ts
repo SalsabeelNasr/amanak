@@ -80,6 +80,7 @@ Ahmed`,
         id: "conv_lead1_call_1",
         leadId: "lead_1",
         channel: "call",
+        callKind: "app_placed",
         occurredAt: nowMinusDays(3),
         direction: "outbound",
         durationSec: 842,
@@ -130,4 +131,22 @@ export async function getLeadConversations(
     (a, b) =>
       new Date(b.occurredAt).getTime() - new Date(a.occurredAt).getTime(),
   );
+}
+
+export type AppendLeadConversationOptions = {
+  simulateDelay?: boolean;
+};
+
+/**
+ * Appends a conversation item to the mock store (newest-first ordering on read).
+ */
+export async function appendLeadConversation(
+  leadId: string,
+  item: LeadConversationItem,
+  options?: AppendLeadConversationOptions,
+): Promise<LeadConversationItem> {
+  await applyMockDelay(options?.simulateDelay);
+  const cur = BY_LEAD.get(leadId) ?? [];
+  BY_LEAD.set(leadId, [item, ...cur]);
+  return item;
 }

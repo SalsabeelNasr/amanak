@@ -62,7 +62,7 @@ function TreatmentItemGrid({
             <div className="space-y-6">
               {item.priceUSD != null && (
                 <div className="flex flex-col gap-1">
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-primary/60">
+                  <span className="text-xs font-semibold text-primary/70">
                     {labels.priceLabel}
                   </span>
                   <span className="text-2xl font-black text-foreground">
