@@ -133,6 +133,96 @@ export type QuotationItem = {
   amountUSD: number;
 };
 
+/** Stable id for idempotent system task creation (usually equals `kind` for system tasks). */
+export type LeadTaskTemplateKey =
+  | "lead_qualification"
+  | "collect_documents"
+  | "consultant_review"
+  | "prepare_quotation"
+  | "send_contract"
+  | "confirm_payment"
+  | "create_order"
+  | "assign_specialist"
+  | "treatment_followup";
+
+export type LeadTaskKind = LeadTaskTemplateKey | "manual";
+
+export type LeadTaskSource = "user" | "system";
+
+export type LeadTaskCompletedReason =
+  | "user"
+  | "status_transition"
+  | "quotation_sent"
+  | "lead_rejected";
+
+export type LeadTaskResolution =
+  | "open"
+  | "completed_manual"
+  | "completed_rule"
+  | "cancelled";
+
+export type LeadTask = {
+  id: string;
+  title: string;
+  completed: boolean;
+  dueAt?: string;
+  assigneeId?: string;
+  createdAt: string;
+  updatedAt: string;
+  createdByUserId?: string;
+  /** System vs checklist; default treated as `manual` / `user` when absent (legacy mocks). */
+  kind?: LeadTaskKind;
+  source?: LeadTaskSource;
+  /** Same as `kind` for system-generated tasks; used to avoid duplicate open tasks. */
+  templateKey?: LeadTaskTemplateKey;
+  completedReason?: LeadTaskCompletedReason;
+  resolution?: LeadTaskResolution;
+  /** Reserved for future transition gating; mock does not enforce. */
+  blocking?: boolean;
+};
+
+export type LeadConversationChannel = "whatsapp" | "email" | "call";
+
+export type LeadConversationDirection = "inbound" | "outbound" | "internal";
+
+type LeadConversationBase = {
+  id: string;
+  leadId: string;
+  occurredAt: string;
+  direction: LeadConversationDirection;
+  preview?: string;
+};
+
+export type LeadConversationWhatsApp = LeadConversationBase & {
+  channel: "whatsapp";
+  body: string;
+  messageId?: string;
+  attachmentHint?: string;
+};
+
+export type LeadConversationEmail = LeadConversationBase & {
+  channel: "email";
+  subject: string;
+  snippet?: string;
+  body?: string;
+  from: string;
+  to: string;
+  threadId?: string;
+};
+
+export type LeadConversationCall = LeadConversationBase & {
+  channel: "call";
+  transcript: string;
+  durationSec?: number;
+  recordingUrl?: string;
+  provider?: string;
+};
+
+export type LeadConversationItem =
+  | LeadConversationWhatsApp
+  | LeadConversationEmail
+  | LeadConversationCall;
+
 export type Quotation = {
   id: string;
   leadId: string;
@@ -160,6 +250,8 @@ export type Lead = {
   patientId: string;
   patientName: string;
   patientPhone: string;
+  /** Optional; used when email channel events exist */
+  patientEmail?: string;
   patientCountry: string;
   treatmentSlug: string;
   clientType: "b2c" | "b2b" | "g2b";
@@ -171,6 +263,7 @@ export type Lead = {
   quotations: Quotation[];
   activeQuotationId?: string;
   notes?: string;
+  tasks: LeadTask[];
   createdAt: string;
   updatedAt: string;
 };

@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { getLeadConversations } from "@/lib/api/lead-conversations";
 import { getLeadById } from "@/lib/api/leads";
 import { LeadDetail } from "./_components/lead-detail";
 
@@ -11,5 +12,9 @@ export default async function CrmLeadDetailPage({
   const lead = await getLeadById(id);
   if (!lead) notFound();
 
-  return <LeadDetail initialLead={lead} />;
+  const initialConversations = await getLeadConversations(id);
+
+  return (
+    <LeadDetail initialLead={lead} initialConversations={initialConversations} />
+  );
 }

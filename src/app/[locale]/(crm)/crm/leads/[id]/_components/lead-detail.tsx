@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { JourneyTimelineVertical } from "@/components/portal/journey-timeline-vertical";
@@ -13,9 +14,22 @@ import {
   getStatusLabel,
   isTerminalState,
 } from "@/lib/services/state-machine.service";
-import { updateLead } from "@/lib/api/leads";
+import {
+  addLeadTask,
+  CRM_TASK_ASSIGNEE_IDS,
+  deleteLeadTask,
+  sortLeadTasksForDisplay,
+  updateLead,
+  updateLeadTask,
+} from "@/lib/api/leads";
 import { useSession } from "@/lib/mock-session";
-import type { Lead, StateTransition } from "@/types";
+import type {
+  Lead,
+  LeadConversationChannel,
+  LeadConversationItem,
+  LeadTask,
+  StateTransition,
+} from "@/types";
 import { cn } from "@/lib/utils";
 import {
   Activity,
@@ -32,12 +46,44 @@ import {
   FileCheck,
   User,
   Calendar,
+  ListTodo,
+  Mail,
+  MessageSquare,
+  Trash2,
 } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 
-type TabId = "overview" | "activity" | "quotes" | "files";
+type TabId =
+  | "overview"
+  | "activity"
+  | "conversations"
+  | "quotes"
+  | "files"
+  | "tasks";
 
-const TAB_IDS: TabId[] = ["overview", "activity", "quotes", "files"];
+const TAB_IDS: TabId[] = [
+  "overview",
+  "activity",
+  "conversations",
+  "quotes",
+  "files",
+  "tasks",
+];
+
+type ConversationFilter = "all" | LeadConversationChannel;
+
+const BODY_COLLAPSE_CHARS = 280;
+
+function conversationBodyText(item: LeadConversationItem): string {
+  switch (item.channel) {
+    case "whatsapp":
+      return item.body;
+    case "email":
+      return item.body ?? item.snippet ?? "";
+    case "call":
+      return item.transcript;
+  }
+}
 
 function formatDateTime(iso: string, locale: string): string {
   return new Date(iso).toLocaleString(locale === "ar" ? "ar-EG" : "en-US", {
@@ -46,6 +92,14 @@ function formatDateTime(iso: string, locale: string): string {
     year: "numeric",
     hour: "2-digit",
     minute: "2-digit",
+  });
+}
+
+function formatDueDate(iso: string, locale: string): string {
+  return new Date(iso).toLocaleDateString(locale === "ar" ? "ar-EG" : "en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
   });
 }
 
@@ -69,7 +123,13 @@ function statusOverviewClass(status: Lead["status"]): string {
   }
 }
 
-export function LeadDetail({ initialLead }: { initialLead: Lead }) {
+export function LeadDetail({
+  initialLead,
+  initialConversations,
+}: {
+  initialLead: Lead;
+  initialConversations: LeadConversationItem[];
+}) {
   const t = useTranslations("crm");
   const tPortal = useTranslations("portal");
   const locale = useLocale();
@@ -81,6 +141,15 @@ export function LeadDetail({ initialLead }: { initialLead: Lead }) {
     useState<StateTransition | null>(null);
   const [note, setNote] = useState("");
   const [successFlash, setSuccessFlash] = useState(false);
+  const [conversationFilter, setConversationFilter] =
+    useState<ConversationFilter>("all");
+  const [expandedConversationIds, setExpandedConversationIds] = useState<
+    Set<string>
+  >(() => new Set());
+  const [newTaskTitle, setNewTaskTitle] = useState("");
+  const [newTaskDue, setNewTaskDue] = useState("");
+  const [newTaskAssignee, setNewTaskAssignee] = useState("");
+  const [taskSaving, setTaskSaving] = useState(false);
 
   const availableTransitions = useMemo(
     () =>
@@ -106,11 +175,11 @@ export function LeadDetail({ initialLead }: { initialLead: Lead }) {
         session.user,
         note.trim() || undefined,
       );
-      setLead(updated);
+      const persisted = await updateLead(lead.id, updated);
+      setLead(persisted);
       setPendingTransition(null);
       setNote("");
       setSuccessFlash(true);
-      void updateLead(lead.id, updated);
     } catch (err) {
       console.error(err);
     }
@@ -120,11 +189,132 @@ export function LeadDetail({ initialLead }: { initialLead: Lead }) {
     ? lead.quotations.find((q) => q.id === lead.activeQuotationId)
     : undefined;
 
+  const filteredConversations = useMemo(() => {
+    if (conversationFilter === "all") return initialConversations;
+    return initialConversations.filter((i) => i.channel === conversationFilter);
+  }, [initialConversations, conversationFilter]);
+
+  const sortedTasks = useMemo(
+    () => sortLeadTasksForDisplay(lead.tasks),
+    [lead.tasks],
+  );
+
+  function assigneeLabel(assigneeId: string | undefined): string {
+    if (!assigneeId) return t("taskAssigneeNone");
+    return t(`taskAssignees.${assigneeId}` as Parameters<typeof t>[0]);
+  }
+
+  function dueBadge(task: LeadTask): { label: string; className: string } | null {
+    if (task.completed) {
+      if (task.resolution === "cancelled") {
+        return {
+          label: t("taskCancelledLabel"),
+          className: "border-transparent bg-destructive/15 text-destructive",
+        };
+      }
+      return {
+        label: t("taskCompletedLabel"),
+        className: "border-transparent bg-muted text-muted-foreground",
+      };
+    }
+    if (!task.dueAt) {
+      return {
+        label: t("taskDueNone"),
+        className: "border-border/60 text-muted-foreground",
+      };
+    }
+    const dueMs = new Date(task.dueAt).getTime();
+    if (dueMs < Date.now()) {
+      return {
+        label: t("taskDueOverdue"),
+        className: "border-transparent bg-destructive/10 text-destructive",
+      };
+    }
+    return {
+      label: formatDueDate(task.dueAt, locale),
+      className: "border-primary/30 bg-primary/5 text-primary",
+    };
+  }
+
+  function taskSourceBadge(task: LeadTask): { label: string; className: string } | null {
+    if (task.source === "system" || task.templateKey) {
+      return {
+        label: t("taskSourceAuto"),
+        className: "border-primary/30 bg-primary/5 text-primary",
+      };
+    }
+    return null;
+  }
+
+  async function handleAddTask() {
+    if (!session.isAuthenticated || !newTaskTitle.trim()) return;
+    setTaskSaving(true);
+    try {
+      const dueAt = newTaskDue.trim()
+        ? new Date(`${newTaskDue}T12:00:00`).toISOString()
+        : undefined;
+      const updated = await addLeadTask(lead.id, {
+        title: newTaskTitle,
+        dueAt,
+        assigneeId: newTaskAssignee.trim() || undefined,
+        createdByUserId: session.user.id,
+      });
+      setLead(updated);
+      setNewTaskTitle("");
+      setNewTaskDue("");
+      setNewTaskAssignee("");
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setTaskSaving(false);
+    }
+  }
+
+  async function handleToggleTaskComplete(task: LeadTask) {
+    if (!session.isAuthenticated) return;
+    setTaskSaving(true);
+    try {
+      const updated = await updateLeadTask(lead.id, task.id, {
+        completed: !task.completed,
+      });
+      setLead(updated);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setTaskSaving(false);
+    }
+  }
+
+  async function handleDeleteTask(taskId: string) {
+    if (!session.isAuthenticated) return;
+    if (!window.confirm(t("taskDeleteConfirm"))) return;
+    setTaskSaving(true);
+    try {
+      const updated = await deleteLeadTask(lead.id, taskId);
+      setLead(updated);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setTaskSaving(false);
+    }
+  }
+
+  function toggleConversationExpanded(id: string) {
+    setExpandedConversationIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }
+
   const tabLabel: Record<TabId, string> = {
     overview: t("tabOverview"),
     activity: t("tabActivity"),
+    conversations: t("tabConversations"),
     quotes: t("tabQuotes"),
     files: t("tabFiles"),
+    tasks: t("tabTasks"),
   };
 
   return (
@@ -223,6 +413,19 @@ export function LeadDetail({ initialLead }: { initialLead: Lead }) {
                     <p className="font-semibold text-foreground">{lead.patientPhone}</p>
                   </div>
                 </div>
+                {lead.patientEmail ? (
+                  <div className="flex gap-4">
+                    <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/5">
+                      <Mail className="size-4 text-primary" aria-hidden />
+                    </div>
+                    <div>
+                      <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                        {t("email")}
+                      </p>
+                      <p className="font-semibold text-foreground">{lead.patientEmail}</p>
+                    </div>
+                  </div>
+                ) : null}
                 <div className="flex gap-4">
                   <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/5">
                     <Globe className="size-4 text-primary" aria-hidden />
@@ -428,6 +631,189 @@ export function LeadDetail({ initialLead }: { initialLead: Lead }) {
             </section>
           </TabsContent>
 
+          <TabsContent
+            value="conversations"
+            className="space-y-6 animate-in fade-in duration-200"
+          >
+            <section className="rounded-2xl border border-border/50 bg-card shadow-sm">
+              <div className="flex flex-col gap-3 border-b border-border/40 bg-muted/5 px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+                <div className="flex items-center gap-2">
+                  <MessageSquare className="size-4 text-primary" aria-hidden />
+                  <h2 className="text-sm font-bold uppercase tracking-wider">
+                    {t("convSectionTitle")}
+                  </h2>
+                </div>
+                <div
+                  className="flex flex-wrap gap-2"
+                  role="group"
+                  aria-label={t("convFiltersAria")}
+                >
+                  {(
+                    [
+                      ["all", "convFilterAll"],
+                      ["whatsapp", "convFilterWhatsapp"],
+                      ["email", "convFilterEmail"],
+                      ["call", "convFilterCall"],
+                    ] as const
+                  ).map(([id, labelKey]) => (
+                    <Button
+                      key={id}
+                      type="button"
+                      size="sm"
+                      variant={conversationFilter === id ? "default" : "outline"}
+                      className="rounded-full px-3 text-xs font-medium"
+                      onClick={() => setConversationFilter(id)}
+                    >
+                      {t(labelKey)}
+                    </Button>
+                  ))}
+                </div>
+              </div>
+              <div className="p-5 sm:p-6">
+                {filteredConversations.length === 0 ? (
+                  <p className="py-8 text-center text-xs text-muted-foreground">
+                    {conversationFilter === "all"
+                      ? t("convEmptyAll")
+                      : t("convEmptyChannel", {
+                          channel: t(
+                            conversationFilter === "whatsapp"
+                              ? "convChannelWhatsapp"
+                              : conversationFilter === "email"
+                                ? "convChannelEmail"
+                                : "convChannelCall",
+                          ),
+                        })}
+                  </p>
+                ) : (
+                  <div className="relative space-y-6 before:absolute before:inset-0 before:start-[11px] before:w-px before:bg-border/60">
+                    {filteredConversations.map((item) => {
+                      const body = conversationBodyText(item);
+                      const isExpanded = expandedConversationIds.has(item.id);
+                      const needsCollapse =
+                        body.length > BODY_COLLAPSE_CHARS;
+                      const shownBody =
+                        needsCollapse && !isExpanded
+                          ? `${body.slice(0, BODY_COLLAPSE_CHARS).trim()}…`
+                          : body;
+
+                      const directionLabel =
+                        item.direction === "inbound"
+                          ? t("convDirectionInbound")
+                          : item.direction === "outbound"
+                            ? t("convDirectionOutbound")
+                            : t("convDirectionInternal");
+
+                      const title =
+                        item.channel === "email"
+                          ? item.subject
+                          : item.channel === "whatsapp"
+                            ? t("convTitleWhatsapp")
+                            : t("convTitleCall");
+
+                      const ChannelIcon =
+                        item.channel === "email"
+                          ? Mail
+                          : item.channel === "whatsapp"
+                            ? MessageSquare
+                            : Phone;
+
+                      const channelLabel =
+                        item.channel === "whatsapp"
+                          ? t("convChannelWhatsapp")
+                          : item.channel === "email"
+                            ? t("convChannelEmail")
+                            : t("convChannelCall");
+
+                      return (
+                        <div key={item.id} className="group relative ps-8">
+                          <div className="absolute start-0 top-1 z-10 flex size-[22px] items-center justify-center rounded-full border-2 border-primary/20 bg-background transition-colors group-hover:border-primary">
+                            <ChannelIcon
+                              className="size-3 text-primary/70"
+                              aria-hidden
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <div className="flex flex-wrap items-center gap-2">
+                              <Badge
+                                variant="secondary"
+                                className="px-2 py-0 text-[10px] font-bold uppercase tracking-wide"
+                              >
+                                {channelLabel}
+                              </Badge>
+                              <Badge
+                                variant="outline"
+                                className="border-border/60 px-2 py-0 text-[10px] font-medium text-muted-foreground"
+                              >
+                                {directionLabel}
+                              </Badge>
+                              <span className="text-[10px] text-muted-foreground/60">
+                                {formatDateTime(item.occurredAt, locale)}
+                              </span>
+                            </div>
+                            <p className="text-xs font-bold text-foreground">
+                              {title}
+                            </p>
+                            {item.channel === "email" ? (
+                              <div className="space-y-0.5 text-[11px] text-muted-foreground">
+                                <p>
+                                  <span className="font-semibold text-foreground/80">
+                                    {t("convEmailFrom")}:{" "}
+                                  </span>
+                                  {item.from}
+                                </p>
+                                <p>
+                                  <span className="font-semibold text-foreground/80">
+                                    {t("convEmailTo")}:{" "}
+                                  </span>
+                                  {item.to}
+                                </p>
+                              </div>
+                            ) : null}
+                            {item.channel === "call" &&
+                            item.durationSec != null ? (
+                              <p className="text-[11px] text-muted-foreground">
+                                {t("convCallDuration", {
+                                  minutes: Math.max(
+                                    1,
+                                    Math.round(item.durationSec / 60),
+                                  ),
+                                })}
+                              </p>
+                            ) : null}
+                            {item.channel === "whatsapp" &&
+                            item.attachmentHint ? (
+                              <p className="text-[11px] text-muted-foreground">
+                                {item.attachmentHint}
+                              </p>
+                            ) : null}
+                            {body ? (
+                              <div className="rounded-lg border border-border/20 bg-muted/30 p-3 text-[11px] whitespace-pre-wrap text-muted-foreground">
+                                {shownBody}
+                              </div>
+                            ) : null}
+                            {needsCollapse ? (
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="sm"
+                                className="h-8 px-2 text-xs text-primary"
+                                onClick={() => toggleConversationExpanded(item.id)}
+                              >
+                                {isExpanded
+                                  ? t("convShowLess")
+                                  : t("convShowMore")}
+                              </Button>
+                            ) : null}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            </section>
+          </TabsContent>
+
           <TabsContent value="quotes" className="animate-in fade-in duration-200">
             {activeQuotation ? (
               <section className="overflow-hidden rounded-2xl bg-primary text-primary-foreground shadow-lg shadow-primary/20">
@@ -516,6 +902,168 @@ export function LeadDetail({ initialLead }: { initialLead: Lead }) {
                       </div>
                     ))}
                   </div>
+                )}
+              </div>
+            </section>
+          </TabsContent>
+
+          <TabsContent value="tasks" className="animate-in fade-in duration-200">
+            <section className="rounded-2xl border border-border/50 bg-card shadow-sm">
+              <div className="flex items-center gap-2 border-b border-border/40 bg-muted/5 px-5 py-4 sm:px-6">
+                <ListTodo className="size-4 text-primary" aria-hidden />
+                <h2 className="text-sm font-bold uppercase tracking-wider">
+                  {t("tasksSectionTitle")}
+                </h2>
+              </div>
+              <div className="space-y-6 p-5 sm:p-6">
+                {session.isAuthenticated ? (
+                  <div className="space-y-4 rounded-xl border border-border/40 bg-muted/10 p-4">
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      <div className="space-y-2 sm:col-span-2">
+                        <Label
+                          htmlFor="new-task-title"
+                          className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground"
+                        >
+                          {t("taskTitleLabel")}
+                        </Label>
+                        <Input
+                          id="new-task-title"
+                          value={newTaskTitle}
+                          onChange={(e) => setNewTaskTitle(e.target.value)}
+                          placeholder={t("taskTitlePlaceholder")}
+                          className="rounded-lg"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label
+                          htmlFor="new-task-due"
+                          className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground"
+                        >
+                          {t("taskDueLabel")}
+                        </Label>
+                        <Input
+                          id="new-task-due"
+                          type="date"
+                          value={newTaskDue}
+                          onChange={(e) => setNewTaskDue(e.target.value)}
+                          className="rounded-lg"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label
+                          htmlFor="new-task-assignee"
+                          className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground"
+                        >
+                          {t("taskAssigneeLabel")}
+                        </Label>
+                        <select
+                          id="new-task-assignee"
+                          value={newTaskAssignee}
+                          onChange={(e) => setNewTaskAssignee(e.target.value)}
+                          className={cn(
+                            "h-8 w-full min-w-0 rounded-lg border border-input bg-transparent px-2.5 py-1 text-sm outline-none transition-colors",
+                            "focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50",
+                            "disabled:cursor-not-allowed disabled:opacity-50 dark:bg-input/30",
+                          )}
+                        >
+                          <option value="">{t("taskAssigneeNone")}</option>
+                          {CRM_TASK_ASSIGNEE_IDS.map((id) => (
+                            <option key={id} value={id}>
+                              {t(`taskAssignees.${id}` as Parameters<typeof t>[0])}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+                    <Button
+                      type="button"
+                      size="sm"
+                      className="rounded-lg"
+                      disabled={taskSaving || !newTaskTitle.trim()}
+                      onClick={() => void handleAddTask()}
+                    >
+                      {t("taskSaveAdd")}
+                    </Button>
+                  </div>
+                ) : (
+                  <p className="text-xs text-muted-foreground">{t("taskLoginHint")}</p>
+                )}
+
+                {sortedTasks.length === 0 ? (
+                  <div className="py-6 text-center">
+                    <ListTodo className="mx-auto mb-2 size-8 text-muted-foreground/20" aria-hidden />
+                    <p className="text-xs text-muted-foreground">{t("taskEmpty")}</p>
+                  </div>
+                ) : (
+                  <ul className="space-y-3" aria-label={t("tasksSectionTitle")}>
+                    {sortedTasks.map((taskItem) => {
+                      const badge = dueBadge(taskItem);
+                      const autoBadge = taskSourceBadge(taskItem);
+                      return (
+                        <li
+                          key={taskItem.id}
+                          className={cn(
+                            "flex flex-col gap-3 rounded-xl border border-border/40 bg-muted/10 p-3 sm:flex-row sm:items-center sm:justify-between",
+                            taskItem.completed && "opacity-70",
+                          )}
+                        >
+                          <div className="min-w-0 flex-1 space-y-1">
+                            <p
+                              className={cn(
+                                "text-sm font-medium text-foreground",
+                                taskItem.completed && "line-through",
+                              )}
+                            >
+                              {taskItem.title}
+                            </p>
+                            <p className="text-[10px] text-muted-foreground">
+                              {assigneeLabel(taskItem.assigneeId)}
+                            </p>
+                          </div>
+                          <div className="flex flex-wrap items-center gap-2">
+                            {autoBadge ? (
+                              <Badge
+                                variant="outline"
+                                className={cn("text-[10px]", autoBadge.className)}
+                              >
+                                {autoBadge.label}
+                              </Badge>
+                            ) : null}
+                            {badge ? (
+                              <Badge variant="outline" className={cn("text-[10px]", badge.className)}>
+                                {badge.label}
+                              </Badge>
+                            ) : null}
+                            {session.isAuthenticated ? (
+                              <>
+                                <Button
+                                  type="button"
+                                  variant="outline"
+                                  size="sm"
+                                  className="h-8 rounded-lg text-xs"
+                                  disabled={taskSaving}
+                                  onClick={() => void handleToggleTaskComplete(taskItem)}
+                                >
+                                  {taskItem.completed ? t("taskReopen") : t("taskMarkComplete")}
+                                </Button>
+                                <Button
+                                  type="button"
+                                  variant="ghost"
+                                  size="icon"
+                                  className="size-8 shrink-0 text-muted-foreground hover:text-destructive"
+                                  disabled={taskSaving}
+                                  onClick={() => void handleDeleteTask(taskItem.id)}
+                                  aria-label={t("taskDelete")}
+                                >
+                                  <Trash2 className="size-4" aria-hidden />
+                                </Button>
+                              </>
+                            ) : null}
+                          </div>
+                        </li>
+                      );
+                    })}
+                  </ul>
                 )}
               </div>
             </section>

@@ -1,5 +1,5 @@
-import { CrmDashboardTabs } from "./_components/crm-dashboard-tabs";
+import { CrmDashboard } from "./_components/crm-dashboard";
 
 export default function CrmDashboardPage() {
-  return <CrmDashboardTabs />;
+  return <CrmDashboard />;
 }
