@@ -2,7 +2,7 @@
 
 import { Menu } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
+import { Link, usePathname } from "@/i18n/navigation";
 import { ROUTES } from "@/lib/routes";
 import { buttonVariants } from "@/components/ui/button";
 import {
@@ -26,12 +26,32 @@ function NavLinks({
   closeSheet?: boolean;
 }) {
   const t = useTranslations("nav");
+  const pathname = usePathname();
   const linkClass =
     "rounded-md px-3 py-3 text-base font-medium text-foreground hover:bg-muted md:py-2 md:text-sm";
 
+  function navItemActive(href: string): boolean {
+    if (href === "/") {
+      return pathname === "/" || pathname === "";
+    }
+    return pathname === href || pathname.startsWith(`${href}/`);
+  }
+
   function linkItem(href: string, label: string) {
+    const active = navItemActive(href);
+    /** Desktop topbar only (`closeSheet` is only used for the mobile sheet). */
+    const desktopActive = active && !closeSheet;
     const inner = (
-      <Link href={href} className={linkClass} prefetch={false}>
+      <Link
+        href={href}
+        className={cn(
+          linkClass,
+          desktopActive &&
+            "text-primary [text-shadow:0_1px_2px_rgba(140,140,140,0.45)]",
+        )}
+        aria-current={active ? "page" : undefined}
+        prefetch={false}
+      >
         {label}
       </Link>
     );

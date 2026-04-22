@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Link } from "@/i18n/navigation";
 import { ROUTES } from "@/lib/routes";
+import type { TreatmentCategory } from "@/types";
 import { buttonVariants } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
@@ -10,7 +11,7 @@ import { cn } from "@/lib/utils";
 export type TreatmentTabItem = {
   id: string;
   slug: string;
-  category: "general" | "ortho" | "cosmetic";
+  category: TreatmentCategory;
   priceUSD?: number;
   title: string;
   description: string;
@@ -22,6 +23,8 @@ type TabLabels = {
     general: string;
     ortho: string;
     cosmetic: string;
+    dental: string;
+    specialized: string;
   };
   priceLabel: string;
   viewTreatment: string;
@@ -32,7 +35,15 @@ type Props = {
   labels: TabLabels;
 };
 
-type CategoryId = "all" | "general" | "ortho" | "cosmetic";
+const CATEGORY_ORDER: TreatmentCategory[] = [
+  "general",
+  "ortho",
+  "cosmetic",
+  "dental",
+  "specialized",
+];
+
+type CategoryId = "all" | TreatmentCategory;
 
 function TreatmentItemGrid({
   items,
@@ -95,11 +106,12 @@ function TreatmentItemGrid({
 export function TreatmentTabs({ items, labels }: Props) {
   const [activeTab, setActiveTab] = useState<CategoryId>("all");
 
-  const categories = [
-    { id: "all" as const, label: labels.categories.all },
-    { id: "general" as const, label: labels.categories.general },
-    { id: "ortho" as const, label: labels.categories.ortho },
-    { id: "cosmetic" as const, label: labels.categories.cosmetic },
+  const categories: { id: CategoryId; label: string }[] = [
+    { id: "all", label: labels.categories.all },
+    ...CATEGORY_ORDER.map((id) => ({
+      id,
+      label: labels.categories[id],
+    })),
   ];
 
   const filteredBy = (id: CategoryId) =>
@@ -111,10 +123,14 @@ export function TreatmentTabs({ items, labels }: Props) {
       onValueChange={(v) => setActiveTab(v as CategoryId)}
       className="gap-8"
     >
-      <div className="-mx-1 overflow-x-auto overscroll-x-contain pb-px">
-        <TabsList variant="underline">
+      <div className="-mx-1 overflow-x-auto overscroll-x-contain pb-px [scrollbar-width:thin]">
+        <TabsList variant="underline" className="inline-flex min-w-min flex-nowrap justify-start gap-1 px-1">
           {categories.map((category) => (
-            <TabsTrigger key={category.id} value={category.id}>
+            <TabsTrigger
+              key={category.id}
+              value={category.id}
+              className="shrink-0 whitespace-nowrap"
+            >
               {category.label}
             </TabsTrigger>
           ))}

@@ -15,6 +15,18 @@ export default function middleware(request: NextRequest) {
   if (request.nextUrl.pathname === "/") {
     return NextResponse.redirect(new URL("/ar", request.url));
   }
+
+  const legacyBook = /^\/(ar|en)\/book-consultation\/?$/.exec(
+    request.nextUrl.pathname,
+  );
+  if (legacyBook) {
+    const locale = legacyBook[1];
+    const url = request.nextUrl.clone();
+    url.pathname = `/${locale}/contact`;
+    url.hash = "book-consultation";
+    return NextResponse.redirect(url);
+  }
+
   return intlMiddleware(request);
 }
 

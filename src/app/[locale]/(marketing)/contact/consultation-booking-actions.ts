@@ -8,14 +8,21 @@ export async function bookConsultationAction(
   raw: unknown,
 ): Promise<
   | { ok: true; id: string }
-  | { ok: false; error: "validation" | "slot_unavailable"; fieldErrors?: Record<string, string[]> }
+  | {
+      ok: false;
+      error: "validation" | "slot_unavailable";
+      fieldErrors?: Record<string, string[]>;
+    }
 > {
   const parsed = consultationBookingFormSchema.safeParse(raw);
   if (!parsed.success) {
     return {
       ok: false,
       error: "validation",
-      fieldErrors: parsed.error.flatten().fieldErrors as Record<string, string[]>,
+      fieldErrors: parsed.error.flatten().fieldErrors as Record<
+        string,
+        string[]
+      >,
     };
   }
 

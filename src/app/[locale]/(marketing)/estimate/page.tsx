@@ -8,12 +8,17 @@ export default async function EstimatePlaceholderPage() {
   const t = await getTranslations("estimate");
 
   return (
-    <div className="mx-auto max-w-2xl space-y-6 px-4 py-16 sm:px-6">
-      <h1 className="text-3xl font-semibold text-foreground">{t("title")}</h1>
-      <p className="text-lg text-muted-foreground">{t("lead")}</p>
+    <div className="mx-auto flex min-h-[50vh] max-w-lg flex-col items-center justify-center px-4 py-16 text-center sm:px-6">
+      <p className="text-sm font-semibold uppercase tracking-widest text-primary">
+        {t("title")}
+      </p>
+      <h1 className="mt-3 text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
+        {t("comingSoon")}
+      </h1>
+      <p className="mt-4 text-muted-foreground leading-relaxed">{t("comingSoonBody")}</p>
       <Link
         href={ROUTES.contactUs}
-        className={cn(buttonVariants({ size: "lg" }))}
+        className={cn(buttonVariants({ size: "lg" }), "mt-8 rounded-full")}
         prefetch={false}
       >
         {t("goInquiry")}

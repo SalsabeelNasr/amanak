@@ -79,15 +79,18 @@ export async function AccommodationTrust() {
   const listings: { id: ListingId; image: string }[] = [
     {
       id: "listing1",
-      image: "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?q=80&w=800&auto=format&fit=crop",
+      image:
+        "https://images.pexels.com/photos/18201945/pexels-photo-18201945.jpeg?auto=compress&cs=tinysrgb&w=800",
     },
     {
       id: "listing2",
-      image: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?q=80&w=800&auto=format&fit=crop",
+      image:
+        "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?q=80&w=800&auto=format&fit=crop",
     },
     {
       id: "listing3",
-      image: "https://images.unsplash.com/photo-1493809842364-78817add7ffb?q=80&w=800&auto=format&fit=crop",
+      image:
+        "https://images.unsplash.com/photo-1493809842364-78817add7ffb?q=80&w=800&auto=format&fit=crop",
     },
   ];
 
@@ -160,7 +163,7 @@ export async function AccommodationTrust() {
                 </a>
                 <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
                   <div className="h-1 w-1 rounded-full bg-border" />
-                  <span>Official Member of ETAA</span>
+                  <span>{t("officialMemberEtaa")}</span>
                 </div>
               </div>
             </div>

@@ -1,6 +1,6 @@
 {
   "meta": {
-    "title": "Amanak — Your Medical Journey in Egypt",
+    "title": "Amanak: Your Medical Journey in Egypt",
     "description": "Trusted healthcare in Egypt’s leading hospitals for our patients from the Middle East. A safe medical journey with clear costs."
   },
   "nav": {
@@ -13,7 +13,8 @@
       "ar": "العربية",
       "en": "English"
     },
-    "login": "Login"
+    "login": "Login",
+    "partners": "Partners"
   },
   "hospitals": {
     "pageTitle": "Hospital details",
@@ -33,6 +34,7 @@
     "pageLead": "Explore the pathways we coordinate in Egypt.. from the first review to travel and follow-up.",
     "viewTreatment": "Learn more",
     "viewAll": "View all treatments",
+    "backToAllTreatments": "Back to all treatments",
     "contactCta": "Contact Us",
     "doctorsLabel": "Leading Doctors",
     "successRateLabel": "Success rate",
@@ -44,7 +46,9 @@
       "all": "All Treatments",
       "general": "General Specialties",
       "ortho": "Orthopedics",
-      "cosmetic": "Cosmetic Surgery"
+      "cosmetic": "Cosmetic Surgery",
+      "dental": "Dental",
+      "specialized": "Specialized Care"
     },
     "items": {
       "diabetic_foot": {
@@ -60,7 +64,7 @@
       "ivf": {
         "title": "IVF & Fertility",
         "description": "Integrated programs to achieve the dream of motherhood with success rates matching the best global centers.",
-        "doctors": "Prof. Mohamed Aboulghar, Dr. Sherif Pasha Seif, Dr. Ismail Aboul Fotouh",
+        "doctors": "Prof. Mohamed Aboulghar, Prof. Maged Adel Aziz",
         "hospitals": "Bedaya Hospital, Sunrise Fertility Center, Egyptian IVF Center",
         "techniques": "No-Needle IVF, Genetic Screening (PGD/PGT), Gender Selection",
         "success_rate": "60% - 70% for women under 35",
@@ -70,7 +74,7 @@
       "oncology": {
         "title": "Oncology (Cancer Treatment)",
         "description": "Modern treatment protocols according to international standards (ESMO) with the latest immunotherapy and genetic treatments.",
-        "doctors": "Prof. Tamer El Nahas (ESMO Certified)",
+        "doctors": "Prof. Tamer El Nahas, Prof. Hesham ElGhazaly, Dr. Ahmed Elashry",
         "hospitals": "Sphinx Cure Center, Cleopatra Hospitals",
         "techniques": "TrueBeam LINAC, Targeted Radiotherapy, Immunotherapy",
         "success_rate": "Internationally Accredited Protocols (ESMO)",
@@ -80,46 +84,76 @@
       "joint_replacement": {
         "title": "Hip Replacement Surgery",
         "description": "Involves replacing the damaged hip joint with a prosthetic one to help patients walk comfortably and pain-free.",
-        "doctors": "Prof. Mahmoud Hafez (PSI Patent Inventor)",
+        "doctors": "Prof. Mahmoud Hafez, Prof. Fouad Zamel Sadek",
         "hospitals": "Saudi German Hospital, Andalusia Hospitals, October 6 University",
         "techniques": "Robotic Knee (ROSA), Custom 3D Molds (PSI)",
         "success_rate": "Extreme Precision & Rapid Recovery",
         "video_url": "https://www.youtube.com/embed/2vYHeaojVCs",
-        "body": "Joint replacement results depend on the surgeon's skill, the quality of joints used, and intensive physical therapy programs to ensure the best movement and fastest recovery.\n\nJoint surgeons in Egypt regularly perform complex operations, following modern protocols that ensure the patient returns to their normal life in record time.\n\nWe help you evaluate your case before travel and determine the required stay duration and physical therapy sessions, to ensure a successful and comfortable medical journey."
+        "body": "Joint replacement results depend on the surgeon's skill, the quality of joints used, and intensive physical therapy programs to ensure the best movement and fastest recovery.\n\nOur comprehensive packages start from ~$5500 and include the operation, 1 day in the ICU, 4 days in a normal room, and postoperative follow-up.\n\nWe help you evaluate your case before travel and determine the required stay duration and physical therapy sessions, to ensure a successful and comfortable medical journey."
       },
       "knee_replacement": {
         "title": "Knee Replacement Surgery",
         "description": "The damaged knee joint is replaced with an artificial implant to relieve pain and restore mobility.",
+        "doctors": "Prof. Mahmoud Hafez, Prof. Fouad Zamel Sadek",
+        "hospitals": "Saudi German Hospital, Andalusia Hospitals, October 6 University",
+        "techniques": "Robotic Knee (ROSA), Custom 3D Molds (PSI)",
+        "success_rate": "Extreme Precision & Rapid Recovery",
+        "video_url": "https://www.youtube.com/embed/kyFIDt3OJV4",
         "body": "Ideal for patients with severe joint damage or advanced arthritis. Modern implants and minimally invasive techniques ensure a faster return to daily activities."
       },
       "limb_lengthening": {
         "title": "Limb Lengthening Surgery",
         "description": "A procedure designed to increase leg length by gradually stretching the bones.",
+        "doctors": "Prof. Mahmoud Hafez, Prof. Mohamed Fawzy Khattab",
+        "hospitals": "Saudi German Hospital, Andalusia Hospitals",
+        "techniques": "Internal/External Fixation, PRECICE Nail",
+        "success_rate": "Safe & Monitored Lengthening",
         "body": "Performed for medical reasons (such as correcting leg length discrepancies) or for cosmetic purposes to safely increase height using internal or external fixation devices."
       },
       "spine_surgery": {
         "title": "Spine Surgeries",
         "description": "Includes procedures like spinal fusion, herniated disc removal, and scoliosis correction.",
+        "doctors": "Prof. Mohamed Fawzy Khattab",
+        "hospitals": "As-Salam International Hospital, Ain Shams University",
+        "techniques": "Minimally Invasive Spine Surgery, 3D Navigation",
+        "success_rate": "High Safety & Functional Recovery",
+        "video_url": "https://www.youtube.com/embed/gBcCUY_7ZVE",
         "body": "These surgeries relieve chronic back pain and improve spinal function using the latest surgical navigation and monitoring systems."
       },
       "breast_augmentation": {
         "title": "Breast Augmentation",
         "description": "This procedure enhances breast size and shape using either silicone implants or fat transfer.",
+        "doctors": "Dr. Yasser Badi, Dr. Mohamed Abdallah Tawfik",
+        "hospitals": "Specialized Aesthetic Centers in Cairo & Alexandria",
+        "techniques": "Silicone Implants, Autologous Fat Transfer",
+        "success_rate": "Natural Results by Board-Certified Experts",
         "body": "Silicone Implants: Offer a long-lasting, natural, and attractive look. Fat Transfer: Fat is harvested from areas like the abdomen or thighs, purified, and then injected into the breasts to achieve a fuller and natural appearance."
       },
       "bbl": {
         "title": "Brazilian Butt Lift (BBL)",
         "description": "A cosmetic procedure that enhances the shape and volume of the buttocks by injecting fat taken from other body areas.",
+        "doctors": "Dr. Yasser Badi, Dr. Mohamed Abdallah Tawfik",
+        "hospitals": "Specialized Aesthetic Centers in Cairo & Alexandria",
+        "techniques": "VASER Liposuction, Fat Grafting",
+        "success_rate": "Natural Results by Board-Certified Experts",
         "body": "Advanced VASER liposuction is used to safely extract fat while minimizing bruising and swelling, achieving natural and defined results."
       },
       "gynecomastia": {
         "title": "Gynecomastia Surgery",
         "description": "This surgery treats enlarged male breasts using a combination of liposuction, gland removal, and skin removal.",
+        "doctors": "Dr. Yasser Badi, Dr. Mohamed Abdallah Tawfik",
+        "hospitals": "Specialized Aesthetic Centers in Cairo & Alexandria",
+        "techniques": "VASER Liposuction, Gland Excision",
+        "success_rate": "Natural Results by Board-Certified Experts",
         "body": "VASER technology may be used for more precise results and chest contouring. This surgery treats enlarged male breasts using a combination of liposuction, gland removal, and, in severe cases, excess skin removal."
       },
       "vaser_liposuction": {
         "title": "VASER Liposuction Technology",
         "description": "Advanced liposuction technique using ultrasound waves to break down fat before removal.",
+        "doctors": "Dr. Yasser Badi, Dr. Mohamed Abdallah Tawfik",
+        "hospitals": "Specialized Aesthetic Centers in Cairo & Alexandria",
+        "techniques": "High-Def VASER, Ultrasound-Assisted Lipo",
+        "success_rate": "Natural Results by Board-Certified Experts",
         "body": "This advanced liposuction technique uses ultrasound waves to break down fat before removal, making the procedure less invasive. It helps reduce swelling and bruising compared to traditional methods. The procedure depends on the patient's condition and targeted areas. It is considered safe and effective for achieving natural and outstanding results."
       },
       "addiction": {
@@ -135,24 +169,91 @@
       "cosmetic": {
         "title": "Cosmetic & Body Contouring",
         "description": "The latest body contouring (VASER) and advanced hair transplantation techniques.",
-        "doctors": "Dr. Adel Wilson, Dr. Ashraf Aboul Fotouh, Dr. Yasser Badi",
+        "doctors": "Dr. Yasser Badi, Dr. Mohamed Abdallah Tawfik",
         "hospitals": "Specialized Aesthetic Centers in Cairo & Alexandria",
         "techniques": "High-Def VASER, Robotic Hair (ARTAS), Rhinoplasty",
         "success_rate": "Natural Results by Board-Certified Experts",
         "body": "Aesthetic surgery requires precise case evaluation and realistic planning for results and recovery period, to ensure obtaining the desired appearance with total safety.\n\nSpecialists in Egypt are characterized by high skill in rhinoplasty, body contouring, and facial rejuvenation operations, using the latest global technologies.\n\nWe support you in arranging medical consultations, clarifying required tests, and coordinating travel dates to suit the treatment and follow-up plan."
+      },
+      "dental": {
+        "title": "Dental Treatment",
+        "description": "Implants, smile design, and full-mouth rehabilitation with modern materials and clear timelines.",
+        "doctors": "Dr. John Elia, Dr. Ahmed Saeed",
+        "hospitals": "Dental Express Center, Wonders Dentistry Center",
+        "techniques": "3D Guided Implants, E-Max Crowns, Zirconia",
+        "success_rate": "100% Implant Success Rate",
+        "video_url": "https://www.youtube.com/embed/g-i3P-D6p7M",
+        "body": "Dental travel plans need accurate imaging, treatment sequencing, and infection control standards. We coordinate your records, specialist selection, and visit schedule so you know how long to stay and what to expect at each step.\n\nOur dental implant packages start from ~$800 and include the implant along with free teeth extraction, cleaning, and polishing."
+      },
+      "hair_transplant": {
+        "title": "Hair Transplant",
+        "description": "FUE and advanced graft techniques for natural density and natural hairlines.",
+        "doctors": "Dr. Shady El-Maghraby, Dr. Marwan Noureldin",
+        "hospitals": "Maghraby Hair Clinic, Nour Clinic",
+        "techniques": "FUE, DHI, Robotic Hair Transplant",
+        "success_rate": "ABHRS Certified Specialists",
+        "body": "Hair restoration outcomes depend on donor quality, graft planning, and aftercare. We help you share photos and medical history for a realistic assessment before you travel.\n\nOur packages start at ~$1850 and include examination, the operation, hospital fees, medication, aftercare treatment, and 4 PRP sessions."
+      },
+      "plastic_surgery": {
+        "title": "Plastic Surgery",
+        "description": "Facial and body procedures planned with board-certified surgeons and clear recovery timelines.",
+        "doctors": "Dr. Yasser Badi, Dr. Mohamed Abdallah Tawfik",
+        "hospitals": "Specialized Aesthetic Centers in Cairo & Alexandria",
+        "techniques": "Tummy Tuck, Rhinoplasty, VASER",
+        "success_rate": "Natural Results by Board-Certified Experts",
+        "body": "Elective surgery abroad should start with candidacy review, not marketing promises. We organize remote consultation materials and match you to surgeons whose scope fits your goals.\n\nFor example, our Tummy Tuck packages start at ~$2700 and include a one-night hospital stay, doctor fees, and postoperative follow-up."
+      },
+      "cardiology": {
+        "title": "Cardiology",
+        "description": "Diagnostics, catheter procedures, and heart surgery pathways coordinated with accredited hospitals.",
+        "doctors": "Prof. Ahmed Rezk, Prof. Mohamed Al-Ghannam, Prof. Hossam Fathi",
+        "hospitals": "Dar Al Fouad, Ain Shams University Hospitals, As-Salam International",
+        "techniques": "Beating Heart CABG, Minimally Invasive Valve Repair",
+        "success_rate": "Internationally Trained Cardiac Surgeons",
+        "video_url": "https://www.youtube.com/embed/3Nf6Q2skGOM",
+        "body": "Cardiac care requires structured diagnostics (ECG, echocardiography, imaging) and clear escalation when intervention is needed. We help assemble your history and prior tests for a focused second opinion.\n\nFor travelers, we plan logistics around stress tests, cath lab slots, and required observation periods so your itinerary matches clinical safety."
+      },
+      "neurology": {
+        "title": "Neurology",
+        "description": "Evaluation and treatment for stroke risk, epilepsy, movement disorders, and complex headache.",
+        "doctors": "Prof. Magd Zakaria, Prof. Ahmed ElBassiouny, Dr. Walid Elhalaby",
+        "hospitals": "Ain Shams Specialized Hospital, Cairo University Hospitals",
+        "techniques": "Neuro-intervention, 3D Neuro-navigation",
+        "success_rate": "Advanced Stroke & MS Centers",
+        "body": "Neurological complaints often need imaging and sometimes longitudinal assessment. We coordinate record translation, appointment sequencing, and any required inpatient observation.\n\nOur hospital partners provide modern MRI/CT access and multidisciplinary review when surgery or device therapy is on the table."
+      },
+      "eye_surgery": {
+        "title": "Eye Surgery",
+        "description": "Cataract, refractive (LASIK/SMILE), and selected retinal or oculoplastic procedures.",
+        "doctors": "Prof. Ahmad Khalil, Prof. Hazem Helmy",
+        "hospitals": "Research Institute of Ophthalmology, International Eye Hospital",
+        "techniques": "LASIK, SMILE, Phacoemulsification",
+        "success_rate": "Pioneering Eye Surgeons in the Middle East",
+        "video_url": "https://www.youtube.com/embed/dKANhIU7Sxk",
+        "body": "Ophthalmic surgery depends on precise measurements and dry-eye screening. We help you complete pre-op tests locally or on arrival to avoid surprises.\n\nEgypt’s eye hospitals combine JCI-accredited pathways with experienced consultants; we align your stay with post-op review dates before you fly home."
+      },
+      "bariatric": {
+        "title": "Bariatric Surgery",
+        "description": "Weight-loss surgery with multidisciplinary assessment, nutrition, and follow-up planning.",
+        "doctors": "Prof. Mahmoud Zakaria, Dr. Tamer Abdelbaki",
+        "hospitals": "Cleopatra Hospitals, Ain Shams University",
+        "techniques": "Bikini Sleeve, Gastric Bypass, Smart Capsule",
+        "success_rate": "IFSO Certified Surgeons",
+        "video_url": "https://www.youtube.com/embed/vu2pV8JPqmg",
+        "body": "Bariatric programs should include psychological readiness, nutrition counseling, and long-term vitamin monitoring, not only the operation day. We coordinate the screening checklist and hospital eligibility criteria upfront.\n\nSleeve gastrectomy and gastric bypass require staged recovery; we build your travel window around surgeon protocols and first follow-up visits."
       }
     }
   },
   "landing": {
     "hero": {
       "title": "Reclaim your wellbeing in Egypt with integrated care.",
-      "subtitle": "From Libya, Iraq, and across the region to Egypt’s leading hospitals. Amanak holds hospitals, specialists, accommodation, and transport under one accountable team—so recovery stays safe and your budget is clear before you travel.",
+      "subtitle": "From around the world to Egypt’s leading hospitals. Amanak holds hospitals, specialists, accommodation, and transport under one accountable team, so recovery stays safe and your budget is clear before you travel.",
       "cta": "Start your free consultation",
       "imageAlt": "Aerial view of the Nile River and Cairo skyline"
     },
     "whyEgypt": {
       "title": "Why choose Egypt.. and why Amanak?",
-      "lead": "Egypt combines deep medical expertise with real value. Amanak is your partner managing the entire journey: accredited hospitals, trusted doctors, comfortable stays, and safe transport—all with costs defined in advance.",
+      "lead": "Egypt combines deep medical expertise with real value. Amanak is your partner managing the entire journey: accredited hospitals, trusted doctors, comfortable stays, and safe transport, all with costs defined in advance.",
       "bullet1Title": "Medical Expertise in Egypt",
       "bullet1": "Elite surgeons and consultants in modern hospitals achieving world-class results, at carefully planned costs that suit families in our region.",
       "bullet2Title": "The Amanak Team by Your Side",
@@ -169,6 +270,9 @@
       "gaharBody": "The General Authority for Healthcare Accreditation and Regulation (GAHAR) is Egypt's official body. Its standards are ISQua-accredited, matching the highest global benchmarks for patient safety and clinical excellence.",
       "jciTitle": "JCI: Global Recognition",
       "jciBody": "Joint Commission International (JCI) is the world's leader in healthcare accreditation. JCI-accredited hospitals in Egypt demonstrate a commitment to the same safety standards found in the top medical centers in the US and Europe.",
+      "trustBadge1": "Patient Safety First",
+      "trustBadge2": "ISQua Accredited Standards",
+      "trustBadge3": "Rigorous Clinical Audits",
       "tableCaption": "A selection of our accredited hospital partners",
       "colHospital": "Hospital",
       "colAccreditations": "Accreditation",
@@ -224,6 +328,7 @@
       "sealBody": "Amanak is an official member of the Egyptian Travel Agents Association (ETAA). We operate as a certified travel operator to ensure you have a comfortable stay and organized logistics, from your arrival until your safe departure.",
       "logoAlt": "Egyptian Travel Agents Association (ETAA)",
       "verifyLinkText": "Verify membership on the official portal",
+      "officialMemberEtaa": "Official Member of ETAA",
       "verifyLinkUrl": "https://www.etaa-egypt.org",
       "staysTitle": "Accommodation Focused on Your Comfort and Recovery",
       "staysLead": "We understand that our patients from the region prefer traveling with their families, so we prioritize providing accommodation options that suit companions and offer an atmosphere for healing and family support, at preferential rates for Amanak patients.",
@@ -256,31 +361,31 @@
     },
     "transportation": {
       "title": "Our transportation partners: safety and comfort in every mile",
-      "intro": "We partner with Egypt’s leading licensed transport providers so your journey is as smooth as your recovery. For ultimate quiet and monitored safety, we work with JTNY and its fully electric, Ministry-licensed fleet. For reliable, transparent city travel, we use Arrw—Egypt’s licensed ride-hailing platform with verified drivers and real-time tracking. Combined with private VIP airport reception and medical-safe vehicles, you never have to worry about how to get where you are going.",
+      "intro": "We partner with Egypt’s leading licensed transport providers so your journey is as smooth as your recovery. For ultimate quiet and monitored safety, we work with JTNY and its fully electric, Ministry-licensed fleet. For reliable, transparent city travel, we use Arrw, Egypt’s licensed ride-hailing platform with verified drivers and real-time tracking. Combined with private VIP airport reception and medical-safe vehicles, you never have to worry about how to get where you are going.",
       "jtnyBrand": "JTNY",
       "jtnyTagline": "Premium, silent recovery on the road",
-      "jtnyWhat": "Egypt’s first officially licensed electric ride-hailing app: a luxury fleet of 100 fully electric vehicles licensed by the Ministry of Transport—ideal when calm matters right after a procedure.",
-      "jtnyB1": "Silent transport: no engine noise or vibration—easier on patients traveling soon after surgery or those sensitive to sound during recovery.",
-      "jtnyB2": "In-cabin cameras cover the full trip—reassuring for families in Iraq and Libya following a loved one in an unfamiliar city.",
-      "jtnyB3": "Handpicked drivers trained to demanding service standards—not anonymous street hail.",
+      "jtnyWhat": "Egypt’s first officially licensed electric ride-hailing app: a luxury fleet of 100 fully electric vehicles licensed by the Ministry of Transport, ideal when calm matters right after a procedure.",
+      "jtnyB1": "Silent transport: no engine noise or vibration, easier on patients traveling soon after surgery or those sensitive to sound during recovery.",
+      "jtnyB2": "In-cabin cameras cover the full trip, reassuring for families in Iraq and Libya following a loved one in an unfamiliar city.",
+      "jtnyB3": "Handpicked drivers trained to demanding service standards, not anonymous street hail.",
       "jtnyB4": "Intercity luxury service between Cairo and Alexandria in new, safety-focused vehicles when your care plan spans both cities.",
       "jtnyImageAlt": "Calm, modern vehicle suggesting quiet electric transport",
       "arrwBrand": "Arrw",
       "arrwTagline": "Transparent pricing, verified drivers",
-      "arrwWhat": "A locally developed, licensed Egyptian ride-hailing platform built for the domestic market—with security, fair upfront pricing, and reliability for international patients.",
-      "arrwB1": "Competitive, upfront rates with no hidden fees—critical when you are managing a strict medical budget abroad.",
+      "arrwWhat": "A locally developed, licensed Egyptian ride-hailing platform built for the domestic market, with security, fair upfront pricing, and reliability for international patients.",
+      "arrwB1": "Competitive, upfront rates with no hidden fees, critical when you are managing a strict medical budget abroad.",
       "arrwB2": "Vetted drivers, live trip tracking, and optional dashcam service for added security during the ride.",
-      "arrwB3": "Pay with cash, card, or in-app wallet—flexible when you are still settling local payment options.",
+      "arrwB3": "Pay with cash, card, or in-app wallet, flexible when you are still settling local payment options.",
       "arrwImageAlt": "Urban ride-hailing context in Cairo",
       "privateTitle": "Specialized private transportation",
       "privateLead": "Licensed apps cover day-to-day movement; our private partners handle clinical-grade needs and border-to-bed hand-offs.",
       "privateAirportTitle": "Airport meet & greet",
-      "privateAirport": "Especially valuable for Iraqi travelers: representatives can meet patients before passport control to assist with security approvals and entry formalities—so the first hour in Egypt feels guided, not chaotic.",
+      "privateAirport": "Especially valuable for Iraqi travelers: representatives can meet patients before passport control to assist with security approvals and entry formalities, so the first hour in Egypt feels guided, not chaotic.",
       "privateVehicleTitle": "Medical-safe vehicles",
-      "privateVehicle": "Post-operative transfers use vehicles with extra legroom and reclining seats when needed—to your hotel or onward routing such as the Salloum border when your care plan requires it.",
+      "privateVehicle": "Post-operative transfers use vehicles with extra legroom and reclining seats when needed, to your hotel or onward routing such as the Salloum border when your care plan requires it.",
       "private247Title": "24/7 on-call support",
-      "private247": "Dedicated drivers for hospital visits, pharmacy runs, labs, and imaging—door-to-door, on your schedule, not a generic tour clock.",
-      "privateClosing": "Apps plus private partners mean every leg—from curbside to clinic—is chosen for safety, transparency, and the comfort your case demands.",
+      "private247": "Dedicated drivers for hospital visits, pharmacy runs, labs, and imaging, door-to-door, on your schedule, not a generic tour clock.",
+      "privateClosing": "Apps plus private partners mean every leg from curbside to clinic is chosen for safety, transparency, and the comfort your case demands.",
       "privateImageAltMeet": "Premium chauffeur fleet of luxury sedans for private transportation",
       "privateImageAltVehicle": "Spacious and comfortable vehicle for patient transfer",
       "privateImageCaption": "We choose the right vehicle for your health condition, ensuring your total comfort between the hotel and the hospital."
@@ -311,7 +416,7 @@
       "row4s": "We provide comfortable accommodation and a dedicated private transport throughout your stay."
     },
     "process": {
-      "title": "Your journey with us in 4 simple steps:",
+      "title": "Your journey with us in 4 simple steps",
       "step1Title": "Create your account:",
       "step1": "Upload your medical records in a secure environment that ensures your privacy.",
       "step2Title": "Initial Consultation:",
@@ -349,12 +454,11 @@
   },
   "estimate": {
     "title": "Trip estimator",
-    "lead": "This URL is reserved for the future pricing & itinerary tool. Landing CTAs already point here so we can ship the wizard later without changing links.",
+    "comingSoon": "Coming soon",
+    "comingSoonBody": "The pricing and itinerary tool is on the way. Request a consultation and we will help you plan your trip in the meantime.",
     "goInquiry": "Go to consultation form"
   },
   "consultationBooking": {
-    "metaTitle": "Book a free consultation",
-    "metaDescription": "Choose a time for a call with an Amanak medical travel consultant.",
     "title": "Book your free consultation call",
     "lead": "Pick a date and time that suit you. Add your contact details and we will call you to discuss your medical journey to Egypt.",
     "selectDateTime": "Select a date & time",
@@ -390,11 +494,65 @@
       "slotUnavailable": "This time is no longer available. Please choose another slot."
     }
   },
+  "partners": {
+    "metaTitle": "Become a partner (Amanak)",
+    "metaDescription": "Partner with Amanak as a hospital, clinic, physician group, hotel, or transport provider. One coordinated medical travel network for patients coming to Egypt.",
+    "heroTitle": "Become a partner",
+    "heroLead": "Join Egypt’s medical travel ecosystem: accredited care, licensed coordination, and a single accountable team connecting international patients with hospitals, stays, and safe ground transport.",
+    "whyTitle": "Why partner with Amanak",
+    "why1": "Access a pipeline of patients from the region seeking structured care in Egypt, with clear expectations and documented pathways.",
+    "why2": "Work with a licensed Egyptian travel operator (ETAA member) that aligns logistics, accommodation, and transfers with clinical schedules.",
+    "why3": "Reduce fragmentation: one partner coordinates scheduling, Arabic and English communication, and follow-up touchpoints where your team leads clinically.",
+    "why4": "Strengthen trust: we emphasize accredited hospitals, transparent cost conversations, and transport partners chosen for safety and reliability.",
+    "typesTitle": "Who we work with",
+    "types": {
+      "hospital": {
+        "title": "Hospitals & health systems",
+        "body": "International patient desks, complex specialties, and peri-operative pathways. We align referrals, records, and visit cadence with your capacity."
+      },
+      "doctor": {
+        "title": "Doctors & specialist groups",
+        "body": "Named consultants and multidisciplinary teams for oncology, orthopedics, IVF, and more, matched to patient needs and your availability."
+      },
+      "clinic": {
+        "title": "Clinics & day-surgery centers",
+        "body": "Outpatient-heavy programs where clear scheduling and companion-friendly logistics matter for travelers."
+      },
+      "hospitality": {
+        "title": "Hotels & serviced accommodation",
+        "body": "Recovery-friendly stays near major medical hubs, with family-friendly options, preferential rates, and stays aligned with treatment length."
+      },
+      "transport": {
+        "title": "Transportation & ground logistics",
+        "body": "Licensed providers for airport hand-offs, hospital runs, and post-procedure transfers, with transparent routing and vehicles suited to the case."
+      }
+    },
+    "howTitle": "How it works",
+    "how": {
+      "step1": {
+        "title": "Introductory call",
+        "body": "We learn your services, service area, and compliance expectations, and we share how Amanak routes patients and companions."
+      },
+      "step2": {
+        "title": "Agreement & onboarding",
+        "body": "We align on hand-offs, SLAs for response times, and how bookings and escalations flow between your team and ours."
+      },
+      "step3": {
+        "title": "Referrals & operations",
+        "body": "Live coordination: scheduled referrals, logistics tied to clinical milestones, and continuous improvement from real case feedback."
+      }
+    },
+    "ctaPrimary": "Contact us about partnership",
+    "ctaHint": "Tell us your organization type, location, and how you’d like to collaborate. We’ll respond with next steps."
+  },
   "contact": {
     "metaTitle": "Contact us",
-    "metaDescription": "Reach the Amanak team with questions about medical travel to Egypt, hospitals, treatments, or planning your care.",
+    "metaDescription": "Reach the Amanak team with questions about medical travel to Egypt, hospitals, treatments, or planning your care. Send a message or book a free consultation call.",
     "title": "Contact us",
-    "lead": "Tell us what you need and we will respond as soon as possible."
+    "lead": "Tell us what you need and we will respond as soon as possible.",
+    "partnerLead": "You’re reaching out about a partnership. Please include your organization name, your role, city or region, and how you’d like to work with Amanak (e.g. hospital, clinic, hotel, transport).",
+    "bookingTitle": "Book a consultation call",
+    "bookingLead": "Choose a date and time, then add your details. We’ll call you to discuss your medical journey to Egypt."
   },
   "inquiry": {
     "title": "Consultation request",
@@ -417,46 +575,138 @@
     }
   },
   "footer": {
-    "tagline": "Amanak — your partner for medical travel to Egypt.",
-    "rights": "All rights reserved."
+    "tagline": "Amanak: your partner for medical travel to Egypt.",
+    "rights": "All rights reserved.",
+    "whatsappAria": "Contact us on WhatsApp",
+    "supervisionIntro": "Under the supervision of",
+    "supervisionMinistryAlt": "Logo of the Egyptian Ministry of Health and Population",
+    "supervisionCouncilAlt": "Logo of the National Council for Health Tourism"
   },
   "doctors": {
     "items": {
-      "rashad_bishara": {
-        "name": "Prof. Rashad Bishara",
-        "title": "Professor of Vascular Surgery - Cairo University"
+      "mahmoud_hafez": {
+        "name": "Prof. Mahmoud Hafez",
+        "title": "Professor of Orthopedics - October 6 University"
       },
-      "ayman_samadony": {
-        "name": "Prof. Ayman El Samadony",
-        "title": "Professor of Vascular Surgery - Cairo University"
+      "mohamed_fawzy_khattab": {
+        "name": "Prof. Mohamed Fawzy Khattab",
+        "title": "Professor of Orthopedics and Spine Surgery - Ain Shams University"
       },
-      "hussein_alwan": {
-        "name": "Dr. Hussein Alwan",
-        "title": "Consultant Vascular Surgeon"
+      "fouad_zamel_sadek": {
+        "name": "Prof. Fouad Zamel Sadek",
+        "title": "Head of Pelvic & Arthroplasty Unit - Cairo University"
       },
       "mohamed_aboulghar": {
         "name": "Prof. Mohamed Aboulghar",
-        "title": "Pioneer of IVF in Egypt"
+        "title": "Pioneer of IVF in Egypt - Cairo University"
       },
-      "sherif_pasha": {
-        "name": "Dr. Sherif Pasha Seif",
-        "title": "Consultant of Obstetrics, Gynecology and Infertility"
+      "maged_adel_aziz": {
+        "name": "Prof. Maged Adel Aziz",
+        "title": "Consultant of Obstetrics & Gynecology"
       },
-      "ismail_aboul_fotouh": {
-        "name": "Dr. Ismail Aboul Fotouh",
-        "title": "Consultant of Infertility and IVF"
+      "mahmoud_zakaria": {
+        "name": "Prof. Mahmoud Zakaria",
+        "title": "Professor of Obesity Surgery - Ain Shams University"
+      },
+      "tamer_abdelbaki": {
+        "name": "Dr. Tamer Abdelbaki",
+        "title": "Bariatric Surgery Consultant - Alexandria University"
+      },
+      "yasser_badi": {
+        "name": "Dr. Yasser Badi",
+        "title": "Plastic Surgery Expert"
+      },
+      "mohamed_abdallah_tawfik": {
+        "name": "Dr. Mohamed Abdallah Tawfik",
+        "title": "Plastic & Bariatric Surgery Consultant"
+      },
+      "john_elia": {
+        "name": "Dr. John Elia",
+        "title": "Specialist in Implantology & Prosthodontics"
+      },
+      "ahmed_saeed": {
+        "name": "Dr. Ahmed Saeed",
+        "title": "Consultant of Dental Implants & Orthodontics"
+      },
+      "shady_el_maghraby": {
+        "name": "Dr. Shady El-Maghraby",
+        "title": "ABHRS Diplomate, Hair Transplant Surgeon"
+      },
+      "marwan_noureldin": {
+        "name": "Dr. Marwan Noureldin",
+        "title": "Plastic & Hair Restoration Surgeon"
+      },
+      "ahmed_rezk": {
+        "name": "Prof. Ahmed Rezk",
+        "title": "Professor of Cardiothoracic Surgery - Ain Shams University"
+      },
+      "mohamed_al_ghannam": {
+        "name": "Prof. Mohamed Al-Ghannam",
+        "title": "Consultant of Open Heart & Minimally Invasive Surgery"
+      },
+      "hossam_fathi": {
+        "name": "Prof. Hossam Fathi",
+        "title": "Professor & Consultant of Cardiothoracic Surgery"
+      },
+      "ahmad_khalil": {
+        "name": "Prof. Ahmad Khalil",
+        "title": "Professor of Ophthalmology - RIO"
+      },
+      "hazem_helmy": {
+        "name": "Prof. Hazem Helmy",
+        "title": "Professor of Ophthalmology & Glaucoma"
+      },
+      "magd_zakaria": {
+        "name": "Prof. Magd Zakaria",
+        "title": "Professor of Neurology - Ain Shams University"
+      },
+      "ahmed_elbassiouny": {
+        "name": "Prof. Ahmed ElBassiouny",
+        "title": "Professor of Neurology & Neuro-intervention"
+      },
+      "walid_elhalaby": {
+        "name": "Dr. Walid Elhalaby",
+        "title": "Assistant Professor of Neurosurgery - Cairo University"
+      },
+      "hesham_elghazaly": {
+        "name": "Prof. Hesham ElGhazaly",
+        "title": "Professor of Clinical Oncology - Ain Shams University"
+      },
+      "hatem_azim": {
+        "name": "Dr. Hatem A. Azim",
+        "title": "Senior Medical Oncology Consultant"
+      },
+      "mohamed_mohi_eldin": {
+        "name": "Prof. Mohamed Mohi Eldin",
+        "title": "Professor of Neurosurgery & Spine Surgery"
+      },
+      "mohamed_hossam_eldin": {
+        "name": "Dr. Mohamed Hossam Eldin",
+        "title": "Consultant Psychiatrist & Addiction Specialist"
+      },
+      "rashad_bishara": {
+        "name": "Prof. Rashad Bishara",
+        "title": "Consultant Vascular Surgeon"
+      },
+      "ayman_samadony": {
+        "name": "Prof. Ayman Samadony",
+        "title": "Professor of Vascular Surgery"
+      },
+      "hussein_alwan": {
+        "name": "Prof. Hussein Alwan",
+        "title": "Professor of Vascular Surgery - Cairo University"
       },
       "tamer_el_nahas": {
         "name": "Prof. Tamer El Nahas",
         "title": "Professor of Clinical Oncology - Cairo University"
       },
-      "mahmoud_hafez": {
-        "name": "Prof. Mahmoud Hafez",
-        "title": "Professor and Head of Orthopedics Department"
-      },
       "nasser_loza": {
         "name": "Dr. Nasser Loza",
-        "title": "Consultant Psychiatrist and Director of Behman Hospital"
+        "title": "Consultant Psychiatrist - President of WFMH"
+      },
+      "ahmed_elashry": {
+        "name": "Prof. Mohamed Saad El Ashry",
+        "title": "Professor of Oncology - Mansoura University"
       }
     }
   },
@@ -471,7 +721,9 @@
     "portalSubtitle": "Sign in to continue your medical journey",
     "mockNote": "This is a mock form — it will be wired to real authentication in phase 2",
     "logout": "Logout",
-    "crmSubtitle": "Staff console for managing leads and cases"
+    "crmSubtitle": "Staff console for managing leads and cases",
+    "passwordLabel": "Password",
+    "passwordError": "Incorrect password."
   },
   "portal": {
     "personalInfo": "Personal Info",

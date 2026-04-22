@@ -57,14 +57,14 @@ export default async function TreatmentDetailPage({ params }: Props) {
     : [];
 
   return (
-    <div className="mx-auto max-w-4xl space-y-12 px-4 py-16 sm:px-6">
+    <div className="mx-auto max-w-6xl space-y-12 px-4 py-16 sm:px-6">
       <div className="space-y-4">
         <Link
           href={ROUTES.treatments}
           className="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline"
           prefetch={false}
         >
-          <span className="text-xs">←</span> {t("pageTitle")}
+          <span className="text-xs">←</span> {t("backToAllTreatments")}
         </Link>
         <h1 className="text-4xl font-extrabold tracking-tight text-foreground sm:text-5xl">{labels(treatment.titleKey)}</h1>
         <p className="text-xl text-muted-foreground leading-relaxed max-w-2xl">{labels(treatment.descriptionKey)}</p>

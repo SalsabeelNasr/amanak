@@ -1,9 +1,13 @@
 "use client";
 
+import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { isLoginGatePassword } from "@/lib/login-gate";
 import { ROUTES } from "@/lib/routes";
 import { MOCK_USERS, useSession } from "@/lib/mock-session";
 
@@ -11,8 +15,14 @@ export function PatientLoginForm() {
   const t = useTranslations("auth");
   const { login } = useSession();
   const router = useRouter();
+  const [password, setPassword] = useState("");
+  const [passwordError, setPasswordError] = useState(false);
 
   function handleLogin() {
+    if (!isLoginGatePassword(password)) {
+      setPasswordError(true);
+      return;
+    }
     const patient = MOCK_USERS.find((u) => u.role === "patient");
     if (!patient) return;
     login(patient);
@@ -22,14 +32,36 @@ export function PatientLoginForm() {
   return (
     <Card>
       <CardContent className="space-y-4 py-6">
-        <Button
-          type="button"
-          size="lg"
-          className="w-full"
-          onClick={handleLogin}
+        <form
+          className="space-y-4"
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleLogin();
+          }}
         >
-          {t("patientLogin")}
-        </Button>
+          <div className="space-y-2">
+            <Label htmlFor="patient-login-password">{t("passwordLabel")}</Label>
+            <Input
+              id="patient-login-password"
+              type="password"
+              value={password}
+              onChange={(e) => {
+                setPassword(e.target.value);
+                setPasswordError(false);
+              }}
+              autoComplete="current-password"
+              aria-invalid={passwordError}
+            />
+            {passwordError ? (
+              <p className="text-sm text-destructive" role="alert">
+                {t("passwordError")}
+              </p>
+            ) : null}
+          </div>
+          <Button type="submit" size="lg" className="w-full">
+            {t("patientLogin")}
+          </Button>
+        </form>
       </CardContent>
     </Card>
   );

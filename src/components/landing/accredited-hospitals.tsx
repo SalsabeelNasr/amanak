@@ -77,15 +77,15 @@ export async function AccreditedHospitals() {
             <div className="flex flex-wrap gap-4 items-center pt-2">
               <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
                 <CheckCircle2 className="h-4 w-4 text-primary" />
-                <span>Patient Safety First</span>
+                <span>{t("trustBadge1")}</span>
               </div>
               <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
                 <CheckCircle2 className="h-4 w-4 text-primary" />
-                <span>ISQua Accredited Standards</span>
+                <span>{t("trustBadge2")}</span>
               </div>
               <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
                 <CheckCircle2 className="h-4 w-4 text-primary" />
-                <span>Rigorous Clinical Audits</span>
+                <span>{t("trustBadge3")}</span>
               </div>
             </div>
           </div>

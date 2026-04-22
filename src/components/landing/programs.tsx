@@ -1,10 +1,11 @@
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { listTreatments } from "@/lib/api/treatments";
+import type { TreatmentCategory } from "@/types";
 import { ROUTES } from "@/lib/routes";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { ChevronLeft } from "lucide-react";
+import { Activity, ChevronLeft } from "lucide-react";
 
 export async function Programs() {
   const [t, tTreatments, items, tGlobal] = await Promise.all([
@@ -14,17 +15,24 @@ export async function Programs() {
     getTranslations(),
   ]);
 
-  // Group treatments by category
-  const categories = {
-    general: items.filter((item) => item.category === "general"),
-    ortho: items.filter((item) => item.category === "ortho"),
-    cosmetic: items.filter((item) => item.category === "cosmetic"),
-  };
+  const categoryOrder: TreatmentCategory[] = [
+    "general",
+    "ortho",
+    "cosmetic",
+    "dental",
+    "specialized",
+  ];
+
+  const categories = Object.fromEntries(
+    categoryOrder.map((key) => [key, items.filter((item) => item.category === key)]),
+  ) as Record<TreatmentCategory, typeof items>;
 
   const categoryLabels = {
     general: tTreatments("categories.general"),
     ortho: tTreatments("categories.ortho"),
     cosmetic: tTreatments("categories.cosmetic"),
+    dental: tTreatments("categories.dental"),
+    specialized: tTreatments("categories.specialized"),
   };
 
   return (
@@ -36,8 +44,8 @@ export async function Programs() {
           </h2>
         </div>
 
-        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-          {(Object.keys(categories) as Array<keyof typeof categories>).map((catKey) => {
+        <div className="grid gap-8 sm:grid-cols-2 xl:grid-cols-3">
+          {categoryOrder.map((catKey) => {
             const catItems = categories[catKey];
             if (catItems.length === 0) return null;
 
@@ -63,6 +71,17 @@ export async function Programs() {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
                     )}
+                    {catKey === "dental" && (
+                      <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M12 3c-1.5 0-2.8.8-3.5 2-.4.8-.5 1.7-.5 2.5 0 1.2-.3 2.2-.8 3.1-.5.9-1.2 1.6-2 2.1-.8.5-1.7.8-2.7.8v8h16v-8c-1 0-1.9-.3-2.7-.8-.8-.5-1.5-1.2-2-2.1-.5-.9-.8-1.9-.8-3.1 0-.8-.1-1.7-.5-2.5-.7-1.2-2-2-3.5-2z"
+                        />
+                      </svg>
+                    )}
+                    {catKey === "specialized" && <Activity className="h-6 w-6" aria-hidden />}
                   </div>
                   <h3 className="text-2xl font-bold text-foreground leading-tight">
                     {categoryLabels[catKey]}

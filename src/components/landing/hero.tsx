@@ -15,7 +15,7 @@ export async function LandingHero() {
       </div>
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <div className="grid gap-10 lg:grid-cols-2 lg:items-center lg:gap-16">
-          <div className="flex flex-col text-left space-y-8">
+          <div className="flex flex-col items-start text-start space-y-8">
             <div className="space-y-4 max-w-2xl">
               <h1 className="amanak-marketing-hero-title">{t("title")}</h1>
               <p className="amanak-marketing-hero-subtitle">{t("subtitle")}</p>
@@ -32,7 +32,7 @@ export async function LandingHero() {
           </div>
           <div className="relative aspect-[4/3] w-full overflow-hidden border border-border bg-muted shadow-2xl">
             <Image
-              src="/landing/hero-cityscape.png"
+              src="/landing/hero-waterfront.png"
               alt={t("imageAlt")}
               fill
               className="object-cover transition-transform duration-700 hover:scale-105"

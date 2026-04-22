@@ -6,7 +6,7 @@ import Image from "next/image";
 import { useLocale, useTranslations } from "next-intl";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { bookConsultationAction } from "@/app/[locale]/(marketing)/book-consultation/actions";
+import { bookConsultationAction } from "@/app/[locale]/(marketing)/contact/consultation-booking-actions";
 import { Calendar } from "@/components/ui/calendar";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -233,9 +233,9 @@ export function ConsultationBookingForm({ initialSlots, consultant }: Props) {
                 </div>
 
                 <div className="space-y-2">
-                  <h1 className="text-lg font-semibold tracking-tight text-foreground sm:text-xl">
+                  <h2 className="text-lg font-semibold tracking-tight text-foreground sm:text-xl">
                     {t("title")}
-                  </h1>
+                  </h2>
                   <p className="max-w-sm text-sm leading-relaxed text-muted-foreground">
                     {t("lead")}
                   </p>

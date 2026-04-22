@@ -13,13 +13,24 @@ export type Doctor = {
   titleKey: string;
   image?: string;
   instagram?: string;
+  facebook?: string;
+  linkedin?: string;
+  website?: string;
 };
+
+/** Tab / browse grouping for treatments listing & landing programs. */
+export type TreatmentCategory =
+  | "general"
+  | "ortho"
+  | "cosmetic"
+  | "dental"
+  | "specialized";
 
 export type Treatment = {
   id: string;
   slug: string;
   sortOrder: number;
-  category: "general" | "ortho" | "cosmetic";
+  category: TreatmentCategory;
   titleKey: string;
   descriptionKey: string;
   bodyKey: string;

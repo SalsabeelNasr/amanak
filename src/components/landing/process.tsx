@@ -11,7 +11,7 @@ export async function Process() {
   ];
 
   return (
-    <section className="bg-secondary/30 py-20 sm:py-24">
+    <section className="border-t border-border/40 bg-muted py-20 sm:py-24">
       <div className="mx-auto max-w-6xl space-y-12 px-4 sm:px-6">
         <div className="text-center space-y-4">
           <h2 className="text-balance text-3xl font-bold text-foreground sm:text-4xl">

@@ -36,18 +36,15 @@ export default async function TreatmentsIndexPage() {
       general: t("categories.general"),
       ortho: t("categories.ortho"),
       cosmetic: t("categories.cosmetic"),
+      dental: t("categories.dental"),
+      specialized: t("categories.specialized"),
     },
     priceLabel: t("priceLabel"),
     viewTreatment: t("viewTreatment"),
   };
 
   return (
-    <div className="mx-auto max-w-6xl space-y-12 px-4 py-20 sm:px-6">
-      <div className="space-y-4 text-center max-w-3xl mx-auto">
-        <h1 className="text-4xl font-extrabold tracking-tight text-foreground sm:text-5xl">{t("pageTitle")}</h1>
-        <p className="text-xl text-muted-foreground leading-relaxed">{t("pageLead")}</p>
-      </div>
-
+    <div className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
       <TreatmentTabs items={tabItems} labels={tabLabels} />
     </div>
   );
