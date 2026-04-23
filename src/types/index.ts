@@ -24,6 +24,7 @@ export type TreatmentCategory =
   | "ortho"
   | "cosmetic"
   | "dental"
+  | "mental"
   | "specialized";
 
 export type Treatment = {

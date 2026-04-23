@@ -1,5 +1,6 @@
 /** Pathnames without locale prefix — use with `Link` from `@/i18n/navigation`. */
 export const ROUTES = {
+  aboutUs: "/about",
   leadEntry: "/estimate",
   bookConsultation: "/contact#book-consultation",
   contactUs: "/contact",

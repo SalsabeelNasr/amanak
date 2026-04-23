@@ -32,12 +32,11 @@ export default async function TreatmentsIndexPage() {
 
   const tabLabels = {
     categories: {
-      all: t("categories.all"),
       general: t("categories.general"),
       ortho: t("categories.ortho"),
       cosmetic: t("categories.cosmetic"),
       dental: t("categories.dental"),
-      specialized: t("categories.specialized"),
+      mental: t("categories.mental"),
     },
     priceLabel: t("priceLabel"),
     viewTreatment: t("viewTreatment"),

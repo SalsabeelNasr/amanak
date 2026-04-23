@@ -69,8 +69,8 @@ function NavLinks({
       )}
     >
       {linkItem("/", t("home"))}
+      {linkItem(ROUTES.aboutUs, t("aboutUs"))}
       {linkItem(ROUTES.treatments, t("treatments"))}
-      {linkItem(ROUTES.leadEntry, t("estimate"))}
     </nav>
   );
 }

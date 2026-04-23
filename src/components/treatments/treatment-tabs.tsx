@@ -19,12 +19,11 @@ export type TreatmentTabItem = {
 
 type TabLabels = {
   categories: {
-    all: string;
     general: string;
     ortho: string;
     cosmetic: string;
     dental: string;
-    specialized: string;
+    mental: string;
   };
   priceLabel: string;
   viewTreatment: string;
@@ -40,10 +39,10 @@ const CATEGORY_ORDER: TreatmentCategory[] = [
   "ortho",
   "cosmetic",
   "dental",
-  "specialized",
+  "mental",
 ];
 
-type CategoryId = "all" | TreatmentCategory;
+type CategoryId = TreatmentCategory;
 
 function TreatmentItemGrid({
   items,
@@ -104,18 +103,16 @@ function TreatmentItemGrid({
 }
 
 export function TreatmentTabs({ items, labels }: Props) {
-  const [activeTab, setActiveTab] = useState<CategoryId>("all");
+  const [activeTab, setActiveTab] = useState<CategoryId>("general");
 
   const categories: { id: CategoryId; label: string }[] = [
-    { id: "all", label: labels.categories.all },
     ...CATEGORY_ORDER.map((id) => ({
       id,
       label: labels.categories[id],
     })),
   ];
 
-  const filteredBy = (id: CategoryId) =>
-    id === "all" ? items : items.filter((item) => item.category === id);
+  const filteredBy = (id: CategoryId) => items.filter((item) => item.category === id);
 
   return (
     <Tabs

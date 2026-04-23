@@ -1,15 +1,22 @@
 import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle2, Globe2, ShieldCheck } from "lucide-react";
+import { CheckCircle2, ExternalLink, Globe2, ShieldCheck } from "lucide-react";
+
+function websiteHostname(url: string): string {
+  try {
+    const host = new URL(url).hostname;
+    return host.startsWith("www.") ? host.slice(4) : host;
+  } catch {
+    return url;
+  }
+}
 
 const ROW_IDS = [
   "andalusia",
   "saudiGerman",
   "asSalam",
   "cleopatra",
-  "internationalEye",
-  "maghrabi",
   "darAlFouad",
 ] as const;
 
@@ -20,8 +27,6 @@ const HOSPITAL_IMAGES: Record<RowId, string> = {
   saudiGerman: "https://images.pexels.com/photos/6646917/pexels-photo-6646917.jpeg?auto=compress&cs=tinysrgb&w=400",
   asSalam: "https://images.pexels.com/photos/40568/medical-appointment-doctor-healthcare-40568.jpeg?auto=compress&cs=tinysrgb&w=400",
   cleopatra: "https://images.pexels.com/photos/247786/pexels-photo-247786.jpeg?auto=compress&cs=tinysrgb&w=400",
-  internationalEye: "https://images.pexels.com/photos/3844581/pexels-photo-3844581.jpeg?auto=compress&cs=tinysrgb&w=400",
-  maghrabi: "https://images.pexels.com/photos/236380/pexels-photo-236380.jpeg?auto=compress&cs=tinysrgb&w=400",
   darAlFouad: "https://images.pexels.com/photos/6646918/pexels-photo-6646918.jpeg?auto=compress&cs=tinysrgb&w=400",
 };
 
@@ -30,7 +35,12 @@ export async function AccreditedHospitals() {
 
   const rowCell = (
     id: RowId,
-    key: "facility" | "accreditations" | "departments" | "location",
+    key:
+      | "facility"
+      | "accreditations"
+      | "departments"
+      | "location"
+      | "websiteUrl",
   ) => t(`rows.${id}.${key}` as Parameters<typeof t>[0]);
 
   return (
@@ -128,6 +138,24 @@ export async function AccreditedHospitals() {
                       <p className="text-[11px] text-muted-foreground truncate font-medium">
                         {rowCell(id, "departments")} • {rowCell(id, "location")}
                       </p>
+                      <a
+                        href={rowCell(id, "websiteUrl")}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        title={t("officialSiteNewTab")}
+                        aria-label={t("officialSiteAria", {
+                          hospital: rowCell(id, "facility"),
+                        })}
+                        className="mt-1 inline-flex max-w-full items-center gap-1 text-[11px] font-medium text-primary hover:underline underline-offset-2"
+                      >
+                        <ExternalLink
+                          className="size-3 shrink-0 opacity-80"
+                          aria-hidden
+                        />
+                        <span className="truncate">
+                          {websiteHostname(rowCell(id, "websiteUrl"))}
+                        </span>
+                      </a>
                     </div>
                   </div>
                 ))}

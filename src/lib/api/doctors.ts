@@ -6,33 +6,36 @@ const DOCTORS: Doctor[] = [
     id: "rashad_bishara",
     nameKey: "doctors.items.rashad_bishara.name",
     titleKey: "doctors.items.rashad_bishara.title",
-    website: "https://eavla.org/rashad-bishara/",
+    image: "/doctors/rashad-bishara.png",
+    website: "https://www.vezeeta.com/ar/dr/%D8%AF%D9%83%D8%AA%D9%88%D8%B1-%D8%B1%D8%B4%D8%A7%D8%AF-%D8%A8%D8%B4%D8%A7%D8%B1%D8%A9",
   },
   {
     id: "ayman_samadony",
     nameKey: "doctors.items.ayman_samadony.name",
     titleKey: "doctors.items.ayman_samadony.title",
-    image: "/doctors/a92f89ac-5ea2-487c-a2e1-babee8e6ac17.jpg",
+    image: "/doctors/ayman-el-samadony.png",
     website: "https://medoc.care/en/doctors/prof-ayman-salem",
   },
   {
     id: "hussein_alwan",
     nameKey: "doctors.items.hussein_alwan.name",
     titleKey: "doctors.items.hussein_alwan.title",
+    image: "/doctors/hussein-alwan.png",
+    facebook: "https://www.facebook.com/drhusseinelwan/?locale=ar_AR",
     website: "https://drhusseinelwan.com/",
   },
   {
     id: "tamer_el_nahas",
     nameKey: "doctors.items.tamer_el_nahas.name",
     titleKey: "doctors.items.tamer_el_nahas.title",
+    image: "/doctors/tamer-el-nahas.png",
     website: "https://www.sphinxcure.com/our-team.html",
   },
   {
     id: "ahmed_elashry",
     nameKey: "doctors.items.ahmed_elashry.name",
     titleKey: "doctors.items.ahmed_elashry.title",
-    image:
-      "https://dashboard.macro.care/assets/ba621a0f-fe8a-4b4e-854b-d2f441a8cfcb?format=webp&quality=100",
+    image: "/doctors/mohamed-saad-el-ashry.png",
     website: "https://macro.care/en/partners/prof-dr-mohamed-saad-el-ashry",
   },
   {
@@ -181,6 +184,7 @@ const DOCTORS: Doctor[] = [
     id: "hatem_azim",
     nameKey: "doctors.items.hatem_azim.name",
     titleKey: "doctors.items.hatem_azim.title",
+    image: "/doctors/hatem-azim.png",
     website: "https://www.cairocure.com/about/dr-hatem-a-azim-md-phd",
   },
   {

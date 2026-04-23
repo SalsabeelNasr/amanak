@@ -7,6 +7,7 @@
     "home": "Home",
     "treatments": "Treatments",
     "contactUs": "Contact Us",
+    "aboutUs": "About Us",
     "estimate": "Plan your trip",
     "openMenu": "Open menu",
     "locale": {
@@ -48,6 +49,7 @@
       "ortho": "Orthopedics",
       "cosmetic": "Cosmetic Surgery",
       "dental": "Dental",
+      "mental": "Mental Health",
       "specialized": "Specialized Care"
     },
     "items": {
@@ -183,7 +185,7 @@
         "techniques": "3D Guided Implants, E-Max Crowns, Zirconia",
         "success_rate": "100% Implant Success Rate",
         "video_url": "https://www.youtube.com/embed/g-i3P-D6p7M",
-        "body": "Dental travel plans need accurate imaging, treatment sequencing, and infection control standards. We coordinate your records, specialist selection, and visit schedule so you know how long to stay and what to expect at each step.\n\nOur dental implant packages start from ~$800 and include the implant along with free teeth extraction, cleaning, and polishing."
+        "body": "Dental travel plans need accurate imaging, treatment sequencing, and infection control standards. We coordinate your records, specialist selection, and visit schedule so you know how long to stay and what to expect at each step.\n\nOur dental implant packages start from ~$40 and include the implant along with free teeth extraction, cleaning, and polishing."
       },
       "hair_transplant": {
         "title": "Hair Transplant",
@@ -192,7 +194,7 @@
         "hospitals": "Maghraby Hair Clinic, Nour Clinic",
         "techniques": "FUE, DHI, Robotic Hair Transplant",
         "success_rate": "ABHRS Certified Specialists",
-        "body": "Hair restoration outcomes depend on donor quality, graft planning, and aftercare. We help you share photos and medical history for a realistic assessment before you travel.\n\nOur packages start at ~$1850 and include examination, the operation, hospital fees, medication, aftercare treatment, and 4 PRP sessions."
+        "body": "Hair restoration outcomes depend on donor quality, graft planning, and aftercare. We help you share photos and medical history for a realistic assessment before you travel.\n\nOur packages start at ~$200 and include examination, the operation, hospital fees, medication, aftercare treatment, and 4 PRP sessions."
       },
       "plastic_surgery": {
         "title": "Plastic Surgery",
@@ -201,7 +203,7 @@
         "hospitals": "Specialized Aesthetic Centers in Cairo & Alexandria",
         "techniques": "Tummy Tuck, Rhinoplasty, VASER",
         "success_rate": "Natural Results by Board-Certified Experts",
-        "body": "Elective surgery abroad should start with candidacy review, not marketing promises. We organize remote consultation materials and match you to surgeons whose scope fits your goals.\n\nFor example, our Tummy Tuck packages start at ~$2700 and include a one-night hospital stay, doctor fees, and postoperative follow-up."
+        "body": "Elective surgery abroad should start with candidacy review, not marketing promises. We organize remote consultation materials and match you to surgeons whose scope fits your goals.\n\nFor example, our Tummy Tuck packages start at ~$700 and include a one-night hospital stay, doctor fees, and postoperative follow-up."
       },
       "cardiology": {
         "title": "Cardiology",
@@ -241,12 +243,120 @@
         "success_rate": "IFSO Certified Surgeons",
         "video_url": "https://www.youtube.com/embed/vu2pV8JPqmg",
         "body": "Bariatric programs should include psychological readiness, nutrition counseling, and long-term vitamin monitoring, not only the operation day. We coordinate the screening checklist and hospital eligibility criteria upfront.\n\nSleeve gastrectomy and gastric bypass require staged recovery; we build your travel window around surgeon protocols and first follow-up visits."
+      },
+      "fue_extraction": {
+        "title": "FUE - Follicular Unit Extraction",
+        "description": "Individual follicle extraction with minimal scarring and fast recovery for mild to moderate hair loss.",
+        "doctors": "Dr. Shady El-Maghraby, Dr. Marwan Noureldin",
+        "hospitals": "Maghraby Hair Clinic, Nour Clinic",
+        "techniques": "Follicular Unit Extraction (FUE)",
+        "success_rate": "ABHRS Certified Specialists",
+        "body": "FUE extracts individual follicles from the donor area and places them in thinning zones with precise angling for natural density. It is less invasive than strip techniques and suits many travel-friendly treatment plans.\n\nStarting package price aligns with Clinido source pricing from 30,000 EGP (about $600)."
+      },
+      "fut_transplantation": {
+        "title": "FUE - Follicular Unit Transplantation",
+        "description": "Strip-based graft harvesting for cases that need a high graft count in one session.",
+        "doctors": "Dr. Shady El-Maghraby, Dr. Marwan Noureldin",
+        "hospitals": "Maghraby Hair Clinic, Nour Clinic",
+        "techniques": "Follicular Unit Transplantation (FUT)",
+        "success_rate": "ABHRS Certified Specialists",
+        "body": "FUT removes a thin donor strip, separates it into graft units, and implants the grafts in target areas. It is typically selected when a larger number of grafts is needed in one sitting.\n\nStarting package price aligns with Clinido source pricing from 10,000 EGP (about $200)."
+      },
+      "dhi_implantation": {
+        "title": "DHI (Direct Hair Implantation)",
+        "description": "Direct implantation using a Choi pen for precise angle and direction control.",
+        "doctors": "Dr. Shady El-Maghraby, Dr. Marwan Noureldin",
+        "hospitals": "Maghraby Hair Clinic, Nour Clinic",
+        "techniques": "DHI with Choi Pen",
+        "success_rate": "ABHRS Certified Specialists",
+        "body": "DHI implants follicles directly without opening broad channels first, which gives surgeons tighter control over placement design. This technique is often chosen for dense hairline work and natural visual outcomes.\n\nStarting package price aligns with Clinido source pricing from 25,000 EGP (about $500)."
+      },
+      "robotic_hair_transplant": {
+        "title": "Robotic Hair Transplant (ARTAS)",
+        "description": "AI-assisted follicle extraction and implantation for high precision and consistency.",
+        "doctors": "Dr. Shady El-Maghraby, Dr. Marwan Noureldin",
+        "hospitals": "Maghraby Hair Clinic, Nour Clinic",
+        "techniques": "Robotic Hair Transplant (ARTAS)",
+        "success_rate": "ABHRS Certified Specialists",
+        "body": "Robotic systems support graft extraction mapping and implantation planning to improve speed and precision in selected candidates. The approach is suitable for patients prioritizing advanced technology pathways.\n\nStarting package price aligns with Clinido source pricing from 80,000 EGP (about $1,600)."
+      },
+      "conventional_ivf": {
+        "title": "Conventional IVF",
+        "description": "Egg and sperm fertilization in the lab followed by embryo transfer.",
+        "doctors": "Prof. Mohamed Aboulghar, Prof. Maged Adel Aziz",
+        "hospitals": "Bedaya Hospital, Sunrise Fertility Center, Egyptian IVF Center",
+        "techniques": "Conventional IVF Protocol",
+        "success_rate": "60% - 70% for women under 35",
+        "body": "Conventional IVF combines eggs and sperm in a controlled lab environment and transfers selected embryos to the uterus. It remains the most common fertility pathway for many indications.\n\nStarting package price aligns with Clinido source pricing from 30,000 EGP (about $600)."
+      },
+      "icsi": {
+        "title": "ICSI (Intracytoplasmic Sperm Injection)",
+        "description": "Single sperm injection into an egg for male-factor infertility and complex cases.",
+        "doctors": "Prof. Mohamed Aboulghar, Prof. Maged Adel Aziz",
+        "hospitals": "Bedaya Hospital, Sunrise Fertility Center, Egyptian IVF Center",
+        "techniques": "ICSI Fertilization",
+        "success_rate": "60% - 70% for women under 35",
+        "body": "ICSI injects one selected sperm into each mature egg, then transfers resulting embryos according to medical protocol. It is commonly used in low sperm quality and prior IVF-failure scenarios.\n\nStarting package price aligns with Clinido source pricing from 30,000 EGP (about $600)."
+      },
+      "hip_replacement": {
+        "title": "Hip Replacement Surgery",
+        "description": "Replacement of damaged hip joints to restore movement and reduce severe pain.",
+        "doctors": "Prof. Mahmoud Hafez, Prof. Fouad Zamel Sadek",
+        "hospitals": "Dar Al Fouad Hospital, Andalusia Al Maadi Hospital",
+        "techniques": "Total Hip Arthroplasty",
+        "success_rate": "Pain Relief and Mobility Restoration",
+        "body": "Hip replacement surgery removes damaged joint surfaces and replaces them with prosthetic components to improve function and quality of life. Case planning includes implant selection, rehab planning, and postoperative follow-up.\n\nStarting package price aligns with Clinido source pricing from 230,000 EGP (about $4,600)."
+      },
+      "lip_reduction": {
+        "title": "Lip Reduction",
+        "description": "Surgical lip-volume reduction to improve facial harmony and proportional contour.",
+        "doctors": "Dr. Yasser Badi, Dr. Mohamed Abdallah Tawfik",
+        "hospitals": "Specialized Aesthetic Centers in Cairo & Alexandria",
+        "techniques": "Aesthetic Lip Reduction Surgery",
+        "success_rate": "Natural Contour by Board-Certified Experts",
+        "body": "Lip reduction reshapes excess tissue to achieve a balanced lip profile based on facial proportions and patient goals. Treatment planning includes anesthesia review, healing timeline guidance, and follow-up care.\n\nStarting package price aligns with Clinido source pricing from 35,000 EGP (about $700)."
+      },
+      "dental_implants": {
+        "title": "Dental Implants",
+        "description": "Artificial root placement for stable and long-term replacement of missing teeth.",
+        "doctors": "Dr. John Elia, Dr. Ahmed Saeed",
+        "hospitals": "Dental Express Center, Wonders Dentistry Center",
+        "techniques": "Single and Multiple Tooth Implants",
+        "success_rate": "High Long-Term Stability",
+        "body": "Dental implants place biocompatible fixtures in the jawbone to replace missing teeth with durable support. Planning includes imaging, bone assessment, staged placement, and prosthetic fitting.\n\nStarting package price aligns with Clinido source pricing from 5,000 EGP (about $100)."
+      },
+      "dental_crowns_bridges": {
+        "title": "Dental Crowns and Bridges",
+        "description": "Restorative solutions for damaged or missing teeth with durable esthetic materials.",
+        "doctors": "Dr. John Elia, Dr. Ahmed Saeed",
+        "hospitals": "Dental Express Center, Wonders Dentistry Center",
+        "techniques": "Crowns, Fixed Bridges, Digital Smile Design",
+        "success_rate": "Function and Smile Restoration",
+        "body": "Crowns and bridges restore chewing function and appearance by covering damaged teeth or spanning gaps from missing teeth. Material and design are selected based on bite pattern, durability, and esthetic goals.\n\nStarting package price aligns with Clinido source pricing from 2,000 EGP (about $40)."
+      },
+      "orthodontic_treatment": {
+        "title": "Orthodontic Treatment",
+        "description": "Fixed and removable braces to align teeth and improve jaw function.",
+        "doctors": "Dr. John Elia, Dr. Ahmed Saeed",
+        "hospitals": "Dental Express Center, Wonders Dentistry Center",
+        "techniques": "Fixed Braces and Clear Aligner Pathways",
+        "success_rate": "Progressive Alignment with Follow-up Plans",
+        "body": "Orthodontic treatment corrects bite and alignment using braces or aligners based on case complexity and treatment goals. Plans are monitored through periodic adjustments and staged progress checks.\n\nStarting package price aligns with Clinido source pricing from 30,000 EGP (about $600)."
+      },
+      "autism": {
+        "title": "Autism Spectrum Disorder (ASD) Care",
+        "description": "Multidisciplinary autism assessment and therapy planning with child psychiatry, behavioral, and speech support.",
+        "doctors": "Dr. Nasser Loza, Dr. Mohamed Hossam Eldin",
+        "hospitals": "Specialized child neurodevelopment and mental health centers in Cairo",
+        "techniques": "ADOS-informed assessment, ABA planning, speech therapy, occupational therapy, parent coaching",
+        "success_rate": "Early intervention pathways with measurable developmental goals",
+        "body": "Autism care works best when diagnosis, behavior plans, speech-language support, and caregiver training are coordinated in one pathway. We help families gather developmental history, reports, and school feedback before travel so the first consultation is clinically focused.\n\nBased on current Egypt market references, initial autism pathway costs often start around 15,000 EGP (about $300) for structured assessment and early-session planning, while comprehensive programs vary by weekly intensity. One-to-one ABA schedules are commonly planned at 10-40 hours per week, with separate pricing for speech and occupational therapy.\n\nAmanak coordinates case review, doctor matching, treatment scheduling, and follow-up milestones so families can track progress with clear goals and transparent cost planning."
       }
     }
   },
   "landing": {
     "hero": {
-      "title": "Reclaim your wellbeing in Egypt with integrated care.",
+      "title": "Reclaim your wellbeing in Egypt with integrated care",
       "subtitle": "From around the world to Egypt’s leading hospitals. Amanak holds hospitals, specialists, accommodation, and transport under one accountable team, so recovery stays safe and your budget is clear before you travel.",
       "cta": "Start your free consultation",
       "imageAlt": "Aerial view of the Nile River and Cairo skyline"
@@ -278,48 +388,43 @@
       "colAccreditations": "Accreditation",
       "colDepartments": "Key Specialties",
       "colLocation": "Location",
+      "officialSiteNewTab": "Opens in a new tab",
+      "officialSiteAria": "Official website for {hospital}, opens in a new tab",
       "rows": {
         "andalusia": {
           "facility": "Andalusia Hospitals",
           "accreditations": "GAHAR",
           "departments": "Transplant, Cardiac, Neuro",
-          "location": "Cairo & Alex"
+          "location": "Cairo & Alex",
+          "websiteUrl": "https://andalusiaegypt.com/"
         },
         "saudiGerman": {
           "facility": "Saudi German Hospital",
           "accreditations": "JCI, GAHAR",
           "departments": "Orthopedics, Cardiac",
-          "location": "Cairo & Alex"
+          "location": "Cairo & Alex",
+          "websiteUrl": "https://sgheg.com/"
         },
         "asSalam": {
           "facility": "As-Salam International",
           "accreditations": "JCI",
           "departments": "Urology, Nephrology",
-          "location": "Maadi, Cairo"
+          "location": "Maadi, Cairo",
+          "websiteUrl": "https://www.assih.com/"
         },
         "cleopatra": {
           "facility": "Cleopatra Hospital",
           "accreditations": "GAHAR, ISO",
           "departments": "Oncology, Bariatric",
-          "location": "Heliopolis"
-        },
-        "internationalEye": {
-          "facility": "International Eye",
-          "accreditations": "JCI, GAHAR",
-          "departments": "Ophthalmology, LASIK",
-          "location": "Giza"
-        },
-        "maghrabi": {
-          "facility": "Maghrabi Hospital",
-          "accreditations": "JCI",
-          "departments": "Ophthalmology, ENT",
-          "location": "Cairo & Alex"
+          "location": "Heliopolis",
+          "websiteUrl": "https://www.cleopatrahospitals.com/en"
         },
         "darAlFouad": {
           "facility": "Dar Al Fouad",
           "accreditations": "JCI",
           "departments": "Cardiology, Oncology",
-          "location": "6th of October"
+          "location": "6th of October",
+          "websiteUrl": "https://daralfouadoctober.alameda-hc.com/"
         }
       }
     },
@@ -391,7 +496,35 @@
       "privateImageCaption": "We choose the right vehicle for your health condition, ensuring your total comfort between the hotel and the hospital."
     },
     "programs": {
-      "title": "Leading specialties"
+      "title": "Featured treatments for medical travelers",
+      "lead": "Focused care pathways in Egypt for the most requested specialties, with coordinated planning from pre-travel review to follow-up.",
+      "learnMore": "Learn more",
+      "items": {
+        "ivf": {
+          "title": "IVF & Fertility Treatments",
+          "description": "Comprehensive fertility evaluation, IVF lab coordination, and clear step-by-step treatment plans."
+        },
+        "dental": {
+          "title": "Dental Implants & Veneers",
+          "description": "Digital imaging and specialist planning for implant cases and aesthetic veneer smile design."
+        },
+        "eyeSurgery": {
+          "title": "LASIK & Eye Surgery",
+          "description": "Advanced refractive and ophthalmic procedures with pre-op screening and structured post-op checks."
+        },
+        "bariatric": {
+          "title": "Bariatric Surgery",
+          "description": "Weight-loss surgery programs combining surgical expertise, nutrition planning, and recovery follow-up."
+        },
+        "cosmetic": {
+          "title": "Cosmetic Surgery",
+          "description": "Personalized aesthetic surgery plans with transparent expectations, safety-first protocols, and recovery support."
+        },
+        "jointReplacement": {
+          "title": "Joint Replacements",
+          "description": "Hip and knee replacement pathways with experienced orthopedic teams and rehabilitation-focused outcomes."
+        }
+      }
     },
     "topDoctorsReels": {
       "title": "Leading doctors in Egypt",
@@ -543,7 +676,11 @@
       }
     },
     "ctaPrimary": "Contact us about partnership",
-    "ctaHint": "Tell us your organization type, location, and how you’d like to collaborate. We’ll respond with next steps."
+    "ctaHint": "Tell us your organization type, location, and how you’d like to collaborate. We’ll respond with next steps.",
+    "heroImageAlt": "Professional team collaborating in a modern office environment",
+    "whyBadge": "Why Partner?",
+    "typesBadge": "Ecosystem",
+    "howBadge": "Process"
   },
   "contact": {
     "metaTitle": "Contact us",
@@ -709,6 +846,36 @@
         "title": "Professor of Oncology - Mansoura University"
       }
     }
+  },
+  "about": {
+    "metaTitle": "About Us | Amanak Medical Travel",
+    "metaDescription": "Learn about Amanak, our team of healthcare and IT experts, and why Egypt is the premier destination for international patients.",
+    "heroTitle": "Bridging the Gap in Healthcare Travel",
+    "heroBadge": "Our Mission",
+    "heroLead": "Amanak is more than a medical travel agency; we are your dedicated partners in health, combining a decade of medical expertise with world-class hospitality and technology.",
+    "teamTitle": "A Team You Can Trust",
+    "teamBody": "Our team is formed from professionals who have served in the healthcare system for over 10 years, working in close cooperation with experts from the IT and hospitality sectors for just as long. This unique synergy allows us to provide a seamless, safe, and comfortable medical journey for every patient.",
+    "reachTitle": "Our International Presence",
+    "reachBody": "With dedicated offices in Libya, Iraq, and Jordan, Amanak has successfully helped international patients access top-tier treatments in Jordan, Turkey, Dubai, Egypt, and Europe. We understand the regional needs and bridge the distance between you and the best medical care.",
+    "addressTitle": "Our Headquarters",
+    "addressBody": "Business Plaza, New Cairo, Egypt",
+    "whyEgyptTitle": "Why Choose Egypt for Treatment?",
+    "whyEgyptLead": "Egypt has emerged as a global hub for medical tourism, offering a unique combination of expertise, accessibility, and value.",
+    "whyEgypt1Title": "World-Class Doctors",
+    "whyEgypt1Body": "Egypt is home to elite surgeons and consultants with international reputations, many of whom perform complex surgeries in Germany, Dubai, and across Europe.",
+    "whyEgypt2Title": "Strategic Location",
+    "whyEgypt2Body": "Located at the crossroads of Africa, Europe, and Asia, Egypt is a short 2-6 hour direct flight from most regional capitals. Easy visa procedures make it a hassle-free destination.",
+    "whyEgypt3Title": "High Quality, Fast Access",
+    "whyEgypt3Body": "Premium medical facilities with JCI and Temos accreditation ensure global safety standards. With no waiting lists, you get the care you need immediately.",
+    "whyEgypt4Title": "Affordable Premium Care",
+    "whyEgypt4Body": "The favorable exchange rate makes Egypt a first-choice destination, offering world-class medical services at a fraction of the cost in other countries.",
+    "partnerTitle": "Why Become a Partner with Us?",
+    "partnerBody": "Join a trusted network that prioritizes patient safety, transparent costs, and coordinated care. We handle the logistics so you can focus on clinical excellence.",
+    "ctaPatient": "Contact us as a patient",
+    "ctaPartner": "Join us as a partner",
+    "heroImageAlt": "Modern Cairo skyline at sunset",
+    "teamImageAlt": "A professional team of healthcare and technology experts collaborating",
+    "reachImageAlt": "Global map showing Amanak's international connectivity"
   },
   "auth": {
     "patientLogin": "Login as Patient",
