@@ -54,41 +54,42 @@ export function DoctorCarousel({ doctors }: Props) {
   if (!doctors || doctors.length === 0) return null;
 
   return (
-    <div className="relative space-y-6 py-8">
+    <div className="space-y-6 py-8">
       <h3 className="text-2xl font-bold text-foreground px-1">
         {t("treatments.doctorsLabel")}
       </h3>
 
-      <Button
-        type="button"
-        variant="secondary"
-        size="icon"
-        className="absolute start-0 top-1/2 z-10 flex -translate-y-1/2 shadow-md"
-        aria-label={t("treatments.prevDoctor")}
-        onClick={() => scrollBySlide(-1)}
-      >
-        <ChevronLeft className="size-5" aria-hidden />
-      </Button>
-      <Button
-        type="button"
-        variant="secondary"
-        size="icon"
-        className="absolute end-0 top-1/2 z-10 flex -translate-y-1/2 shadow-md"
-        aria-label={t("treatments.nextDoctor")}
-        onClick={() => scrollBySlide(1)}
-      >
-        <ChevronRight className="size-5" aria-hidden />
-      </Button>
+      <div className="relative">
+        <Button
+          type="button"
+          variant="secondary"
+          size="icon"
+          className="absolute left-0 top-[140px] z-10 -translate-y-1/2 shadow-md"
+          aria-label={t("treatments.prevDoctor")}
+          onClick={() => scrollBySlide(-1)}
+        >
+          <ChevronLeft className="size-5" aria-hidden />
+        </Button>
+        <Button
+          type="button"
+          variant="secondary"
+          size="icon"
+          className="absolute right-0 top-[140px] z-10 -translate-y-1/2 shadow-md"
+          aria-label={t("treatments.nextDoctor")}
+          onClick={() => scrollBySlide(1)}
+        >
+          <ChevronRight className="size-5" aria-hidden />
+        </Button>
 
-      <div
-        ref={scrollerRef}
-        dir="ltr"
-        className={cn(
-          "flex gap-6 overflow-x-auto overflow-y-hidden pb-6 snap-x snap-mandatory [-ms-overflow-style:none] [scrollbar-width:none]",
-          "[&::-webkit-scrollbar]:hidden",
-          "px-1 md:px-12",
-        )}
-      >
+        <div
+          ref={scrollerRef}
+          dir="ltr"
+          className={cn(
+            "flex gap-6 overflow-x-auto overflow-y-hidden pb-6 snap-x snap-mandatory [-ms-overflow-style:none] [scrollbar-width:none]",
+            "[&::-webkit-scrollbar]:hidden",
+            "px-1 md:px-12",
+          )}
+        >
         {doctors.map((doctor) => (
           <div
             key={doctor.id}
@@ -180,6 +181,7 @@ export function DoctorCarousel({ doctors }: Props) {
             </div>
           </div>
         ))}
+        </div>
       </div>
     </div>
   );
