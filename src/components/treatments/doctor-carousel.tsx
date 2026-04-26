@@ -63,7 +63,7 @@ export function DoctorCarousel({ doctors }: Props) {
         type="button"
         variant="secondary"
         size="icon"
-        className="absolute start-0 top-1/2 z-10 hidden -translate-y-1/2 shadow-md md:flex"
+        className="absolute start-0 top-1/2 z-10 flex -translate-y-1/2 shadow-md"
         aria-label={t("treatments.prevDoctor")}
         onClick={() => scrollBySlide(-1)}
       >
@@ -73,7 +73,7 @@ export function DoctorCarousel({ doctors }: Props) {
         type="button"
         variant="secondary"
         size="icon"
-        className="absolute end-0 top-1/2 z-10 hidden -translate-y-1/2 shadow-md md:flex"
+        className="absolute end-0 top-1/2 z-10 flex -translate-y-1/2 shadow-md"
         aria-label={t("treatments.nextDoctor")}
         onClick={() => scrollBySlide(1)}
       >

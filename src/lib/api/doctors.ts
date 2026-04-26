@@ -73,7 +73,7 @@ const DOCTORS: Doctor[] = [
     id: "mohamed_aboulghar",
     nameKey: "doctors.items.mohamed_aboulghar.name",
     titleKey: "doctors.items.mohamed_aboulghar.title",
-    image: "https://egyptianivfcenter.com/wp-content/uploads/2024/03/mohamed-aboulghar.jpg",
+    image: "https://dashboard.macro.care/assets/c7deffd6-4c19-4532-9b22-1c1e0b5058a1?format=webp&quality=100",
     facebook: "https://www.facebook.com/EgyptianIVFCenter",
     website: "https://egyptianivfcenter.com/",
   },
@@ -341,6 +341,7 @@ const DOCTORS: Doctor[] = [
     nameKey: "doctors.items.mohamed_elkersh.name",
     titleKey: "doctors.items.mohamed_elkersh.title",
     subSpecialtyKey: "doctors.items.mohamed_elkersh.sub_specialty",
+    image: "https://cdn-dr-images.vezeeta.com/Assets/Images/SelfServiceDoctors/ENT661273728a87bc84/Profile/150/mohamed-el-kersh--orthopedics_20230912144833215.jpg",
   },
   {
     id: "ahmed_salama",
@@ -383,6 +384,7 @@ const DOCTORS: Doctor[] = [
     nameKey: "doctors.items.mohamed_gebeily.name",
     titleKey: "doctors.items.mohamed_gebeily.title",
     subSpecialtyKey: "doctors.items.mohamed_gebeily.sub_specialty",
+    image: "https://ganzourihospital.com/wp-content/uploads/2022/10/محمد-الجبيلى-213x420.png",
   },
   {
     id: "yasser_batrawy",
@@ -408,6 +410,7 @@ const DOCTORS: Doctor[] = [
     nameKey: "doctors.items.reda_abolatta.name",
     titleKey: "doctors.items.reda_abolatta.title",
     subSpecialtyKey: "doctors.items.reda_abolatta.sub_specialty",
+    image: "https://dashboard.macro.care/assets/49c6fbca-09e5-4d97-be8e-41e5dcef291d?format=webp&quality=100",
   },
   {
     id: "khaled_aly",
@@ -421,7 +424,7 @@ const DOCTORS: Doctor[] = [
     nameKey: "doctors.items.mohamed_mandour.name",
     titleKey: "doctors.items.mohamed_mandour.title",
     subSpecialtyKey: "doctors.items.mohamed_mandour.sub_specialty",
-    image: "https://cdn-dr-images.vezeeta.com/Assets/Images/SelfServiceDoctors/ENTc9fec4/Profile/150/doctor-mohamed-mandour-cardiology-and-vascular-disease-1_20211124164824945.jpg",
+    image: "https://cdn-dr-images.vezeeta.com/Assets/Images/SelfServiceDoctors/ENTbb649f/Profile/150/mohamed-mandour-cardiology-and-vascular-disease_20200116104913985.jpg",
     website: "https://www.vezeeta.com/en/dr/doctor-mohamed-mandour-cardiology-and-vascular-disease-1",
   },
   {
@@ -686,6 +689,7 @@ const DOCTORS: Doctor[] = [
     id: "hossam_salah",
     nameKey: "doctors.items.hossam_salah.name",
     titleKey: "doctors.items.hossam_salah.title",
+    image: "https://images.squarespace-cdn.com/content/v1/5efa0fe78713d718e5a23e0d/1623830750777-V04F455FJW0DNVF053UB/Dr+Hossam+Salah+Mourad.png",
     website: "https://www.assih.com/en/doctors/dr-hossam-salah-mourad",
   },
   {
