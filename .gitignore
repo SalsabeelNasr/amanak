@@ -46,6 +46,10 @@ yarn-error.log*
 # IDE / editor
 .idea/
 
+# Claude Code session artefacts (worktrees, local settings)
+.claude/worktrees/
+.claude/settings.local.json
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
