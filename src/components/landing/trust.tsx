@@ -35,25 +35,25 @@ export async function Trust() {
           </h2>
         </div>
 
-        <div className="grid gap-8 md:grid-cols-3">
+        <div className="grid gap-6 md:grid-cols-3">
           {testimonialIds.map((id) => {
             const keys = TRUST_ITEMS[id];
             return (
               <div
                 key={id}
-                className="relative flex flex-col items-center text-center space-y-6 p-8 rounded-3xl border border-border bg-card shadow-sm transition-all hover:shadow-md"
+                className="relative flex flex-col items-center text-center space-y-4 p-6 sm:p-8 rounded-2xl sm:rounded-3xl border border-border bg-card shadow-sm transition-all hover:shadow-md"
               >
                 <div className="flex justify-center">
-                  <Quote className="size-8 text-primary/20" aria-hidden />
+                  <Quote className="size-6 sm:size-8 text-primary/20" aria-hidden />
                 </div>
-                <blockquote className="flex-1 text-lg font-medium leading-relaxed text-foreground italic">
+                <blockquote className="flex-1 text-base sm:text-lg font-medium leading-relaxed text-foreground italic">
                   {t(keys.quote)}
                 </blockquote>
                 <div className="space-y-1">
-                  <cite className="not-italic font-bold text-foreground block">
+                  <cite className="not-italic text-sm sm:text-base font-bold text-foreground block">
                     {t(keys.attribution)}
                   </cite>
-                  <span className="text-sm font-medium text-primary bg-primary/5 px-3 py-1 rounded-full">
+                  <span className="text-xs sm:text-sm font-medium text-primary bg-primary/5 px-3 py-1 rounded-full">
                     {t(keys.treatment)}
                   </span>
                 </div>

@@ -37,14 +37,13 @@ export default async function TreatmentsIndexPage() {
       cosmetic: t("categories.cosmetic"),
       dental: t("categories.dental"),
       mental: t("categories.mental"),
-      specialized: t("categories.specialized"),
     },
     priceLabel: t("priceLabel"),
     viewTreatment: t("viewTreatment"),
   };
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
+    <div className="mx-auto max-w-6xl px-4 pt-10 pb-24 sm:px-6 sm:pt-12 sm:pb-32 lg:pt-14">
       <TreatmentTabs items={tabItems} labels={tabLabels} />
     </div>
   );

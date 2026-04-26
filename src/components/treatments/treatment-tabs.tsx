@@ -17,8 +17,18 @@ export type TreatmentTabItem = {
   description: string;
 };
 
+const CATEGORY_ORDER = [
+  "general",
+  "ortho",
+  "cosmetic",
+  "dental",
+  "mental",
+] as const satisfies readonly TreatmentCategory[];
+
+type TreatmentTabCategory = (typeof CATEGORY_ORDER)[number];
+
 type TabLabels = {
-  categories: Record<TreatmentCategory, string>;
+  categories: Record<TreatmentTabCategory, string>;
   priceLabel: string;
   viewTreatment: string;
 };
@@ -28,16 +38,7 @@ type Props = {
   labels: TabLabels;
 };
 
-const CATEGORY_ORDER = [
-  "general",
-  "ortho",
-  "cosmetic",
-  "dental",
-  "mental",
-  "specialized",
-] as const satisfies readonly TreatmentCategory[];
-
-type CategoryId = TreatmentCategory;
+type CategoryId = TreatmentTabCategory;
 
 function TreatmentItemGrid({
   items,
@@ -113,15 +114,19 @@ export function TreatmentTabs({ items, labels }: Props) {
     <Tabs
       value={activeTab}
       onValueChange={(v) => setActiveTab(v as CategoryId)}
-      className="gap-8"
+      className="mt-0 gap-4"
     >
-      <div className="-mx-1 overflow-x-auto overscroll-x-contain pb-px [scrollbar-width:thin]">
+      <div className="-mx-1 mt-0 overflow-x-auto overscroll-x-contain pb-px [scrollbar-width:thin]">
         <TabsList variant="underline" className="inline-flex min-w-min flex-nowrap justify-start gap-1 px-1">
           {categories.map((category) => (
             <TabsTrigger
               key={category.id}
               value={category.id}
-              className="shrink-0 whitespace-nowrap"
+              className={cn(
+                "shrink-0 whitespace-nowrap",
+                "text-sm sm:text-base lg:text-xl xl:text-2xl",
+                "lg:min-h-12 lg:px-5 lg:py-3 xl:min-h-14 xl:px-6 xl:py-3.5",
+              )}
             >
               {category.label}
             </TabsTrigger>
@@ -130,7 +135,11 @@ export function TreatmentTabs({ items, labels }: Props) {
       </div>
 
       {categories.map((category) => (
-        <TabsContent key={category.id} value={category.id}>
+        <TabsContent
+          key={category.id}
+          value={category.id}
+          className="mt-0 flex-none outline-none"
+        >
           <TreatmentItemGrid items={filteredBy(category.id)} labels={labels} />
         </TabsContent>
       ))}

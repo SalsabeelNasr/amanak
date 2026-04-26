@@ -38,6 +38,13 @@ const MAX_LIST_REPEATS = 6;
 const MIN_LIST_REPEATS = 3;
 const DURATION_SEC = 58;
 
+function flexRowGapPx(track: HTMLElement): number {
+  const { columnGap, gap } = getComputedStyle(track);
+  const raw = columnGap && columnGap !== "normal" ? columnGap : gap;
+  const n = parseFloat(raw);
+  return Number.isFinite(n) ? n : 0;
+}
+
 function LogoTile({ logo }: { logo: PartnerBrandLogo }) {
   return (
     <div className="relative flex h-12 w-28 shrink-0 items-center justify-center sm:h-14 sm:w-36">
@@ -54,6 +61,7 @@ function LogoTile({ logo }: { logo: PartnerBrandLogo }) {
 
 export function PartnerLogosMarquee() {
   const viewportRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
   const firstSegmentRef = useRef<HTMLDivElement>(null);
   const [listRepeats, setListRepeats] = useState(MIN_LIST_REPEATS);
   const [shiftPx, setShiftPx] = useState(0);
@@ -62,15 +70,17 @@ export function PartnerLogosMarquee() {
 
   useLayoutEffect(() => {
     const viewport = viewportRef.current;
+    const track = trackRef.current;
     const first = firstSegmentRef.current;
-    if (!viewport || !first) return;
+    if (!viewport || !track || !first) return;
 
     const sync = () => {
       const vw = viewport.clientWidth;
-      const sw = first.offsetWidth;
+      const sw = first.getBoundingClientRect().width;
       if (sw <= 0 || vw <= 0) return;
 
-      setShiftPx(sw);
+      // One loop = first segment + flex gap before the duplicate (matches spacing between logos).
+      setShiftPx(sw + flexRowGapPx(track));
 
       setListRepeats((n) => {
         if (n >= MAX_LIST_REPEATS || sw >= vw * 1.12) return n;
@@ -80,6 +90,7 @@ export function PartnerLogosMarquee() {
 
     const ro = new ResizeObserver(sync);
     ro.observe(viewport);
+    ro.observe(track);
     ro.observe(first);
     sync();
 
@@ -99,16 +110,17 @@ export function PartnerLogosMarquee() {
       <div className="pointer-events-none absolute inset-y-0 end-0 z-10 w-10 bg-gradient-to-l from-background via-background/90 to-transparent rtl:bg-gradient-to-r" />
 
       <div
+        ref={trackRef}
         dir="ltr"
-        className="flex w-max shrink-0 flex-nowrap backface-hidden will-change-transform transform-gpu"
+        className="flex w-max shrink-0 flex-nowrap items-stretch gap-10 py-6 sm:gap-14 backface-hidden will-change-transform transform-gpu"
         style={trackStyle}
       >
-        <div ref={firstSegmentRef} className="flex shrink-0 flex-nowrap items-center gap-10 py-6 sm:gap-14">
+        <div ref={firstSegmentRef} className="flex shrink-0 flex-nowrap items-center gap-10 sm:gap-14">
           {segment.map((logo, i) => (
             <LogoTile key={`seg-a-${logo.src}-${i}`} logo={logo} />
           ))}
         </div>
-        <div className="flex shrink-0 flex-nowrap items-center gap-10 py-6 sm:gap-14" aria-hidden>
+        <div className="flex shrink-0 flex-nowrap items-center gap-10 sm:gap-14" aria-hidden>
           {segment.map((logo, i) => (
             <LogoTile key={`seg-b-${logo.src}-${i}`} logo={logo} />
           ))}

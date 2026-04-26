@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import { getTranslations } from "next-intl/server";
-import { Building2, CheckCircle2, Globe, Plane, Users } from "lucide-react";
+import { Building2, CheckCircle2, Plane } from "lucide-react";
 import { SupervisionLogosBanner } from "@/components/supervision-logos-banner";
 
 type Props = { params: Promise<{ locale: string }> };
@@ -31,13 +31,12 @@ export default async function AboutPage() {
   return (
     <div className="flex flex-col">
       {/* Our team (first section) */}
-      <section className="border-b border-border/40 bg-slate-50 py-24 sm:py-32" aria-labelledby="about-team-heading">
+      <section
+        className="border-b border-border/40 bg-slate-50 pt-10 pb-24 sm:pt-12 sm:pb-32 lg:pt-14"
+        aria-labelledby="about-team-heading"
+      >
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
           <div className="mb-8 max-w-3xl space-y-4 text-start sm:mb-10 rtl:text-right">
-            <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-1 text-sm font-semibold text-primary">
-              <Users className="h-4 w-4" aria-hidden />
-              <span>{t("teamBadge")}</span>
-            </div>
             <h1 id="about-team-heading" className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
               {t("teamTitle")}
             </h1>
@@ -69,13 +68,9 @@ export default async function AboutPage() {
       </section>
 
       {/* Reach — second section (restored) */}
-      <section className="border-b border-border/40 bg-background py-16 sm:py-20">
+      <section className="border-b border-border/40 bg-background py-24 sm:py-32">
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
           <div className="mb-10 max-w-2xl space-y-3 text-start">
-            <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-0.5 text-xs font-semibold text-primary sm:text-sm">
-              <Globe className="h-3.5 w-3.5 sm:h-4 sm:w-4" aria-hidden />
-              <span>{t("reachSectionBadge")}</span>
-            </div>
             <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">{t("reachTitle")}</h2>
             <p className="text-base leading-relaxed text-muted-foreground sm:text-lg">{t("reachBody")}</p>
           </div>
@@ -129,7 +124,7 @@ export default async function AboutPage() {
         </div>
       </section>
 
-      <SupervisionLogosBanner />
+      <SupervisionLogosBanner className="py-24 sm:py-32" />
     </div>
   );
 }

@@ -1,5 +1,5 @@
 import { getTranslations } from "next-intl/server";
-import { ShieldCheck, CheckCircle2 } from "lucide-react";
+import { ShieldCheck } from "lucide-react";
 
 export async function PainPoints() {
   const t = await getTranslations("landing.painPoints");
@@ -45,11 +45,6 @@ export async function PainPoints() {
                   <p className="text-muted-foreground leading-relaxed">
                     {t(row.s)}
                   </p>
-                </div>
-                
-                <div className="flex items-center gap-2 text-primary font-semibold text-sm">
-                  <CheckCircle2 className="h-4 w-4" />
-                  <span>{t("colSolution")}</span>
                 </div>
               </div>
 

@@ -56,11 +56,11 @@ export default async function ContactPage({ searchParams }: Props) {
       <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 items-stretch gap-12 lg:grid-cols-2">
           <div className="min-h-0 space-y-8">
-            <header className="space-y-3 text-start">
-              <h1 className="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+            <header className="space-y-4 text-start rtl:text-right">
+              <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
                 {tContact("title")}
               </h1>
-              <p className="text-base leading-relaxed text-muted-foreground sm:text-lg">
+              <p className="text-lg leading-relaxed text-muted-foreground sm:text-xl">
                 {isPartnerIntent ? tContact("partnerLead") : tContact("lead")}
               </p>
             </header>
@@ -141,8 +141,8 @@ export default async function ContactPage({ searchParams }: Props) {
       </div>
       <section id="book-consultation" className="scroll-mt-24 border-t border-border bg-accent/5 py-12">
         <div className="mx-auto max-w-6xl px-4 pb-10 sm:px-6 lg:px-8">
-          <header className="space-y-3 text-start">
-            <h2 className="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+          <header className="space-y-3 text-start rtl:text-right">
+            <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
               {tContact("bookingTitle")}
             </h2>
             <p className="text-base leading-relaxed text-muted-foreground sm:text-lg">

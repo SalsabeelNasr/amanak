@@ -49,8 +49,7 @@
       "ortho": "Orthopedics",
       "cosmetic": "Cosmetic Surgery",
       "dental": "Dental",
-      "mental": "Mental Health",
-      "specialized": "Specialized Care"
+      "mental": "Mental Health"
     },
     "items": {
       "diabetic_foot": {
@@ -513,7 +512,6 @@
     "painPoints": {
       "title": "We Make Medical Travel Simple",
       "colProblem": "Common Challenges",
-      "colSolution": "The Amanak Solution",
       "row1p": "Budget confusion and hidden costs",
       "row1s": "Clear, all-inclusive packages with fixed pricing.",
       "row2p": "Long waits and coordination delays",
