@@ -63,13 +63,13 @@
         "body": "Complex diabetic foot cases require immediate and comprehensive medical evaluation, including blood flow, infection control, and a precise wound care plan to avoid complications that may threaten the limb.\n\nIn Egypt, medical teams have extensive experience in dealing with joint disease and deep infection cases, using the latest imaging and revascularization techniques.\n\nWe help you share your medical records early and align on a realistic treatment plan, with clarification on stay duration, aftercare details, and follow-up with your doctor after return."
       },
       "ivf": {
-        "title": "IVF & Fertility",
-        "description": "Integrated programs to achieve the dream of motherhood with success rates matching the best global centers.",
+        "title": "IVF & Reproductive Medicine",
+        "description": "Integrated fertility programs covering Conventional IVF, ICSI, no-needle protocols, genetic screening (PGD/PGT) and gender selection — with success rates matching the best global centers.",
         "doctors": "Prof. Mohamed Aboulghar, Prof. Maged Adel Aziz",
-        "hospitals": "Bedaya Hospital, Sunrise Fertility Center, Egyptian IVF Center",
-        "techniques": "No-Needle IVF, Genetic Screening (PGD/PGT), Gender Selection",
-        "success_rate": "60% - 70% for women under 35",
-        "body": "The success of IVF depends on precise medical protocols, reliable lab quality, and transparent planning for each stage, away from general marketing promises.\n\nEgypt has long-standing experience in treating fertility diseases, where a customized treatment program is designed for each case based on age, ovarian reserve, and the couple's medical history.\n\nWe coordinate remote medical record review and clarify all details of the treatment stages, with full logistical support so you can focus on your medical journey calmly."
+        "hospitals": "Egyptian IVF-ET Center, Bedaya Hospital, Cairo Fertility Centers",
+        "techniques": "Conventional IVF, ICSI, No-Needle IVF, PGD/PGT Genetic Screening, Gender Selection, Embryo Cryopreservation",
+        "success_rate": "Pregnancy rates aligned with leading European IVF registries (age-stratified)",
+        "body": "The success of an IVF cycle depends on precise medical protocols, reliable embryology lab quality, and a transparent plan tailored to each couple — not generic marketing.\n\nEgypt has decades of experience treating fertility conditions; a customized program is built around age, ovarian reserve, sperm parameters, and prior history. We coordinate remote review of your medical records, align on the right pathway, and book the cycle around your travel.\n\n**Conventional IVF.** Eggs and sperm are placed together in a controlled lab environment and selected embryos are transferred to the uterus. It remains the most common pathway for many indications — including age-related decline in egg quality, mild male-factor cases, and unexplained infertility.\n\n**ICSI (Intracytoplasmic Sperm Injection).** A single selected sperm is injected directly into each mature egg under a microscope, then the resulting embryos are transferred according to medical protocol. ICSI is the standard choice for low sperm count or motility, prior IVF failure, and specific genetic indications.\n\n**Add-on options.** PGD/PGT genetic screening for monogenic disease or chromosomal screening; gender selection where legally permitted; cryopreservation of surplus embryos; donor sperm/egg coordination through accredited partner banks.\n\nDoctors on this page are matched to your case profile — your assigned consultant's top-rated sub-specialty appears under their name in the carousel below, so you can see at a glance whether they lead with conventional IVF, ICSI, or a related procedure."
       },
       "oncology": {
         "title": "Oncology (Cancer Treatment)",
@@ -268,24 +268,6 @@
         "techniques": "Robotic Hair Transplant (ARTAS)",
         "success_rate": "ABHRS Certified Specialists",
         "body": "Robotic systems support graft extraction mapping and implantation planning to improve speed and precision in selected candidates. The approach is suitable for patients prioritizing advanced technology pathways.\n\nStarting package price aligns with Clinido source pricing from 80,000 EGP (about $1,600)."
-      },
-      "conventional_ivf": {
-        "title": "Conventional IVF",
-        "description": "Egg and sperm fertilization in the lab followed by embryo transfer.",
-        "doctors": "Prof. Mohamed Aboulghar, Prof. Maged Adel Aziz",
-        "hospitals": "Bedaya Hospital, Sunrise Fertility Center, Egyptian IVF Center",
-        "techniques": "Conventional IVF Protocol",
-        "success_rate": "60% - 70% for women under 35",
-        "body": "Conventional IVF combines eggs and sperm in a controlled lab environment and transfers selected embryos to the uterus. It remains the most common fertility pathway for many indications.\n\nStarting package price aligns with Clinido source pricing from 30,000 EGP (about $600)."
-      },
-      "icsi": {
-        "title": "ICSI (Intracytoplasmic Sperm Injection)",
-        "description": "Single sperm injection into an egg for male-factor infertility and complex cases.",
-        "doctors": "Prof. Mohamed Aboulghar, Prof. Maged Adel Aziz",
-        "hospitals": "Bedaya Hospital, Sunrise Fertility Center, Egyptian IVF Center",
-        "techniques": "ICSI Fertilization",
-        "success_rate": "60% - 70% for women under 35",
-        "body": "ICSI injects one selected sperm into each mature egg, then transfers resulting embryos according to medical protocol. It is commonly used in low sperm quality and prior IVF-failure scenarios.\n\nStarting package price aligns with Clinido source pricing from 30,000 EGP (about $600)."
       },
       "hip_replacement": {
         "title": "Hip Replacement Surgery",
