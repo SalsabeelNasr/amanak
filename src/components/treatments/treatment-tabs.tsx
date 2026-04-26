@@ -18,13 +18,7 @@ export type TreatmentTabItem = {
 };
 
 type TabLabels = {
-  categories: {
-    general: string;
-    ortho: string;
-    cosmetic: string;
-    dental: string;
-    mental: string;
-  };
+  categories: Record<TreatmentCategory, string>;
   priceLabel: string;
   viewTreatment: string;
 };
@@ -34,13 +28,14 @@ type Props = {
   labels: TabLabels;
 };
 
-const CATEGORY_ORDER: TreatmentCategory[] = [
+const CATEGORY_ORDER = [
   "general",
   "ortho",
   "cosmetic",
   "dental",
   "mental",
-];
+  "specialized",
+] as const satisfies readonly TreatmentCategory[];
 
 type CategoryId = TreatmentCategory;
 

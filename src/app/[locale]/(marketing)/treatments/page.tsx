@@ -37,6 +37,7 @@ export default async function TreatmentsIndexPage() {
       cosmetic: t("categories.cosmetic"),
       dental: t("categories.dental"),
       mental: t("categories.mental"),
+      specialized: t("categories.specialized"),
     },
     priceLabel: t("priceLabel"),
     viewTreatment: t("viewTreatment"),
