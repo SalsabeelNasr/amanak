@@ -4,10 +4,12 @@ import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { getTreatmentBySlug, listTreatments } from "@/lib/api/treatments";
 import { getDoctorsByIds } from "@/lib/api/doctors";
+import { getVideosForTreatment } from "@/lib/api/doctor-videos";
 import { ROUTES } from "@/lib/routes";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { DoctorCarousel } from "@/components/treatments/doctor-carousel";
+import { TreatmentVideoCarousel } from "@/components/treatments/treatment-video-carousel";
 
 type Props = { params: Promise<{ locale: string; slug: string }> };
 
@@ -52,9 +54,11 @@ export default async function TreatmentDetailPage({ params }: Props) {
 
   if (!treatment) notFound();
 
-  const doctors = treatment.doctorIds 
-    ? await getDoctorsByIds(treatment.doctorIds)
-    : [];
+  const [doctors, videos] = await Promise.all([
+    treatment.doctorIds ? getDoctorsByIds(treatment.doctorIds) : Promise.resolve([]),
+    getVideosForTreatment(treatment.slug),
+  ]);
+  const doctorsById = Object.fromEntries(doctors.map((d) => [d.id, d]));
 
   return (
     <div className="mx-auto max-w-6xl space-y-12 px-4 py-16 sm:px-6">
@@ -82,20 +86,7 @@ export default async function TreatmentDetailPage({ params }: Props) {
             </section>
           )}
 
-          {treatment.videoUrlKey && (
-            <section className="space-y-6 border-t border-border pt-12">
-              <h3 className="text-2xl font-bold text-foreground">{t("videoLabel")}</h3>
-              <div className="aspect-video overflow-hidden rounded-3xl border border-border bg-muted shadow-2xl">
-                <iframe
-                  src={labels(treatment.videoUrlKey)}
-                  title={labels(treatment.titleKey)}
-                  className="h-full w-full"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                />
-              </div>
-            </section>
-          )}
+          <TreatmentVideoCarousel videos={videos} doctorsById={doctorsById} />
         </div>
 
         <aside className="space-y-8">
