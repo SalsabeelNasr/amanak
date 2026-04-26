@@ -1062,107 +1062,133 @@
       },
       "hatem_galal_zaki": {
         "name": "Dr. Hatem Galal Zaki",
-        "title": "Consultant of Orthopedic Surgery"
+        "title": "Consultant of Orthopedic Surgery",
+        "sub_specialty": "Hip & Shoulder Arthroscopy"
       },
       "mahmoud_abdelkarem": {
         "name": "Dr. Mahmoud Abdelkarem",
-        "title": "Consultant of Orthopedic Surgery"
+        "title": "Consultant of Orthopedic Surgery",
+        "sub_specialty": "Hip & Shoulder Arthroscopy"
       },
       "mohamed_asal": {
         "name": "Dr. Mohamed Asal",
-        "title": "Consultant of Orthopedic Surgery"
+        "title": "Consultant of Orthopedic Surgery",
+        "sub_specialty": "Joint Replacement"
       },
       "mohamed_mokhtar": {
         "name": "Dr. Mohamed Mokhtar",
-        "title": "Consultant of Orthopedic Surgery"
+        "title": "Consultant of Orthopedic Surgery",
+        "sub_specialty": "Foot & Ankle Surgery"
       },
       "nasef_mohamed_nasef": {
         "name": "Dr. Nasef Mohamed Nasef",
-        "title": "Consultant of Orthopedic Surgery"
+        "title": "Consultant of Orthopedic Surgery",
+        "sub_specialty": "Foot & Ankle Surgery"
       },
       "saleh_gamil": {
         "name": "Dr. Saleh Gamil",
-        "title": "Consultant of Orthopedic Surgery"
+        "title": "Consultant of Orthopedic Surgery",
+        "sub_specialty": "Joint Replacement"
       },
       "ahmed_rezk_2": {
         "name": "Dr. Ahmed Rezk",
-        "title": "Consultant of Orthopedic Surgery"
+        "title": "Consultant of Orthopedic Surgery",
+        "sub_specialty": "Knee Surgery"
       },
       "mohamed_amr": {
         "name": "Dr. Mohamed Amr",
-        "title": "Consultant of Orthopedic Surgery"
+        "title": "Consultant of Orthopedic Surgery",
+        "sub_specialty": "Hip & Shoulder Arthroscopy"
       },
       "waleed_alnahal": {
         "name": "Dr. Waleed Alnahal",
-        "title": "Consultant of Orthopedic Surgery"
+        "title": "Consultant of Orthopedic Surgery",
+        "sub_specialty": "Hip & Shoulder Arthroscopy"
       },
       "wael_samir": {
         "name": "Dr. Wael Samir",
-        "title": "Consultant of Orthopedic Surgery"
+        "title": "Consultant of Orthopedic Surgery",
+        "sub_specialty": "Joint Replacement"
       },
       "haitham_abdelazeem": {
         "name": "Dr. Haitham Abdelazeem",
-        "title": "Consultant of Orthopedic Surgery"
+        "title": "Consultant of Orthopedic Surgery",
+        "sub_specialty": "Joint Replacement"
       },
       "hisham_abdelbaky": {
         "name": "Dr. Hisham Abdelbaky",
-        "title": "Consultant of Orthopedic Surgery"
+        "title": "Consultant of Orthopedic Surgery",
+        "sub_specialty": "Joint Replacement"
       },
       "mostafa_baraka": {
         "name": "Dr. Mostafa Baraka",
-        "title": "Consultant of Orthopedic Surgery"
+        "title": "Consultant of Orthopedic Surgery",
+        "sub_specialty": "Pediatric Orthopedics"
       },
       "mohamed_elkersh": {
         "name": "Dr. Mohamed Elkersh",
-        "title": "Consultant of Orthopedic Surgery"
+        "title": "Consultant of Orthopedic Surgery",
+        "sub_specialty": "Pediatric Orthopedics"
       },
       "ahmed_salama": {
         "name": "Dr. Ahmed Salama",
-        "title": "Consultant of Orthopedic Surgery"
+        "title": "Consultant of Orthopedic Surgery",
+        "sub_specialty": "Spine Surgery"
       },
       "waheed_yousry": {
         "name": "Dr. Waheed Yousry",
-        "title": "Consultant of Orthopedic Surgery"
+        "title": "Consultant of Orthopedic Surgery",
+        "sub_specialty": "Spine Surgery"
       },
       "hany_abdelgawad": {
         "name": "Dr. Hany Abdelgawad",
-        "title": "Consultant of Orthopedic Surgery"
+        "title": "Consultant of Orthopedic Surgery",
+        "sub_specialty": "Spine Surgery"
       },
       "yehia_bromboly": {
         "name": "Dr. Yehia Bromboly",
-        "title": "Consultant of Orthopedic Surgery"
+        "title": "Consultant of Orthopedic Surgery",
+        "sub_specialty": "Spine Surgery"
       },
       "ahmed_hosny": {
         "name": "Dr. Ahmed Hosny",
-        "title": "Consultant of Orthopedic Surgery"
+        "title": "Consultant of Orthopedic Surgery",
+        "sub_specialty": "Spine Surgery"
       },
       "mohamed_gebeily": {
         "name": "Dr. Mohamed Gebeily",
-        "title": "Consultant of Orthopedic Surgery"
+        "title": "Consultant of Orthopedic Surgery",
+        "sub_specialty": "Deformity Correction & Revision"
       },
       "yasser_batrawy": {
         "name": "Dr. Yasser Batrawy",
-        "title": "Consultant of Orthopedic Surgery"
+        "title": "Consultant of Orthopedic Surgery",
+        "sub_specialty": "Limb Lengthening"
       },
       "yasser_sadek": {
         "name": "Dr. Yasser Sadek",
-        "title": "Consultant of Cardiology"
+        "title": "Consultant of Cardiology",
+        "sub_specialty": "TAVI"
       },
       "reda_abolatta": {
         "name": "Dr. Reda Abolatta",
-        "title": "Consultant of Cardiology"
+        "title": "Consultant of Cardiology",
+        "sub_specialty": "TAVI"
       },
       "khaled_aly": {
         "name": "Dr. Khaled Aly",
-        "title": "Consultant of Cardiology"
+        "title": "Consultant of Cardiology",
+        "sub_specialty": "Chronic Total Occlusion (CTO)"
       },
       "mohamed_mandour": {
         "name": "Dr. Mohamed Mandour",
-        "title": "Consultant of Cardiology"
+        "title": "Consultant of Cardiology",
+        "sub_specialty": "Chronic Total Occlusion (CTO)"
       },
       "hossam_mansour": {
         "name": "Dr. Hossam Mansour",
-        "title": "Consultant of Cardiology"
+        "title": "Consultant of Cardiology",
+        "sub_specialty": "Chronic Total Occlusion (CTO)"
       },
       "osama_amen": {
         "name": "Dr. Osama Amen",
@@ -1182,19 +1208,23 @@
       },
       "mervat_abolmaaty": {
         "name": "Dr. Mervat Abolmaaty",
-        "title": "Consultant of Cardiology"
+        "title": "Consultant of Cardiology",
+        "sub_specialty": "Cardiac Electrophysiology"
       },
       "ghalia_almhanny": {
         "name": "Dr. Ghalia Almhanny",
-        "title": "Consultant of Cardiology"
+        "title": "Consultant of Cardiology",
+        "sub_specialty": "Cardiac Electrophysiology"
       },
       "tarek_abdelsalam": {
         "name": "Dr. Tarek Abdelsalam",
-        "title": "Consultant of Cardiology"
+        "title": "Consultant of Cardiology",
+        "sub_specialty": "Cardiac Electrophysiology"
       },
       "mohamed_damaty": {
         "name": "Dr. Mohamed Damaty",
-        "title": "Consultant of Cardiology"
+        "title": "Consultant of Cardiology",
+        "sub_specialty": "Cardiac Electrophysiology"
       },
       "tarek_rasheed": {
         "name": "Dr. Tarek Rasheed",
@@ -1202,7 +1232,8 @@
       },
       "ahmed_alsawaah": {
         "name": "Dr. Ahmed Alsawaah",
-        "title": "Consultant of Cardiology"
+        "title": "Consultant of Cardiology",
+        "sub_specialty": "Chronic Total Occlusion (CTO)"
       },
       "nabil_farag": {
         "name": "Dr. Nabil Farag",
@@ -1214,7 +1245,8 @@
       },
       "emad_ebeid": {
         "name": "Dr. Emad Ebeid",
-        "title": "Consultant of Oncology"
+        "title": "Consultant of Oncology",
+        "sub_specialty": "Pediatric Oncology"
       },
       "emad_barsoum": {
         "name": "Dr. Emad Barsoum",
@@ -1366,7 +1398,8 @@
       },
       "mostafada_farid": {
         "name": "Dr. Mostafada Farid",
-        "title": "Consultant of Neurology"
+        "title": "Consultant of Neurology",
+        "sub_specialty": "Interventional Neurology"
       },
       "mahmoud_hemeda": {
         "name": "Dr. Mahmoud Hemeda",
@@ -1414,7 +1447,8 @@
       },
       "ahmed_abdelaziz": {
         "name": "Dr. Ahmed Abdelaziz",
-        "title": "Consultant of General Surgery"
+        "title": "Consultant of General Surgery",
+        "sub_specialty": "Anal & Colorectal Surgery"
       },
       "mohamed_abdelrazek": {
         "name": "Dr. Mohamed Abdelrazek",
@@ -1562,7 +1596,8 @@
       },
       "tarek_amer": {
         "name": "Dr. Tarek Amer",
-        "title": "Consultant of Plastic Surgery"
+        "title": "Consultant of Plastic Surgery",
+        "sub_specialty": "Facial Palsy"
       },
       "hossam_abolatta": {
         "name": "Dr. Hossam Abolatta",
@@ -1582,27 +1617,33 @@
       },
       "mohamed_shawky_khater": {
         "name": "Dr. Mohamed Shawky Khater",
-        "title": "Consultant of Internal Medicine"
+        "title": "Consultant of Internal Medicine",
+        "sub_specialty": "Geriatric Medicine"
       },
       "hala_sweed": {
         "name": "Dr. Hala Sweed",
-        "title": "Consultant of Internal Medicine"
+        "title": "Consultant of Internal Medicine",
+        "sub_specialty": "Geriatric Medicine"
       },
       "mohamed_elsherbeny": {
         "name": "Dr. Mohamed Elsherbeny",
-        "title": "Consultant of Internal Medicine"
+        "title": "Consultant of Internal Medicine",
+        "sub_specialty": "Gastroenterology & Endoscopy"
       },
       "rami_nakhka": {
         "name": "Dr. Rami Nakhka",
-        "title": "Consultant of Internal Medicine"
+        "title": "Consultant of Internal Medicine",
+        "sub_specialty": "Gastroenterology & Endoscopy"
       },
       "ahmed_taee": {
         "name": "Dr. Ahmed Taee",
-        "title": "Consultant of Internal Medicine"
+        "title": "Consultant of Internal Medicine",
+        "sub_specialty": "Gastroenterology & Endoscopy"
       },
       "hany_haroun": {
         "name": "Dr. Hany Haroun",
-        "title": "Consultant of Internal Medicine"
+        "title": "Consultant of Internal Medicine",
+        "sub_specialty": "Gastroenterology & Endoscopy"
       }
     }
   },

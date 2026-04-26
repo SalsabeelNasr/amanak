@@ -11,6 +11,8 @@ export type Doctor = {
   id: string;
   nameKey: string;
   titleKey: string;
+  /** Sub-specialty (e.g. "Joint Replacement", "TAVI"); rendered under the title. */
+  subSpecialtyKey?: string;
   image?: string;
   instagram?: string;
   facebook?: string;

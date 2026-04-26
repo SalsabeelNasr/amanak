@@ -82,6 +82,11 @@ export function DoctorCarousel({ doctors }: Props) {
                 <p className="text-sm text-muted-foreground leading-relaxed">
                   {t(doctor.titleKey)}
                 </p>
+                {doctor.subSpecialtyKey && (
+                  <p className="mt-0.5 text-xs font-medium uppercase tracking-wide text-primary/80">
+                    {t(doctor.subSpecialtyKey)}
+                  </p>
+                )}
               </div>
 
               {/* Social Links */}
