@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { getTranslations } from "next-intl/server";
-import { MapPin, Home, ChevronRight } from "lucide-react";
+import { MapPin, Home } from "lucide-react";
 
 const LISTING_MSG = {
   listing1: {
@@ -85,7 +85,6 @@ export async function AccommodationTrust() {
   const t = await getTranslations("landing.accommodation");
   const tFooter = await getTranslations("footer");
   const councilLogoAlt = tFooter("supervisionCouncilAlt");
-  const verifyUrl = t("verifyLinkUrl");
   const sectionId = "accommodation-trust-heading";
 
   const listings: { id: ListingId; image: string }[] = [
@@ -159,19 +158,10 @@ export async function AccommodationTrust() {
                 <NationalCouncilTrustLogo alt={councilLogoAlt} />
               </div>
 
-              <div className="flex flex-wrap items-center gap-6 pt-2">
-                <a
-                  href={verifyUrl}
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-2.5 text-sm font-bold text-primary-foreground shadow-lg shadow-primary/20 transition-all hover:bg-primary/90 hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0"
-                >
-                  {t("verifyLinkText")}
-                  <ChevronRight className="h-4 w-4 rtl:rotate-180" />
-                </a>
-                <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
-                  <div className="h-1 w-1 rounded-full bg-border" />
-                  <span>{t("officialMemberEtaa")}</span>
-                </div>
+              <div className="pt-2">
+                <span className="inline-flex items-center rounded-full bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground shadow-sm">
+                  {t("officialMemberEtaa")}
+                </span>
               </div>
             </div>
             <div className="hidden shrink-0 md:flex md:items-center">

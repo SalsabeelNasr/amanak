@@ -9,7 +9,6 @@ import {
   Sheet,
   SheetClose,
   SheetContent,
-  SheetHeader,
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
@@ -84,34 +83,36 @@ export function SiteHeader() {
 
   return (
     <header className="sticky top-0 z-40 border-b border-border/80 bg-card/90 pt-[env(safe-area-inset-top,0px)] backdrop-blur supports-backdrop-filter:bg-card/80">
-      {/* Grid mirrors in RTL: logo column moves to inline-end, actions to inline-start (mirror of LTR). */}
-      <div className="mx-auto grid min-h-14 w-full max-w-6xl grid-cols-[auto_1fr_auto] items-center gap-3 px-4 sm:px-6">
+      {/* Mobile: flex + justify-between mirrors in RTL (logo inline-start, actions inline-end). md+: 3-col grid. */}
+      <div className="mx-auto flex min-h-14 w-full max-w-6xl items-center justify-between gap-0 px-4 sm:px-6 md:grid md:grid-cols-[auto_1fr_auto] md:items-center md:gap-3 md:justify-normal">
         <Link
           href="/"
           data-amanak-wordmark
           className={cn(
             wordmarkFont.variable,
             /* font-wordmark + data attr: logo always Saira Stencil; exempt from locale --font-sans (Roboto/IBM order). */
-            "shrink-0 justify-self-start font-wordmark text-xl font-black leading-none tracking-tight text-brand-wordmark [font-synthesis-weight:auto] transition-colors hover:text-brand-wordmark/85 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background sm:text-2xl",
+            "shrink-0 font-wordmark text-xl font-black leading-none tracking-tight text-brand-wordmark [font-synthesis-weight:auto] transition-colors hover:text-brand-wordmark/85 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background sm:text-2xl md:justify-self-start",
           )}
           prefetch={false}
         >
           Amanak
         </Link>
 
-        <div className="hidden min-w-0 justify-self-center md:flex">
+        <div className="hidden min-w-0 md:flex md:justify-self-center">
           <NavLinks />
         </div>
 
-        <div className="flex shrink-0 items-center justify-end gap-2 sm:gap-3">
-          <LocaleSwitcher />
-          <Link
-            href={ROUTES.login}
-            className={cn(buttonVariants({ size: "sm" }))}
-            prefetch={false}
-          >
-            {t("login")}
-          </Link>
+        <div className="flex shrink-0 items-center gap-2 sm:gap-3 md:justify-end">
+          <div className="hidden items-center gap-2 sm:gap-3 md:flex">
+            <LocaleSwitcher />
+            <Link
+              href={ROUTES.login}
+              className={cn(buttonVariants({ size: "sm" }))}
+              prefetch={false}
+            >
+              {t("login")}
+            </Link>
+          </div>
 
           <div className="md:hidden">
             <Sheet>
@@ -126,11 +127,32 @@ export function SiteHeader() {
                 <span className="sr-only">{t("openMenu")}</span>
               </SheetTrigger>
               <SheetContent side={sheetSide} className="gap-0 p-0" id="mobile-navigation">
-                <SheetHeader className="border-b border-border p-4 text-start">
-                  <SheetTitle className="text-start">{t("openMenu")}</SheetTitle>
-                </SheetHeader>
-                <div className="p-4">
+                <SheetTitle className="sr-only">{t("openMenu")}</SheetTitle>
+                <div className="flex flex-col p-4">
                   <NavLinks closeSheet />
+                  <div className="mt-6 flex flex-col gap-3 border-t border-border pt-6">
+                    <SheetClose
+                      nativeButton={false}
+                      render={
+                        <LocaleSwitcher className="rounded-md px-3 py-3 text-base hover:bg-muted hover:text-foreground" />
+                      }
+                    />
+                    <SheetClose
+                      nativeButton={false}
+                      render={
+                        <Link
+                          href={ROUTES.login}
+                          className={cn(
+                            buttonVariants({ size: "sm" }),
+                            "w-full justify-center",
+                          )}
+                          prefetch={false}
+                        >
+                          {t("login")}
+                        </Link>
+                      }
+                    />
+                  </div>
                 </div>
               </SheetContent>
             </Sheet>

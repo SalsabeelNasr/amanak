@@ -15,10 +15,6 @@ export const DOCTOR_REEL_EMBEDS: readonly DoctorReelItem[] = [
     embedPath: "reel/DHBasUMN31l",
   },
   {
-    canonicalUrl: "https://www.instagram.com/reel/DQzP69tjUhV/",
-    embedPath: "reel/DQzP69tjUhV",
-  },
-  {
     canonicalUrl: "https://www.instagram.com/reel/C33lugHoJpC/",
     embedPath: "reel/C33lugHoJpC",
   },
@@ -33,6 +29,10 @@ export const DOCTOR_REEL_EMBEDS: readonly DoctorReelItem[] = [
   {
     canonicalUrl: "https://www.instagram.com/reel/DLskBSttm55/",
     embedPath: "reel/DLskBSttm55",
+  },
+  {
+    canonicalUrl: "https://www.instagram.com/reel/DQzP69tjUhV/",
+    embedPath: "reel/DQzP69tjUhV",
   },
 ] as const;
 

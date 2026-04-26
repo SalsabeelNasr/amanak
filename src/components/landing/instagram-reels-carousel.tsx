@@ -73,7 +73,7 @@ export function InstagramReelsCarousel({ items, className }: Props) {
               <iframe
                 src={instagramEmbedSrc(item.embedPath)}
                 title={`${t("iframeTitle")} ${index + 1}`}
-                className="h-[26rem] w-full max-w-full border-0 bg-muted sm:h-[30rem] md:h-[34rem]"
+                className="h-[min(40rem,78svh)] w-full max-w-full border-0 bg-muted"
                 allowFullScreen
                 loading={index < 2 ? "eager" : "lazy"}
                 referrerPolicy="strict-origin-when-cross-origin"

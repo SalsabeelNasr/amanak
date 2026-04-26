@@ -36,7 +36,7 @@ function repeatLogos(logos: ReadonlyArray<PartnerBrandLogo>, times: number): Par
 
 const MAX_LIST_REPEATS = 6;
 const MIN_LIST_REPEATS = 3;
-const DURATION_SEC = 58;
+const DURATION_SEC = 85;
 
 function flexRowGapPx(track: HTMLElement): number {
   const { columnGap, gap } = getComputedStyle(track);

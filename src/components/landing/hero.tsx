@@ -17,7 +17,7 @@ export async function LandingHero() {
         <div className="grid gap-10 lg:grid-cols-2 lg:items-center lg:gap-16">
           <div className="flex flex-col items-start text-start space-y-8">
             <div className="space-y-4 max-w-2xl">
-              <h1 className="amanak-marketing-hero-title">{t("title")}</h1>
+              <h1 className="amanak-marketing-hero-title whitespace-pre-line">{t("title")}</h1>
               <p className="amanak-marketing-hero-subtitle">{t("subtitle")}</p>
             </div>
             <div className="flex flex-wrap items-center gap-4">
