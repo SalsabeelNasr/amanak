@@ -3,6 +3,7 @@
 import { useTranslations } from "next-intl";
 import type { Doctor, DoctorVideo, VideoSource } from "@/types";
 import { videoEmbedSrc } from "@/lib/api/doctor-videos";
+import { cn } from "@/lib/utils";
 
 type Props = {
   videos: DoctorVideo[];
@@ -62,17 +63,20 @@ export function TreatmentVideoCarousel({ videos, doctorsById }: Props) {
       <h3 className="text-2xl font-bold text-foreground">
         {t("treatments.videoLabel")}
       </h3>
-      <div className="flex gap-6 overflow-x-auto pb-6 scrollbar-hide snap-x snap-mandatory">
+      <div className="flex flex-wrap items-start justify-center gap-x-6 gap-y-10 sm:justify-start">
         {videos.map((v, idx) => {
           const doctor = doctorsById[v.doctorId];
           const Icon = SOURCE_ICON[v.source];
           const vertical = isVertical(v.source);
+          const narrowTile = v.source !== "youtube";
           return (
             <article
               key={v.id}
-              className={`flex-none snap-start ${
-                vertical ? "w-[280px]" : "w-[440px] max-w-full"
-              }`}
+              className={cn(
+                narrowTile
+                  ? "w-[min(280px,100%)] shrink-0 grow-0"
+                  : "w-full min-w-0 max-w-3xl basis-full shrink-0",
+              )}
             >
               <div
                 className={`relative overflow-hidden rounded-2xl border border-border bg-muted shadow-sm ${

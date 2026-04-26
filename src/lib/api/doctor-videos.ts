@@ -1,4 +1,5 @@
 import type { DoctorVideo } from "@/types";
+import { videoSlugsForHairTransplantPage } from "@/lib/api/hair-transplant-variants";
 import { applyMockDelay } from "./mock-delay";
 
 /**
@@ -464,7 +465,7 @@ const DOCTOR_VIDEOS: DoctorVideo[] = [
     embedRef: "reel/C2XtHpoLcJV",
     canonicalUrl: "https://www.instagram.com/dr.marwan_noureldin/reel/C2XtHpoLcJV/",
     doctorId: "marwan_noureldin",
-    treatmentSlug: "fue-extraction",
+    treatmentSlug: "hair-transplant",
     captionKey: "videos.items.marwan_noureldin_v3.caption",
     publishedAt: "2024-01-25",
   },
@@ -631,8 +632,11 @@ export async function getVideosForTreatment(
   options?: { simulateDelay?: boolean },
 ): Promise<DoctorVideo[]> {
   await applyMockDelay(options?.simulateDelay);
+  const hairSlugs = videoSlugsForHairTransplantPage();
   return DOCTOR_VIDEOS
-    .filter((v) => v.treatmentSlug === treatmentSlug)
+    .filter((v) =>
+      treatmentSlug === "hair-transplant" ? hairSlugs.has(v.treatmentSlug) : v.treatmentSlug === treatmentSlug,
+    )
     .sort((a, b) => (b.publishedAt ?? "").localeCompare(a.publishedAt ?? ""));
 }
 

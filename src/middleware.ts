@@ -27,6 +27,26 @@ export default function middleware(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
+  const legacyHair = /^\/(ar|en)\/treatments\/(fue-extraction|fut-transplantation|dhi-implantation|robotic-hair-transplant)\/?$/.exec(
+    request.nextUrl.pathname,
+  );
+  if (legacyHair) {
+    const locale = legacyHair[1];
+    const url = request.nextUrl.clone();
+    url.pathname = `/${locale}/treatments/hair-transplant`;
+    return NextResponse.redirect(url, 308);
+  }
+
+  const removedLipReduction = /^\/(ar|en)\/treatments\/lip-reduction\/?$/.exec(
+    request.nextUrl.pathname,
+  );
+  if (removedLipReduction) {
+    const locale = removedLipReduction[1];
+    const url = request.nextUrl.clone();
+    url.pathname = `/${locale}/treatments`;
+    return NextResponse.redirect(url, 308);
+  }
+
   return intlMiddleware(request);
 }
 

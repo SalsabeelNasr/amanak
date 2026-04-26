@@ -5,10 +5,15 @@ import { Link } from "@/i18n/navigation";
 import { getTreatmentBySlug, listTreatments } from "@/lib/api/treatments";
 import { getDoctorsByIds } from "@/lib/api/doctors";
 import { getVideosForTreatment } from "@/lib/api/doctor-videos";
+import {
+  HAIR_TRANSPLANT_VARIANTS,
+  isMergedHairTransplantTreatmentSlug,
+} from "@/lib/api/hair-transplant-variants";
 import { ROUTES } from "@/lib/routes";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { DoctorCarousel } from "@/components/treatments/doctor-carousel";
+import { HairTransplantTypeSections } from "@/components/treatments/hair-transplant-type-sections";
 import { TreatmentVideoCarousel } from "@/components/treatments/treatment-video-carousel";
 
 type Props = { params: Promise<{ locale: string; slug: string }> };
@@ -79,6 +84,15 @@ export default async function TreatmentDetailPage({ params }: Props) {
           <section className="prose prose-slate dark:prose-invert max-w-none">
             <BodyText text={labels(treatment.bodyKey)} />
           </section>
+
+          {isMergedHairTransplantTreatmentSlug(treatment.slug) ? (
+            <HairTransplantTypeSections
+              heading={t("hairTransplantTypesHeading")}
+              variants={HAIR_TRANSPLANT_VARIANTS}
+              labels={labels}
+              priceLabel={t("priceLabel")}
+            />
+          ) : null}
 
           {doctors.length > 0 && (
             <section className="border-t border-border pt-12">

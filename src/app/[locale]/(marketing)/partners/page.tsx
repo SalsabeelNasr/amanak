@@ -68,7 +68,7 @@ export default async function PartnersPage() {
         <div className="absolute inset-0 z-0 bg-gradient-to-r from-muted/60 via-muted/30 to-transparent rtl:bg-gradient-to-l" />
 
         <div className="container relative z-10 mx-auto max-w-6xl px-4 sm:px-6">
-          <div className="grid items-center gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:gap-10">
+          <div className="grid items-center gap-8 lg:grid-cols-[1.2fr_minmax(0,0.62fr)] lg:gap-10">
             <div className="order-2 space-y-5 text-start rtl:text-right lg:order-1 lg:space-y-6 rtl:lg:order-2">
               <div className="space-y-3 lg:space-y-4">
                 <h1 className="text-balance text-4xl font-extrabold tracking-tight text-foreground sm:text-5xl lg:text-6xl leading-[1.08]">
@@ -92,15 +92,15 @@ export default async function PartnersPage() {
               </div>
             </div>
 
-            <div className="order-1 relative overflow-hidden rounded-3xl border border-border/70 bg-card shadow-lg lg:order-2 rtl:lg:order-1">
-              <div className="relative aspect-[16/10] w-full">
+            <div className="order-1 relative w-full max-w-[280px] justify-self-center overflow-hidden rounded-3xl border border-border/70 bg-card shadow-lg sm:max-w-xs lg:order-2 lg:max-w-sm lg:justify-self-end rtl:lg:justify-self-start rtl:lg:order-1">
+              <div className="relative aspect-[3/4] w-full">
                 <Image
                   src="/landing/partners-hero-v3.png"
                   alt={t("heroImageAlt")}
                   fill
                   priority
                   className="object-cover"
-                  sizes="(min-width: 1024px) 38vw, 100vw"
+                  sizes="(min-width: 1024px) 360px, (min-width: 640px) 320px, 280px"
                 />
               </div>
             </div>

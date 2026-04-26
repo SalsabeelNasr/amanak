@@ -43,6 +43,8 @@
     "hospitalsLabel": "Partner Hospitals",
     "videoLabel": "Overview Video",
     "priceLabel": "Starts with",
+    "hairTransplantTypesHeading": "Hair restoration techniques",
+    "topServiceLabel": "Leading focus",
     "categories": {
       "all": "All Treatments",
       "general": "General Specialties",
@@ -235,16 +237,16 @@
       "fue_extraction": {
         "title": "FUE - Follicular Unit Extraction",
         "description": "Individual follicle extraction with minimal scarring and fast recovery for mild to moderate hair loss.",
-        "doctors": "Dr. Shady El-Maghraby, Dr. Marwan Noureldin",
+        "doctors": "Dr. Shady El-Maghraby",
         "hospitals": "Andalusia Hospital, Dar Al Fouad (6th of October)",
         "techniques": "Follicular Unit Extraction (FUE)",
         "success_rate": "ABHRS Certified Specialists",
         "body": "FUE extracts individual follicles from the donor area and places them in thinning zones with precise angling for natural density. It is less invasive than strip techniques and suits many travel-friendly treatment plans.\n\nStarting package price aligns with Clinido source pricing from 30,000 EGP (about $600)."
       },
       "fut_transplantation": {
-        "title": "FUE - Follicular Unit Transplantation",
+        "title": "FUT - Follicular Unit Transplantation",
         "description": "Strip-based graft harvesting for cases that need a high graft count in one session.",
-        "doctors": "Dr. Shady El-Maghraby, Dr. Marwan Noureldin",
+        "doctors": "Dr. Marwan Noureldin",
         "hospitals": "Andalusia Hospital, Dar Al Fouad (6th of October)",
         "techniques": "Follicular Unit Transplantation (FUT)",
         "success_rate": "ABHRS Certified Specialists",
@@ -262,7 +264,7 @@
       "robotic_hair_transplant": {
         "title": "Robotic Hair Transplant (ARTAS)",
         "description": "AI-assisted follicle extraction and implantation for high precision and consistency.",
-        "doctors": "Dr. Shady El-Maghraby, Dr. Marwan Noureldin",
+        "doctors": "Dr. Marwan Noureldin",
         "hospitals": "Andalusia Hospital, Dar Al Fouad (6th of October)",
         "techniques": "Robotic Hair Transplant (ARTAS)",
         "success_rate": "ABHRS Certified Specialists",
@@ -294,15 +296,6 @@
         "techniques": "Total Hip Arthroplasty",
         "success_rate": "Pain Relief and Mobility Restoration",
         "body": "Hip replacement surgery removes damaged joint surfaces and replaces them with prosthetic components to improve function and quality of life. Case planning includes implant selection, rehab planning, and postoperative follow-up.\n\nStarting package price aligns with Clinido source pricing from 230,000 EGP (about $4,600)."
-      },
-      "lip_reduction": {
-        "title": "Lip Reduction",
-        "description": "Surgical lip-volume reduction to improve facial harmony and proportional contour.",
-        "doctors": "Dr. Yasser Badi, Dr. Mohamed Abdallah Tawfik",
-        "hospitals": "Cleopatra (Salah Aldin), Saudi German Hospital",
-        "techniques": "Aesthetic Lip Reduction Surgery",
-        "success_rate": "Natural Contour by Board-Certified Experts",
-        "body": "Lip reduction reshapes excess tissue to achieve a balanced lip profile based on facial proportions and patient goals. Treatment planning includes anesthesia review, healing timeline guidance, and follow-up care.\n\nStarting package price aligns with Clinido source pricing from 35,000 EGP (about $700)."
       },
       "dental_implants": {
         "title": "Dental Implants",
@@ -404,7 +397,7 @@
         "body": "Vascular surgery in Egypt covers both open and endovascular procedures — including EVAR for abdominal aneurysms, peripheral angioplasty, and limb salvage in diabetic patients.\n\nOur partner surgeons run dedicated vascular units with hybrid operating theatres and 24/7 interventional radiology support.\n\nWe coordinate vascular imaging review, perioperative anaesthesia, and structured follow-up with duplex surveillance."
       },
       "internal_medicine": {
-        "title": "Internal Medicine — Geriatrics, Gastroenterology & Endoscopy",
+        "title": "Internal Medicine, Gastroenterology & Endoscopy",
         "description": "Comprehensive internal medicine review, gastrointestinal endoscopy, and geriatric care by senior internists across Cairo.",
         "doctors": "",
         "hospitals": "Cairo University Hospital, Ain Shams Specialised, As-Salam International",
