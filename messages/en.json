@@ -362,8 +362,8 @@
       "imageAlt": "Aerial view of the Nile River and Cairo skyline"
     },
     "whyEgypt": {
-      "title": "Why choose Egypt.. and why Amanak?",
-      "lead": "Egypt combines deep medical expertise with real value. Amanak is your partner managing the entire journey: accredited hospitals, trusted doctors, comfortable stays, and safe transport, all with costs defined in advance.",
+      "title": "Why choose Egypt, and why Amanak?",
+      "lead": "Egypt offers world-class medical expertise at exceptional value. Amanak is your trusted partner, managing every detail across top-tier hospitals and doctors, comfortable stays, and safe transport, with all costs transparent and fixed upfront.",
       "bullet1Title": "Medical Expertise in Egypt",
       "bullet1": "Elite surgeons and consultants in modern hospitals achieving world-class results, at carefully planned costs that suit families in our region.",
       "bullet2Title": "The Amanak Team by Your Side",
@@ -429,20 +429,14 @@
       }
     },
     "accommodation": {
-      "sealTitle": "Licensed Partner.. Care Backed by Tourism Expertise",
-      "sealBody": "Amanak is an official member of the Egyptian Travel Agents Association (ETAA). We operate as a certified travel operator to ensure you have a comfortable stay and organized logistics, from your arrival until your safe departure.",
+      "sealTitle": "Your Licensed Partner for a Safe and Comfortable Stay",
+      "sealBody": "Amanak is an official member of the ETAA, ensuring organized logistics in carefully selected accommodations near major medical centers. We offer special rates for long stays and a familiar family atmosphere that meets all your needs.",
       "logoAlt": "Egyptian Travel Agents Association (ETAA)",
       "verifyLinkText": "Verify membership on the official portal",
       "officialMemberEtaa": "Official Member of ETAA",
       "verifyLinkUrl": "https://www.etaa-egypt.org",
       "staysTitle": "Accommodation Focused on Your Comfort and Recovery",
       "staysLead": "We understand that our patients from the region prefer traveling with their families, so we prioritize providing accommodation options that suit companions and offer an atmosphere for healing and family support, at preferential rates for Amanak patients.",
-      "staysProximityTitle": "Close to Medical Centers",
-      "staysProximity": "Premium residential options just minutes from major hospitals, ensuring easy transport and patient comfort.",
-      "staysRatesTitle": "Special Rates",
-      "staysRates": "Exclusive agreements with hotels and serviced apartments to provide suitable rates for long stays.",
-      "staysCultureTitle": "Familiar Family Atmosphere",
-      "staysCulture": "We select places that offer halal dining options, prayer facilities, and equipped kitchens to make you feel at home.",
       "badgeLabel": "Certified Coordination",
       "viewAll": "View all listings",
       "listing1": {
@@ -464,40 +458,21 @@
         "features": "3 Bedrooms • Near Dar Al Fouad • Quiet Environment"
       }
     },
-    "transportation": {
-      "title": "Our transportation partners: safety and comfort in every mile",
-      "intro": "We partner with Egypt’s leading licensed transport providers so your journey is as smooth as your recovery. For ultimate quiet and monitored safety, we work with JTNY and its fully electric, Ministry-licensed fleet. For reliable, transparent city travel, we use Arrw, Egypt’s licensed ride-hailing platform with verified drivers and real-time tracking. Combined with private VIP airport reception and medical-safe vehicles, you never have to worry about how to get where you are going.",
-      "jtnyBrand": "JTNY",
-      "jtnyTagline": "Premium, silent recovery on the road",
-      "jtnyWhat": "Egypt’s first officially licensed electric ride-hailing app: a luxury fleet of 100 fully electric vehicles licensed by the Ministry of Transport, ideal when calm matters right after a procedure.",
-      "jtnyB1": "Silent transport: no engine noise or vibration, easier on patients traveling soon after surgery or those sensitive to sound during recovery.",
-      "jtnyB2": "In-cabin cameras cover the full trip, reassuring for families in Iraq and Libya following a loved one in an unfamiliar city.",
-      "jtnyB3": "Handpicked drivers trained to demanding service standards, not anonymous street hail.",
-      "jtnyB4": "Intercity luxury service between Cairo and Alexandria in new, safety-focused vehicles when your care plan spans both cities.",
-      "jtnyImageAlt": "Calm, modern vehicle suggesting quiet electric transport",
-      "arrwBrand": "Arrw",
-      "arrwTagline": "Transparent pricing, verified drivers",
-      "arrwWhat": "A locally developed, licensed Egyptian ride-hailing platform built for the domestic market, with security, fair upfront pricing, and reliability for international patients.",
-      "arrwB1": "Competitive, upfront rates with no hidden fees, critical when you are managing a strict medical budget abroad.",
-      "arrwB2": "Vetted drivers, live trip tracking, and optional dashcam service for added security during the ride.",
-      "arrwB3": "Pay with cash, card, or in-app wallet, flexible when you are still settling local payment options.",
-      "arrwImageAlt": "Urban ride-hailing context in Cairo",
-      "privateTitle": "Specialized private transportation",
-      "privateLead": "Licensed apps cover day-to-day movement; our private partners handle clinical-grade needs and border-to-bed hand-offs.",
-      "privateAirportTitle": "Airport meet & greet",
-      "privateAirport": "Especially valuable for Iraqi travelers: representatives can meet patients before passport control to assist with security approvals and entry formalities, so the first hour in Egypt feels guided, not chaotic.",
-      "privateVehicleTitle": "Medical-safe vehicles",
-      "privateVehicle": "Post-operative transfers use vehicles with extra legroom and reclining seats when needed, to your hotel or onward routing such as the Salloum border when your care plan requires it.",
-      "private247Title": "24/7 on-call support",
-      "private247": "Dedicated drivers for hospital visits, pharmacy runs, labs, and imaging, door-to-door, on your schedule, not a generic tour clock.",
-      "privateClosing": "Apps plus private partners mean every leg from curbside to clinic is chosen for safety, transparency, and the comfort your case demands.",
-      "privateImageAltMeet": "Premium chauffeur fleet of luxury sedans for private transportation",
-      "privateImageAltVehicle": "Spacious and comfortable vehicle for patient transfer",
-      "privateImageCaption": "We choose the right vehicle for your health condition, ensuring your total comfort between the hotel and the hospital."
+    "transportationTeaser": {
+      "title": "Safe and reliable transport throughout your journey",
+      "lead": "We coordinate with licensed partners to ensure your movement between the airport, hospital, and stay is comfortable, secure, and always on time.",
+      "jtnyBrand": "Premium Electric Fleet",
+      "jtnyBlurb": "Experience silent and smooth recovery on the road with our fully electric, Ministry-licensed partners.",
+      "jtnyImageAlt": "Modern electric vehicle for quiet transport",
+      "arrwBrand": "Verified City Travel",
+      "arrwBlurb": "Reliable ride-hailing with vetted drivers and transparent upfront pricing for all your city trips.",
+      "arrwImageAlt": "City transport service",
+      "privateBrand": "Private Medical Escort",
+      "privateBlurb": "Dedicated VIP reception and specialized vehicles tailored for patient comfort and medical needs.",
+      "privateImageAlt": "Spacious private vehicle for comfortable medical transport"
     },
     "programs": {
       "title": "Featured treatments for medical travelers",
-      "lead": "Focused care pathways in Egypt for the most requested specialties, with coordinated planning from pre-travel review to follow-up.",
       "learnMore": "Learn more",
       "items": {
         "ivf": {
@@ -528,7 +503,7 @@
     },
     "topDoctorsReels": {
       "title": "Leading doctors in Egypt",
-      "lead": "Egypt is home to surgeons and consultants who routinely manage complex cases with outcomes that compare well across the region. Scroll these Instagram highlights.. patient stories and clinical excellence at centres we trust for your Amanak journey.",
+      "lead": "Egypt is home to surgeons and consultants who routinely manage complex cases with outcomes that compare well across the region. Scroll these Instagram highlights: from patient stories and clinical excellence at centres we trust for your Amanak journey.",
       "scrollHint": "Swipe sideways for more reels",
       "prevReel": "Previous reel",
       "nextReel": "Next reel",
@@ -536,7 +511,7 @@
       "iframeTitle": "Instagram reel"
     },
     "painPoints": {
-      "title": "Goodbye to medical travel headaches.. A smooth journey with Amanak",
+      "title": "Goodbye to medical travel headaches: a smooth journey with Amanak",
       "colProblem": "The challenge you might face",
       "colSolution": "The Amanak solution",
       "row1p": "Budget confusion and unexpected costs",
@@ -635,29 +610,29 @@
     "whyTitle": "Why partner with Amanak",
     "why1": "Access a pipeline of patients from the region seeking structured care in Egypt, with clear expectations and documented pathways.",
     "why2": "Work with a licensed Egyptian travel operator (ETAA member) that aligns logistics, accommodation, and transfers with clinical schedules.",
-    "why3": "Reduce fragmentation: one partner coordinates scheduling, Arabic and English communication, and follow-up touchpoints where your team leads clinically.",
-    "why4": "Strengthen trust: we emphasize accredited hospitals, transparent cost conversations, and transport partners chosen for safety and reliability.",
+    "why3": "Reduce fragmentation: one partner coordinates scheduling, multilingual communication, and follow-up touchpoints where your team leads clinically.",
+    "why4": "Strengthen trust: we emphasize accredited hospitals, full cost transparency, and accommodation and transport partners chosen for safety and reliability.",
     "typesTitle": "Who we work with",
     "types": {
       "hospital": {
-        "title": "Hospitals & health systems",
-        "body": "International patient desks, complex specialties, and peri-operative pathways. We align referrals, records, and visit cadence with your capacity."
+        "title": "Hospitals",
+        "body": "International patient desks and complex specialties."
       },
       "doctor": {
-        "title": "Doctors & specialist groups",
-        "body": "Named consultants and multidisciplinary teams for oncology, orthopedics, IVF, and more, matched to patient needs and your availability."
+        "title": "Specialists",
+        "body": "Expert consultants for oncology, orthopedics, and IVF."
       },
       "clinic": {
-        "title": "Clinics & day-surgery centers",
-        "body": "Outpatient-heavy programs where clear scheduling and companion-friendly logistics matter for travelers."
+        "title": "Clinics",
+        "body": "Outpatient centers and day-surgery programs."
       },
       "hospitality": {
-        "title": "Hotels & serviced accommodation",
-        "body": "Recovery-friendly stays near major medical hubs, with family-friendly options, preferential rates, and stays aligned with treatment length."
+        "title": "Hospitality",
+        "body": "Recovery-friendly stays and serviced accommodation."
       },
       "transport": {
-        "title": "Transportation & ground logistics",
-        "body": "Licensed providers for airport hand-offs, hospital runs, and post-procedure transfers, with transparent routing and vehicles suited to the case."
+        "title": "Logistics",
+        "body": "Licensed airport transfers and ground transport."
       }
     },
     "howTitle": "How it works",
@@ -675,12 +650,161 @@
         "body": "Live coordination: scheduled referrals, logistics tied to clinical milestones, and continuous improvement from real case feedback."
       }
     },
+    "ctaTitle": "Ready to Grow Together?",
     "ctaPrimary": "Contact us about partnership",
     "ctaHint": "Tell us your organization type, location, and how you’d like to collaborate. We’ll respond with next steps.",
     "heroImageAlt": "Professional team collaborating in a modern office environment",
     "whyBadge": "Why Partner?",
     "typesBadge": "Ecosystem",
-    "howBadge": "Process"
+    "howBadge": "Process",
+    "teamTitle": "A Team You Can Trust",
+    "teamBody": "Our team is formed from professionals who have served in the healthcare system for over 10 years, working in close cooperation with experts from the IT and hospitality sectors for just as long. This unique synergy allows us to provide a seamless, safe, and comfortable medical journey for every patient.",
+    "teamImageAlt": "A professional team of healthcare and technology experts collaborating",
+    "teamBadge": "Expertise",
+    "teamHighlight1Title": "10+ Years Healthcare",
+    "teamHighlight1Desc": "Deep roots in medical systems",
+    "teamHighlight2Title": "IT & Digital Excellence",
+    "teamHighlight2Desc": "Seamless patient coordination",
+    "teamHighlight3Title": "Hospitality Expertise",
+    "teamHighlight3Desc": "5-star patient experience",
+    "teamHighlight4Title": "Patient-First Care",
+    "teamHighlight4Desc": "Compassionate journey management",
+    "teamStatValue": "10+",
+    "teamStatLabel": "Years of cross-industry synergy",
+    "hospitalsListTitle": "Our Network of Partner Hospitals",
+    "locations": {
+      "cairo": "Cairo",
+      "giza": "Giza",
+      "alexandria": "Alexandria",
+      "mansoura": "Mansoura"
+    },
+    "hospitalsList": {
+      "cairo": [
+        "As-Salam International (Fifth Settlement)",
+        "Saudi German Hospital",
+        "Sky Hospital",
+        "Dar Al Fouad (Nasr City)",
+        "International Medical Center",
+        "Global Medical City",
+        "Cleopatra (Salah Aldin)",
+        "Shifa Hospital",
+        "Kattameya Clinic",
+        "Nasaeem Hospital",
+        "Galaa Military Hospital",
+        "Air Force Specialized Hospital",
+        "Wadi Al Nile Hospital",
+        "Al Orouba Hospital",
+        "Grand Hospital",
+        "Cura Al Nasr",
+        "Shifa Al Shourouk",
+        "British Hospital",
+        "Nasr City Specialized",
+        "Bedayat Hospital",
+        "Islamic Centralized Hospital",
+        "Royal Hospital",
+        "Jaydaa Center",
+        "Hana Center",
+        "Tabarak Hospital",
+        "Hemocure",
+        "Police Hospital",
+        "Soaad Kafafy Hospital"
+      ],
+      "giza": [
+        "Dar Al Fouad (6th of October)",
+        "As-Salam International (Maadi)",
+        "Al Mehwar Hospital",
+        "Al Safa Hospital",
+        "Al Nada Hospital",
+        "Nile Badrawy Hospital",
+        "Andalusia Hospital",
+        "Shorouk Hospital",
+        "Gannah Hospital",
+        "Al Salam Al Haram",
+        "New Giza Hospital",
+        "Heaven Hospital"
+      ],
+      "alexandria": [
+        "Andalusia Hospital",
+        "Saudi German (Alexandria)",
+        "Elite Hospital"
+      ],
+      "mansoura": [
+        "Delta Hospital",
+        "Ghoneim Center"
+      ]
+    },
+    "healthcareProvidersTitle": "Diagnostic & Healthcare Partners",
+    "healthcareProvidersLead": "We collaborate with Egypt's most trusted diagnostic centers to provide accurate results and seamless coordination for our patients.",
+    "providerCategories": {
+      "labs": "Medical Laboratories",
+      "radiology": "Radiology & Imaging"
+    },
+    "providersList": {
+      "labs": [
+        "El Mokhtabar (Al-Mokhtabar)",
+        "Al Borg Laboratories",
+        "Alfa Medical Lab"
+      ],
+      "radiology": [
+        "Alfa Scan",
+        "CairoScan",
+        "Misr Radiology Center (MRC)"
+      ]
+    },
+    "pharmacyPartnersTitle": "Trusted Pharmacy Networks",
+    "pharmacyPartnersLead": "We partner with Egypt's largest pharmacy chains to ensure 24/7 availability of medications and professional pharmaceutical care for our patients.",
+    "pharmaciesList": [
+      "El Ezaby Pharmacies",
+      "Seif Pharmacies",
+      "El-Tarshouby Pharmacies",
+      "Misr Pharmacies"
+    ],
+    "accommodationTitle": "Accommodation Ecosystem",
+    "accommodationLead": "From global booking platforms to specialized local providers, we help you find the perfect stay for your recovery and your family.",
+    "accommodation": {
+      "platforms": {
+        "title": "Global Platforms & Local Apps",
+        "body": "We guide you through the best options on booking.com, airbnb, and local Egyptian apps like rentelly and maat stays for flexible, vetted stays."
+      },
+      "providers": {
+        "title": "Specialized Stay Providers",
+        "body": "Direct access to recovery-focused hospitality groups like xuru stays, birdnest, kennah hospitality, and brassbell hospitality group, offering serviced apartments tailored for medical travelers."
+      }
+    },
+    "otherPartnersBadge": "Ecosystem",
+    "otherPartnersTitle": "Transportation & Logistics",
+    "otherPartnersLead": "We partner with Egypt’s leading licensed transport providers to ensure your journey is as smooth as your recovery. From jtny silent electric fleet for post-op calm to arrw transparent city travel and our private VIP medical escorts, every leg of your trip is managed for safety and reliability.",
+    "transportation": {
+      "title": "",
+      "intro": "",
+      "jtnyBrand": "JTNY",
+      "jtnyTagline": "Premium, silent recovery on the road",
+      "jtnyWhat": "Egypt’s first officially licensed electric ride-hailing app: a luxury fleet of 100 fully electric vehicles licensed by the Ministry of Transport, ideal when calm matters right after a procedure.",
+      "jtnyB1": "Silent transport: no engine noise or vibration, easier on patients traveling soon after surgery or those sensitive to sound during recovery.",
+      "jtnyB2": "In-cabin cameras cover the full trip, reassuring for families in Iraq and Libya following a loved one in an unfamiliar city.",
+      "jtnyB3": "Handpicked drivers trained to demanding service standards, not anonymous street hail.",
+      "jtnyB4": "Intercity luxury service between Cairo and Alexandria in new, safety-focused vehicles when your care plan spans both cities.",
+      "jtnyImageAlt": "Calm, modern vehicle suggesting quiet electric transport",
+      "arrwBrand": "Arrw",
+      "arrwTagline": "Transparent pricing, verified drivers",
+      "arrwWhat": "A locally developed, licensed Egyptian ride-hailing platform built for the domestic market, with security, fair upfront pricing, and reliability for international patients.",
+      "arrwB1": "Competitive, upfront rates with no hidden fees, critical when you are managing a strict medical budget abroad.",
+      "arrwB2": "Vetted drivers, live trip tracking, and optional dashcam service for added security during the ride.",
+      "arrwB3": "Pay with cash, card, or in-app wallet, flexible when you are still settling local payment options.",
+      "arrwImageAlt": "Urban ride-hailing context in Cairo",
+      "privateTitle": "Specialized private transportation",
+      "privateLead": "Licensed apps cover day-to-day movement; our private partners handle clinical-grade needs and border-to-bed hand-offs.",
+      "privateAirportTitle": "Airport meet & greet",
+      "privateAirport": "Especially valuable for Iraqi travelers: representatives can meet patients before passport control to assist with security approvals and entry formalities, so the first hour in Egypt feels guided, not chaotic.",
+      "privateVehicleTitle": "Medical-safe vehicles",
+      "privateVehicle": "Post-operative transfers use vehicles with extra legroom and reclining seats when needed, to your hotel or onward routing such as the Salloum border when your care plan requires it.",
+      "private247Title": "24/7 on-call support",
+      "private247": "Dedicated drivers for hospital visits, pharmacy runs, labs, and imaging, door-to-door, on your schedule, not a generic tour clock.",
+      "privateClosing": "Apps plus private partners mean every leg from curbside to clinic is chosen for safety, transparency, and the comfort your case demands.",
+      "privateImageAltMeet": "Premium chauffeur fleet of luxury sedans for private transportation",
+      "privateImageAltVehicle": "Spacious and comfortable vehicle for patient transfer",
+      "privateImageCaption": "We choose the right vehicle for your health condition, ensuring your total comfort between the hotel and the hospital."
+    }
   },
   "contact": {
     "metaTitle": "Contact us",
@@ -689,7 +813,10 @@
     "lead": "Tell us what you need and we will respond as soon as possible.",
     "partnerLead": "You’re reaching out about a partnership. Please include your organization name, your role, city or region, and how you’d like to work with Amanak (e.g. hospital, clinic, hotel, transport).",
     "bookingTitle": "Book a consultation call",
-    "bookingLead": "Choose a date and time, then add your details. We’ll call you to discuss your medical journey to Egypt."
+    "bookingLead": "Choose a date and time, then add your details. We’ll call you to discuss your medical journey to Egypt.",
+    "phone": "Phone",
+    "whatsapp": "WhatsApp",
+    "address": "Address"
   },
   "inquiry": {
     "title": "Consultation request",
@@ -849,33 +976,52 @@
   },
   "about": {
     "metaTitle": "About Us | Amanak Medical Travel",
-    "metaDescription": "Learn about Amanak, our team of healthcare and IT experts, and why Egypt is the premier destination for international patients.",
-    "heroTitle": "Bridging the Gap in Healthcare Travel",
-    "heroBadge": "Our Mission",
-    "heroLead": "Amanak is more than a medical travel agency; we are your dedicated partners in health, combining a decade of medical expertise with world-class hospitality and technology.",
-    "teamTitle": "A Team You Can Trust",
-    "teamBody": "Our team is formed from professionals who have served in the healthcare system for over 10 years, working in close cooperation with experts from the IT and hospitality sectors for just as long. This unique synergy allows us to provide a seamless, safe, and comfortable medical journey for every patient.",
+    "metaDescription": "Learn about Amanak, our mission, and how we coordinate international patients across the region.",
+    "reachSectionBadge": "Our reach",
+    "reachRegionalPresenceLabel": "Regional presence",
+    "reachDestinationsTitle": "Destinations",
+    "reachPresenceCountries": ["Libya", "Iraq", "Jordan"],
+    "reachDestinationCountries": ["Jordan", "Turkey", "Dubai", "Egypt", "Europe"],
     "reachTitle": "Our International Presence",
     "reachBody": "With dedicated offices in Libya, Iraq, and Jordan, Amanak has successfully helped international patients access top-tier treatments in Jordan, Turkey, Dubai, Egypt, and Europe. We understand the regional needs and bridge the distance between you and the best medical care.",
     "addressTitle": "Our Headquarters",
     "addressBody": "Business Plaza, New Cairo, Egypt",
-    "whyEgyptTitle": "Why Choose Egypt for Treatment?",
-    "whyEgyptLead": "Egypt has emerged as a global hub for medical tourism, offering a unique combination of expertise, accessibility, and value.",
-    "whyEgypt1Title": "World-Class Doctors",
-    "whyEgypt1Body": "Egypt is home to elite surgeons and consultants with international reputations, many of whom perform complex surgeries in Germany, Dubai, and across Europe.",
-    "whyEgypt2Title": "Strategic Location",
-    "whyEgypt2Body": "Located at the crossroads of Africa, Europe, and Asia, Egypt is a short 2-6 hour direct flight from most regional capitals. Easy visa procedures make it a hassle-free destination.",
-    "whyEgypt3Title": "High Quality, Fast Access",
-    "whyEgypt3Body": "Premium medical facilities with JCI and Temos accreditation ensure global safety standards. With no waiting lists, you get the care you need immediately.",
-    "whyEgypt4Title": "Affordable Premium Care",
-    "whyEgypt4Body": "The favorable exchange rate makes Egypt a first-choice destination, offering world-class medical services at a fraction of the cost in other countries.",
-    "partnerTitle": "Why Become a Partner with Us?",
-    "partnerBody": "Join a trusted network that prioritizes patient safety, transparent costs, and coordinated care. We handle the logistics so you can focus on clinical excellence.",
-    "ctaPatient": "Contact us as a patient",
-    "ctaPartner": "Join us as a partner",
-    "heroImageAlt": "Modern Cairo skyline at sunset",
-    "teamImageAlt": "A professional team of healthcare and technology experts collaborating",
-    "reachImageAlt": "Global map showing Amanak's international connectivity"
+    "reachImageAlt": "Global map showing Amanak's international connectivity",
+    "teamBadge": "Leadership",
+    "teamTitle": "Our team",
+    "teamLead": "Our leadership brings together clinical travel coordination, commercial growth, and trusted partnerships across the region.",
+    "teamMembers": [
+      {
+        "name": "Raed Youssef",
+        "role": "Chief Executive Officer",
+        "imageAlt": "Portrait of Raed Youssef, Chief Executive Officer",
+        "imageUrl": "https://ui-avatars.com/api/?name=Raed+Youssef&size=640&background=1e3a8a&color=fff&bold=true"
+      },
+      {
+        "name": "Sajed Nasr",
+        "role": "Head of Sales",
+        "imageAlt": "Portrait of Sajed Nasr, Head of Sales",
+        "imageUrl": "/team/sajed-nasr.png"
+      },
+      {
+        "name": "Sahar",
+        "role": "Head of Partnerships",
+        "imageAlt": "Portrait of Sahar, Head of Partnerships",
+        "imageUrl": "https://ui-avatars.com/api/?name=Sahar&size=640&background=7c3aed&color=fff&bold=true"
+      },
+      {
+        "name": "Salsabeel Khaleel",
+        "role": "Head of IT",
+        "imageAlt": "Initials avatar for Salsabeel Khaleel, Head of IT",
+        "imageUrl": "https://ui-avatars.com/api/?name=Salsabeel+Khaleel&size=640&background=0d9488&color=fff&bold=true"
+      },
+      {
+        "name": "Rosemary",
+        "role": "Head of PR & Marketing",
+        "imageAlt": "Portrait of Rosemary, Head of PR and Marketing",
+        "imageUrl": "/team/rosemary.png"
+      }
+    ]
   },
   "auth": {
     "patientLogin": "Login as Patient",

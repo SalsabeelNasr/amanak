@@ -133,10 +133,13 @@ export function LeadCommunicateDialog({
     setError(null);
   }, []);
 
-  useEffect(() => {
-    if (!open) return;
-    resetForm();
-  }, [open, resetForm]);
+  const handleDialogOpenChange = useCallback(
+    (next: boolean) => {
+      if (next) resetForm();
+      onOpenChange(next);
+    },
+    [onOpenChange, resetForm],
+  );
 
   function templateLabelKey(id: MessageTemplateId): Parameters<typeof t>[0] {
     return `convComposeTpl_${id}` as Parameters<typeof t>[0];
@@ -481,7 +484,7 @@ export function LeadCommunicateDialog({
                     `leadQuotation.tiers.${q.packageTier}` as Parameters<typeof t>[0],
                   );
                   return (
-                    <li key={q.id} role="option">
+                    <li key={q.id} role="option" aria-selected={false}>
                       <button
                         type="button"
                         className="flex w-full items-center justify-between gap-3 rounded-lg px-3 py-2.5 text-start text-sm font-medium hover:bg-muted/80"
@@ -510,7 +513,7 @@ export function LeadCommunicateDialog({
   }
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleDialogOpenChange}>
       <DialogContent
         dir={locale === "ar" ? "rtl" : "ltr"}
         size="lg"

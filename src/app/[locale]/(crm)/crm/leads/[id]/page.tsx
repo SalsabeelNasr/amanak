@@ -28,6 +28,7 @@ export default async function CrmLeadDetailPage({
 
   return (
     <LeadDetail
+      key={lead.id}
       initialLead={lead}
       initialConversations={initialConversations}
       initialConsultationSlots={initialConsultationSlots}

@@ -1,7 +1,5 @@
 import Image from "next/image";
 import { getTranslations } from "next-intl/server";
-import { Link } from "@/i18n/navigation";
-import { ROUTES } from "@/lib/routes";
 import { MapPin, Home, BedDouble, ChevronRight } from "lucide-react";
 
 const LISTING_MSG = {
@@ -26,6 +24,18 @@ const LISTING_MSG = {
 } as const;
 
 type ListingId = keyof typeof LISTING_MSG;
+
+function NationalCouncilTrustLogo({ alt }: { alt: string }) {
+  return (
+    <Image
+      src="/footer/national-council-health-tourism.png"
+      alt={alt}
+      width={596}
+      height={624}
+      className="h-28 w-auto max-w-[15rem] object-contain opacity-90 sm:h-36 sm:max-w-[18rem] md:h-40 md:max-w-[22rem]"
+    />
+  );
+}
 
 interface ListingProps {
   title: string;
@@ -73,6 +83,8 @@ function AccommodationCard({ title, type, location, features, image }: ListingPr
 
 export async function AccommodationTrust() {
   const t = await getTranslations("landing.accommodation");
+  const tFooter = await getTranslations("footer");
+  const councilLogoAlt = tFooter("supervisionCouncilAlt");
   const verifyUrl = t("verifyLinkUrl");
   const sectionId = "accommodation-trust-heading";
 
@@ -100,26 +112,17 @@ export async function AccommodationTrust() {
       aria-labelledby={sectionId}
     >
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
-        {/* Header Section */}
-        <div className="mb-12 flex flex-col items-start justify-between gap-6 md:flex-row md:items-end">
-          <div className="max-w-2xl space-y-4">
-            <h2
-              id={sectionId}
-              className="text-balance text-3xl font-bold tracking-tight text-foreground sm:text-4xl"
-            >
-              {t("staysTitle")}
-            </h2>
-            <p className="text-lg text-muted-foreground leading-relaxed">
-              {t("staysLead")}
-            </p>
-          </div>
-          <Link
-            href={ROUTES.leadEntry}
-            className="group flex items-center gap-2 text-sm font-bold text-primary transition-colors hover:text-primary/80"
+        {/* Header Section: title stays readable width; lead uses full section width */}
+        <div className="mb-12 space-y-4">
+          <h2
+            id={sectionId}
+            className="max-w-2xl text-balance text-3xl font-bold tracking-tight text-foreground sm:text-4xl"
           >
-            {t("viewAll")}
-            <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-1 rtl:rotate-180 rtl:group-hover:-translate-x-1" />
-          </Link>
+            {t("staysTitle")}
+          </h2>
+          <p className="w-full max-w-none text-pretty text-lg text-muted-foreground leading-relaxed">
+            {t("staysLead")}
+          </p>
         </div>
 
         {/* Listings Grid */}
@@ -141,7 +144,7 @@ export async function AccommodationTrust() {
 
         {/* Trust Banner */}
         <div className="mt-20 relative overflow-hidden rounded-3xl border border-primary/10 bg-gradient-to-br from-primary/[0.03] to-transparent p-8 sm:p-12 shadow-sm">
-          <div className="relative flex flex-col gap-10 md:flex-row md:items-center">
+          <div className="relative flex flex-col gap-10 md:flex-row md:items-center md:gap-12">
             <div className="min-w-0 flex-1 space-y-6">
               <div className="space-y-3">
                 <h3 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
@@ -151,7 +154,11 @@ export async function AccommodationTrust() {
                   {t("sealBody")}
                 </p>
               </div>
-              
+
+              <div className="flex justify-center pt-2 md:hidden">
+                <NationalCouncilTrustLogo alt={councilLogoAlt} />
+              </div>
+
               <div className="flex flex-wrap items-center gap-6 pt-2">
                 <a
                   href={verifyUrl}
@@ -167,31 +174,9 @@ export async function AccommodationTrust() {
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-
-        {/* Features Grid */}
-        <div className="mt-16 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-          <div className="space-y-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/5 text-primary">
-              <MapPin className="h-5 w-5" />
+            <div className="hidden shrink-0 md:flex md:items-center">
+              <NationalCouncilTrustLogo alt={councilLogoAlt} />
             </div>
-            <h4 className="text-base font-bold text-foreground">{t("staysProximityTitle")}</h4>
-            <p className="text-sm text-muted-foreground leading-relaxed">{t("staysProximity")}</p>
-          </div>
-          <div className="space-y-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/5 text-primary">
-              <BedDouble className="h-5 w-5" />
-            </div>
-            <h4 className="text-base font-bold text-foreground">{t("staysRatesTitle")}</h4>
-            <p className="text-sm text-muted-foreground leading-relaxed">{t("staysRates")}</p>
-          </div>
-          <div className="space-y-3 sm:col-span-2 lg:col-span-1">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/5 text-primary">
-              <Home className="h-5 w-5" />
-            </div>
-            <h4 className="text-base font-bold text-foreground">{t("staysCultureTitle")}</h4>
-            <p className="text-sm text-muted-foreground leading-relaxed">{t("staysCulture")}</p>
           </div>
         </div>
       </div>

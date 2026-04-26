@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useId, useState } from "react";
+import { useCallback, useId, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Button, buttonVariants } from "@/components/ui/button";
 import {
@@ -46,13 +46,17 @@ export function DocumentUploadDialog({
   const [saving, setSaving] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (open) {
-      setDocType(defaultType ?? "medical_report");
-      setFile(null);
-      setFormError(null);
-    }
-  }, [open, defaultType]);
+  const handleOpenChange = useCallback(
+    (next: boolean) => {
+      if (next) {
+        setDocType(defaultType ?? "medical_report");
+        setFile(null);
+        setFormError(null);
+      }
+      onOpenChange(next);
+    },
+    [defaultType, onOpenChange],
+  );
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -69,7 +73,7 @@ export function DocumentUploadDialog({
         uploadedByUserId,
       });
       onUploaded(updated);
-      onOpenChange(false);
+      handleOpenChange(false);
     } catch (err) {
       console.error(err);
       setFormError(t("uploadErrorGeneric"));
@@ -79,7 +83,7 @@ export function DocumentUploadDialog({
   }
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent dir={dir} size="md" layout="scrollable">
         <form
           onSubmit={handleSubmit}
@@ -138,7 +142,7 @@ export function DocumentUploadDialog({
               type="button"
               variant="outline"
               className="rounded-xl"
-              onClick={() => onOpenChange(false)}
+              onClick={() => handleOpenChange(false)}
               disabled={saving}
             >
               {t("cancel")}

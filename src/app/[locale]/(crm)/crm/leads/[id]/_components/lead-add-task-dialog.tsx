@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import {
@@ -72,11 +72,6 @@ export function LeadAddTaskDialog({
   const fileInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
 
   const def = getLeadTaskCreationTypeDef(creationTypeId);
-
-  useEffect(() => {
-    setFieldValues(emptyFieldsForType(creationTypeId));
-    setSlotFiles({});
-  }, [creationTypeId]);
 
   const resetAll = useCallback(() => {
     setCreationTypeId(DEFAULT_TYPE);
@@ -258,7 +253,11 @@ export function LeadAddTaskDialog({
                   <button
                     key={typeDef.id}
                     type="button"
-                    onClick={() => setCreationTypeId(typeDef.id)}
+                    onClick={() => {
+                      setCreationTypeId(typeDef.id);
+                      setFieldValues(emptyFieldsForType(typeDef.id));
+                      setSlotFiles({});
+                    }}
                     className={cn(
                       "rounded-xl border px-3 py-3 text-start transition-all",
                       selected

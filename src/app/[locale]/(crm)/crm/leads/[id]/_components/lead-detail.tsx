@@ -13,8 +13,6 @@ import {
   Dialog,
   DialogBody,
   DialogContent,
-  DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -204,12 +202,17 @@ export function LeadDetail({
     useState<LeadConversationItem[]>(initialConversations);
   const [communicateDialogOpen, setCommunicateDialogOpen] = useState(false);
   const [viewQuotation, setViewQuotation] = useState<Quotation | null>(null);
+  const [quotationWizardKey, setQuotationWizardKey] = useState(0);
+  const [nowMs, setNowMs] = useState(() => Date.now());
   const documentsTabRef = useRef<LeadDocumentsTabRef>(null);
   const appointmentsTabRef = useRef<LeadAppointmentsTabRef>(null);
 
   useEffect(() => {
-    setConversations(initialConversations);
-  }, [initialLead.id, initialConversations]);
+    const id = window.setInterval(() => {
+      setNowMs(Date.now());
+    }, 60_000);
+    return () => window.clearInterval(id);
+  }, []);
 
   const availableTransitions = useMemo(
     () =>
@@ -229,11 +232,12 @@ export function LeadDetail({
     const tid = searchParams.get("task");
     if (!tid) return;
     const exists = lead.tasks.some((t) => t.id === tid);
-    if (exists) {
+    if (!exists) return;
+    requestAnimationFrame(() => {
       setTaskDetailTaskId(tid);
       setTaskDetailOpen(true);
       router.replace(pathname, { scroll: false });
-    }
+    });
   }, [searchParams, lead.tasks, pathname, router]);
 
   function openTaskDetail(taskId: string) {
@@ -319,7 +323,7 @@ export function LeadDetail({
       };
     }
     const dueMs = new Date(task.dueAt).getTime();
-    if (dueMs < Date.now()) {
+    if (dueMs < nowMs) {
       return {
         label: t("taskDueOverdue"),
         className: "border-transparent bg-destructive/10 text-destructive",
@@ -703,7 +707,10 @@ export function LeadDetail({
                   size="sm"
                   disabled={!leadCanCreateQuotation(lead)}
                   className="h-8 shrink-0 rounded-xl px-4 text-sm font-semibold shadow-sm"
-                  onClick={() => setQuotationWizardOpen(true)}
+                  onClick={() => {
+                    setQuotationWizardKey((k) => k + 1);
+                    setQuotationWizardOpen(true);
+                  }}
                 >
                   {t("leadQuotation.createButton")}
                 </Button>
@@ -745,6 +752,7 @@ export function LeadDetail({
               hideTrigger
             />
             <LeadQuotationWizardDialog
+              key={quotationWizardKey}
               lead={lead}
               open={quotationWizardOpen}
               onOpenChange={setQuotationWizardOpen}
@@ -766,6 +774,11 @@ export function LeadDetail({
         />
 
         <LeadTaskDetailDialog
+          key={
+            taskDetailOpen && taskDetailTaskId
+              ? `${lead.id}-${taskDetailTaskId}-${lead.tasks.find((t) => t.id === taskDetailTaskId)?.updatedAt ?? ""}`
+              : "lead-task-detail-closed"
+          }
           lead={lead}
           taskId={taskDetailTaskId}
           open={taskDetailOpen}

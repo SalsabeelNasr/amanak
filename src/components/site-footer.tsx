@@ -44,6 +44,13 @@ export async function SiteFooter() {
             {tNav("partners")}
           </Link>
           <Link
+            href={ROUTES.aboutUs}
+            prefetch={false}
+            className="rounded-md px-1 py-1 font-medium text-foreground underline-offset-4 transition-colors hover:text-foreground hover:underline"
+          >
+            {tNav("aboutUs")}
+          </Link>
+          <Link
             href={ROUTES.contactUs}
             prefetch={false}
             className="rounded-md px-1 py-1 font-medium text-foreground underline-offset-4 transition-colors hover:text-foreground hover:underline"

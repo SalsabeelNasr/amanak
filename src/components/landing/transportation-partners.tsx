@@ -29,6 +29,7 @@ function PartnerCard({
   imageSrc,
   imageAlt,
   className,
+  href,
 }: {
   brand: string;
   tagline: string;
@@ -37,20 +38,22 @@ function PartnerCard({
   imageSrc: string;
   imageAlt: string;
   className?: string;
+  href?: string;
 }) {
-  return (
+  const content = (
     <article
       className={cn(
-        "flex flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-sm transition-shadow hover:shadow-md",
+        "flex flex-col h-full overflow-hidden rounded-2xl border border-border bg-card shadow-sm transition-all hover:shadow-md",
+        href && "hover:border-primary/30",
         className,
       )}
     >
-      <div className="relative aspect-[16/10] w-full shrink-0 bg-muted">
+      <div className="relative aspect-[16/9] w-full shrink-0 bg-muted">
         <Image
           src={imageSrc}
           alt={imageAlt}
           fill
-          className="object-cover"
+          className="object-cover object-bottom"
           sizes="(min-width: 1024px) 40vw, 100vw"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
@@ -65,21 +68,46 @@ function PartnerCard({
       </div>
     </article>
   );
+
+  if (href) {
+    return (
+      <a href={href} target="_blank" rel="noopener noreferrer" className="block h-full">
+        {content}
+      </a>
+    );
+  }
+
+  return content;
 }
 
-export async function TransportationPartners() {
-  const t = await getTranslations("landing.transportation");
-  const sectionId = "transportation-partners-heading";
+type TransportationPartnersProps = {
+  /** When true, render inside a parent section (e.g. Partners “Other partners”) with h3 for the block title. */
+  embedded?: boolean;
+};
 
-  return (
-    <section className="bg-muted/30 py-20 sm:py-24 border-t border-border/40" aria-labelledby={sectionId}>
-      <div className="mx-auto max-w-6xl space-y-14 px-4 sm:px-6">
-        <div className="mx-auto max-w-3xl space-y-4 text-center">
-          <h2 id={sectionId} className="text-balance text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-            {t("title")}
-          </h2>
+export async function TransportationPartners({ embedded = false }: TransportationPartnersProps = {}) {
+  const t = await getTranslations("partners.transportation");
+  const sectionId = "transportation-partners-heading";
+  const TitleTag = embedded ? "h3" : "h2";
+  const PrivateTitleTag = embedded ? "h4" : "h3";
+  const PrivateSubTitleTag = embedded ? "h5" : "h4";
+  const outerClassName = embedded
+    ? "space-y-14"
+    : "bg-muted/30 py-20 sm:py-24 border-t border-border/40";
+  const innerPadding = embedded ? "" : "mx-auto max-w-6xl space-y-14 px-4 sm:px-6";
+
+  const body = (
+    <>
+      {(!embedded || t("intro")) && (
+        <div className={cn("mx-auto max-w-3xl space-y-4 text-center", embedded && "px-0")}>
+          {!embedded && (
+            <TitleTag id={sectionId} className="text-balance text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+              {t("title")}
+            </TitleTag>
+          )}
           <p className="text-pretty text-lg text-muted-foreground leading-relaxed">{t("intro")}</p>
         </div>
+      )}
 
         <div className="grid gap-8 lg:grid-cols-2 lg:gap-10">
           <PartnerCard
@@ -89,6 +117,7 @@ export async function TransportationPartners() {
             bullets={[t("jtnyB1"), t("jtnyB2"), t("jtnyB3"), t("jtnyB4")]}
             imageSrc={IMAGES.jtny}
             imageAlt={t("jtnyImageAlt")}
+            href="https://jtnyeg.com"
           />
           <PartnerCard
             brand={t("arrwBrand")}
@@ -97,6 +126,7 @@ export async function TransportationPartners() {
             bullets={[t("arrwB1"), t("arrwB2"), t("arrwB3")]}
             imageSrc={IMAGES.arrw}
             imageAlt={t("arrwImageAlt")}
+            href="https://mwm.ai/apps/arrw/6744344347"
           />
         </div>
 
@@ -107,26 +137,26 @@ export async function TransportationPartners() {
                 src={IMAGES.privateMeet}
                 alt={t("privateImageAltMeet")}
                 fill
-                className="object-cover"
+                className="object-cover object-bottom"
                 sizes="(min-width: 1024px) 50vw, 100vw"
               />
             </div>
             <div className="flex flex-col justify-center space-y-6 p-8 sm:p-10">
               <div className="space-y-2">
-                <h3 className="text-2xl font-bold text-foreground">{t("privateTitle")}</h3>
+                <PrivateTitleTag className="text-2xl font-bold text-foreground">{t("privateTitle")}</PrivateTitleTag>
                 <p className="text-muted-foreground leading-relaxed">{t("privateLead")}</p>
               </div>
               <div className="space-y-5">
                 <div>
-                  <h4 className="text-base font-bold text-foreground">{t("privateAirportTitle")}</h4>
+                  <PrivateSubTitleTag className="text-base font-bold text-foreground">{t("privateAirportTitle")}</PrivateSubTitleTag>
                   <p className="mt-1 text-sm text-muted-foreground leading-relaxed">{t("privateAirport")}</p>
                 </div>
                 <div>
-                  <h4 className="text-base font-bold text-foreground">{t("privateVehicleTitle")}</h4>
+                  <PrivateSubTitleTag className="text-base font-bold text-foreground">{t("privateVehicleTitle")}</PrivateSubTitleTag>
                   <p className="mt-1 text-sm text-muted-foreground leading-relaxed">{t("privateVehicle")}</p>
                 </div>
                 <div>
-                  <h4 className="text-base font-bold text-foreground">{t("private247Title")}</h4>
+                  <PrivateSubTitleTag className="text-base font-bold text-foreground">{t("private247Title")}</PrivateSubTitleTag>
                   <p className="mt-1 text-sm text-muted-foreground leading-relaxed">{t("private247")}</p>
                 </div>
               </div>
@@ -139,7 +169,16 @@ export async function TransportationPartners() {
             </div>
           </div>
         </article>
-      </div>
+    </>
+  );
+
+  if (embedded) {
+    return <div className={outerClassName}>{body}</div>;
+  }
+
+  return (
+    <section className={outerClassName} aria-labelledby={sectionId}>
+      <div className={innerPadding}>{body}</div>
     </section>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import {
@@ -39,6 +39,21 @@ function dueAtFromDateInput(date: string): string | undefined {
   return new Date(`${t}T12:00:00`).toISOString();
 }
 
+function resolveTask(lead: Lead, taskId: string | null): LeadTask | null {
+  return taskId ? (lead.tasks.find((x) => x.id === taskId) ?? null) : null;
+}
+
+function initialFieldValuesForTask(tsk: LeadTask | null): Record<string, string> {
+  if (!tsk?.creationTypeId) return {};
+  const d = getLeadTaskCreationTypeDef(tsk.creationTypeId);
+  if (!d) return {};
+  const fv: Record<string, string> = {};
+  for (const f of d.fields) {
+    fv[f.id] = tsk.creationFields?.[f.id] ?? "";
+  }
+  return fv;
+}
+
 export function LeadTaskDetailDialog({
   lead,
   taskId,
@@ -64,59 +79,36 @@ export function LeadTaskDetailDialog({
 }) {
   const t = useTranslations("crm");
   const task = useMemo(
-    () => (taskId ? (lead.tasks.find((x) => x.id === taskId) ?? null) : null),
-    [lead.tasks, taskId],
+    () => resolveTask(lead, taskId),
+    [lead, taskId],
   );
 
-  const [dueDate, setDueDate] = useState("");
-  const [assigneeId, setAssigneeId] = useState("");
-  const [fieldValues, setFieldValues] = useState<Record<string, string>>({});
+  const [dueDate, setDueDate] = useState(() =>
+    dueDateFromIso(resolveTask(lead, taskId)?.dueAt),
+  );
+  const [assigneeId, setAssigneeId] = useState(
+    () => resolveTask(lead, taskId)?.assigneeId ?? "",
+  );
+  const [fieldValues, setFieldValues] = useState(() =>
+    initialFieldValuesForTask(resolveTask(lead, taskId)),
+  );
   const [slotFiles, setSlotFiles] = useState<Record<string, File[]>>({});
   const [pipelineNote, setPipelineNote] = useState("");
   const [saving, setSaving] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
   const fileInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
 
+  const handleDialogOpenChange = useCallback(
+    (next: boolean) => {
+      if (next) onError?.(null);
+      onOpenChange(next);
+    },
+    [onError, onOpenChange],
+  );
+
   const creationDef = task?.creationTypeId
     ? getLeadTaskCreationTypeDef(task.creationTypeId)
     : undefined;
-
-  const resetFromTask = useCallback(
-    (tsk: LeadTask | null) => {
-      if (!tsk) {
-        setDueDate("");
-        setAssigneeId("");
-        setFieldValues({});
-        setSlotFiles({});
-        setPipelineNote("");
-        return;
-      }
-      const d = tsk.creationTypeId
-        ? getLeadTaskCreationTypeDef(tsk.creationTypeId)
-        : undefined;
-      if (d) {
-        const fv: Record<string, string> = {};
-        for (const f of d.fields) {
-          fv[f.id] = tsk.creationFields?.[f.id] ?? "";
-        }
-        setFieldValues(fv);
-      } else {
-        setFieldValues({});
-      }
-      setDueDate(dueDateFromIso(tsk.dueAt));
-      setAssigneeId(tsk.assigneeId ?? "");
-      setSlotFiles({});
-      setPipelineNote("");
-      setFormError(null);
-    },
-    [],
-  );
-
-  useEffect(() => {
-    if (!open) return;
-    resetFromTask(task);
-    onError?.(null);
-  }, [open, task, resetFromTask, onError]);
 
   const transitionAction = task
     ? getTransitionActionForSystemTaskCompletion(lead, task)
@@ -312,7 +304,7 @@ export function LeadTaskDetailDialog({
   const notFound = open && taskId && !task;
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleDialogOpenChange}>
       <DialogContent
         dir={locale === "ar" ? "rtl" : "ltr"}
         size="xl"

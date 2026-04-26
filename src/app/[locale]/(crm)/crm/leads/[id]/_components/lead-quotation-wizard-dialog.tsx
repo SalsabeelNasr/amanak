@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import {
@@ -134,28 +134,6 @@ export function LeadQuotationWizardDialog({
     hotelName,
     transport,
   ]);
-
-  useEffect(() => {
-    if (!open) return;
-    setStepIndex(0);
-    setPackageTier(null);
-    setDoctorId(null);
-    setHospitalId(null);
-    setHotelName(null);
-    setDoctorOptions([]);
-    setValidationError(null);
-    setSaveError(null);
-    setSaving(false);
-  }, [open]);
-
-  useEffect(() => {
-    if (!open || !packageTier) {
-      setDoctorOptions([]);
-      return;
-    }
-    const ids = listQuotationDoctorIds(lead.treatmentSlug, packageTier);
-    void getDoctorsByIds(ids).then(setDoctorOptions);
-  }, [open, packageTier, lead.treatmentSlug]);
 
   const currentStep = steps[stepIndex] ?? "package";
 
@@ -362,6 +340,11 @@ export function LeadQuotationWizardDialog({
                         setDoctorId(null);
                         setHospitalId(null);
                         setHotelName(null);
+                        const ids = listQuotationDoctorIds(
+                          lead.treatmentSlug,
+                          tier,
+                        );
+                        void getDoctorsByIds(ids).then(setDoctorOptions);
                       }}
                       className={cn(
                         "flex flex-col p-4 rounded-xl border text-start transition-all",
@@ -414,13 +397,32 @@ export function LeadQuotationWizardDialog({
                           />
                         ) : (
                           <div className="size-full flex items-center justify-center text-primary font-bold text-sm bg-primary/5">
-                            {tDoctors(d.nameKey.replace(/^doctors\./, "") as any).charAt(0)}
+                            {tDoctors(
+                              d.nameKey.replace(
+                                /^doctors\./,
+                                "",
+                              ) as Parameters<typeof tDoctors>[0],
+                            ).charAt(0)}
                           </div>
                         )}
                       </div>
                       <div className="min-w-0 flex-1">
-                        <p className="text-xs font-bold text-foreground truncate">{tDoctors(d.nameKey.replace(/^doctors\./, "") as any)}</p>
-                        <p className="text-[10px] text-muted-foreground truncate">{tDoctors(d.titleKey.replace(/^doctors\./, "") as any)}</p>
+                        <p className="text-xs font-bold text-foreground truncate">
+                          {tDoctors(
+                            d.nameKey.replace(
+                              /^doctors\./,
+                              "",
+                            ) as Parameters<typeof tDoctors>[0],
+                          )}
+                        </p>
+                        <p className="text-[10px] text-muted-foreground truncate">
+                          {tDoctors(
+                            d.titleKey.replace(
+                              /^doctors\./,
+                              "",
+                            ) as Parameters<typeof tDoctors>[0],
+                          )}
+                        </p>
                       </div>
                       {doctorId === d.id && <Check className="size-3.5 text-primary ms-auto" />}
                     </button>
