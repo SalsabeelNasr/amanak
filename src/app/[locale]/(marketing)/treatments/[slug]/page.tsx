@@ -36,13 +36,27 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return { title, description };
 }
 
+/** Render a paragraph with `**bold**` segments wrapped in <strong>. */
+function renderInlineBold(p: string) {
+  const parts = p.split(/(\*\*[^*]+\*\*)/g);
+  return parts.map((part, i) =>
+    part.startsWith("**") && part.endsWith("**") ? (
+      <strong key={i} className="font-semibold text-foreground">
+        {part.slice(2, -2)}
+      </strong>
+    ) : (
+      part
+    ),
+  );
+}
+
 function BodyText({ text }: { text: string }) {
   const paragraphs = text.split("\n\n").filter(Boolean);
   return (
     <div className="space-y-4">
       {paragraphs.map((p, i) => (
         <p key={i} className="leading-relaxed text-muted-foreground text-lg">
-          {p}
+          {renderInlineBold(p)}
         </p>
       ))}
     </div>
@@ -111,12 +125,9 @@ export default async function TreatmentDetailPage({ params }: Props) {
                   <p className="text-xs font-semibold text-primary/70">
                     {t("successRateLabel")}
                   </p>
-                  <div className="flex items-center gap-3">
-                    <div className="h-3 w-3 rounded-full bg-green-500 animate-pulse" />
-                    <p className="text-xl font-bold text-foreground">
-                      {labels(treatment.successRateKey)}
-                    </p>
-                  </div>
+                  <p className="w-full text-xl font-bold leading-relaxed text-foreground">
+                    {labels(treatment.successRateKey)}
+                  </p>
                 </div>
               )}
 

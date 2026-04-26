@@ -1,12 +1,25 @@
 import type { HairTransplantVariant } from "@/lib/api/hair-transplant-variants";
 
+function renderInlineBold(p: string) {
+  const parts = p.split(/(\*\*[^*]+\*\*)/g);
+  return parts.map((part, i) =>
+    part.startsWith("**") && part.endsWith("**") ? (
+      <strong key={i} className="font-semibold text-foreground">
+        {part.slice(2, -2)}
+      </strong>
+    ) : (
+      part
+    ),
+  );
+}
+
 function RichText({ text }: { text: string }) {
   const paragraphs = text.split("\n\n").filter(Boolean);
   return (
     <div className="space-y-4">
       {paragraphs.map((p, i) => (
         <p key={i} className="leading-relaxed text-muted-foreground text-lg">
-          {p}
+          {renderInlineBold(p)}
         </p>
       ))}
     </div>

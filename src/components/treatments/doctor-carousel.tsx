@@ -1,8 +1,10 @@
 "use client";
 
+import { ChevronLeft, ChevronRight, Globe } from "lucide-react";
 import { useTranslations } from "next-intl";
-import Image from "next/image";
-import { Globe } from "lucide-react";
+import { useCallback, useRef } from "react";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import type { Doctor } from "@/types";
 
 type Props = {
@@ -39,19 +41,58 @@ function LinkedinIcon({ className }: { className?: string }) {
 
 export function DoctorCarousel({ doctors }: Props) {
   const t = useTranslations();
+  const scrollerRef = useRef<HTMLDivElement>(null);
+
+  const scrollBySlide = useCallback((direction: -1 | 1) => {
+    const el = scrollerRef.current;
+    if (!el) return;
+    const slide = el.querySelector<HTMLElement>("[data-doctor-slide]");
+    const delta = slide?.offsetWidth ? slide.offsetWidth + 24 : Math.min(304, el.clientWidth * 0.88);
+    el.scrollBy({ left: direction * delta, behavior: "smooth" });
+  }, []);
 
   if (!doctors || doctors.length === 0) return null;
 
   return (
-    <div className="space-y-6 py-8">
+    <div className="relative space-y-6 py-8">
       <h3 className="text-2xl font-bold text-foreground px-1">
         {t("treatments.doctorsLabel")}
       </h3>
-      
-      <div className="flex gap-6 overflow-x-auto pb-6 scrollbar-hide snap-x snap-mandatory">
+
+      <Button
+        type="button"
+        variant="secondary"
+        size="icon"
+        className="absolute start-0 top-1/2 z-10 hidden -translate-y-1/2 shadow-md md:flex"
+        aria-label={t("treatments.prevDoctor")}
+        onClick={() => scrollBySlide(-1)}
+      >
+        <ChevronLeft className="size-5" aria-hidden />
+      </Button>
+      <Button
+        type="button"
+        variant="secondary"
+        size="icon"
+        className="absolute end-0 top-1/2 z-10 hidden -translate-y-1/2 shadow-md md:flex"
+        aria-label={t("treatments.nextDoctor")}
+        onClick={() => scrollBySlide(1)}
+      >
+        <ChevronRight className="size-5" aria-hidden />
+      </Button>
+
+      <div
+        ref={scrollerRef}
+        dir="ltr"
+        className={cn(
+          "flex gap-6 overflow-x-auto overflow-y-hidden pb-6 snap-x snap-mandatory [-ms-overflow-style:none] [scrollbar-width:none]",
+          "[&::-webkit-scrollbar]:hidden",
+          "px-1 md:px-12",
+        )}
+      >
         {doctors.map((doctor) => (
-          <div 
+          <div
             key={doctor.id}
+            data-doctor-slide
             className="flex-none w-[280px] snap-start group"
           >
             <div className="relative aspect-[4/5] overflow-hidden rounded-2xl border border-border bg-muted mb-4 flex items-center justify-center">

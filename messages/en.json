@@ -414,7 +414,9 @@
         "success_rate": "Revision arthroplasty outcomes benchmarked against international registries",
         "body": "Revision orthopedic surgery in Egypt addresses cases that need re-do hip and knee arthroplasty, complex axial deformities, malunion or non-union of long bones, and post-infection reconstruction.\n\nOur partner surgeons are sub-specialised in revision arthroplasty and complex deformity, with access to custom implants and modular revision systems.\n\nWe coordinate detailed pre-op imaging review, infection workup where relevant, and a realistic recovery timeline given case complexity."
       }
-    }
+    },
+    "prevDoctor": "Previous doctor",
+    "nextDoctor": "Next doctor"
   },
   "landing": {
     "hero": {
