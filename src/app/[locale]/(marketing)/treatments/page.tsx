@@ -43,7 +43,7 @@ export default async function TreatmentsIndexPage() {
   };
 
   return (
-    <div className="mx-auto max-w-6xl px-4 pt-10 pb-24 sm:px-6 sm:pt-12 sm:pb-32 lg:pt-14">
+    <div className="mx-auto max-w-6xl min-w-0 px-4 pt-8 pb-16 sm:px-6 sm:pt-12 sm:pb-32 lg:pt-14">
       <TreatmentTabs items={tabItems} labels={tabLabels} />
     </div>
   );

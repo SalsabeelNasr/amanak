@@ -18,7 +18,7 @@ function RichText({ text }: { text: string }) {
   return (
     <div className="space-y-4">
       {paragraphs.map((p, i) => (
-        <p key={i} className="leading-relaxed text-muted-foreground text-lg">
+        <p key={i} className="text-base leading-relaxed text-muted-foreground sm:text-lg">
           {renderInlineBold(p)}
         </p>
       ))}
@@ -41,7 +41,9 @@ export function HairTransplantTypeSections({ heading, variants, labels, priceLab
         {variants.map((v) => (
           <article key={v.id} className="space-y-4">
             <h3 className="text-xl font-bold text-foreground sm:text-2xl">{labels(v.titleKey)}</h3>
-            <p className="text-lg leading-relaxed text-muted-foreground">{labels(v.descriptionKey)}</p>
+            <p className="text-base leading-relaxed text-muted-foreground sm:text-lg">
+              {labels(v.descriptionKey)}
+            </p>
             <RichText text={labels(v.bodyKey)} />
             <p className="text-sm font-medium text-foreground">
               <span className="text-xs font-semibold uppercase tracking-wide text-primary/80">

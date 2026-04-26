@@ -59,11 +59,11 @@ export function TreatmentVideoCarousel({ videos, doctorsById }: Props) {
   if (!videos.length) return null;
 
   return (
-    <section className="space-y-6 border-t border-border pt-12">
-      <h3 className="text-2xl font-bold text-foreground">
+    <section className="space-y-5 border-t border-border pt-8 sm:space-y-6 sm:pt-12">
+      <h3 className="text-xl font-bold text-foreground sm:text-2xl">
         {t("treatments.videoLabel")}
       </h3>
-      <div className="flex flex-wrap items-start justify-center gap-x-6 gap-y-10 sm:justify-start">
+      <div className="flex flex-wrap items-start justify-center gap-x-4 gap-y-8 sm:justify-start sm:gap-x-6 sm:gap-y-10">
         {videos.map((v, idx) => {
           const doctor = doctorsById[v.doctorId];
           const Icon = SOURCE_ICON[v.source];

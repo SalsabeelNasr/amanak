@@ -55,7 +55,7 @@ export function DoctorCarousel({ doctors }: Props) {
 
   return (
     <div className="space-y-6 py-8">
-      <h3 className="text-2xl font-bold text-foreground px-1">
+      <h3 className="px-1 text-xl font-bold text-foreground sm:text-2xl">
         {t("treatments.doctorsLabel")}
       </h3>
 
@@ -64,7 +64,7 @@ export function DoctorCarousel({ doctors }: Props) {
           type="button"
           variant="secondary"
           size="icon"
-          className="absolute left-0 top-[140px] z-10 -translate-y-1/2 shadow-md"
+          className="absolute start-0 top-[140px] z-10 hidden size-11 -translate-y-1/2 shadow-md md:inline-flex"
           aria-label={t("treatments.prevDoctor")}
           onClick={() => scrollBySlide(-1)}
         >
@@ -74,7 +74,7 @@ export function DoctorCarousel({ doctors }: Props) {
           type="button"
           variant="secondary"
           size="icon"
-          className="absolute right-0 top-[140px] z-10 -translate-y-1/2 shadow-md"
+          className="absolute end-0 top-[140px] z-10 hidden size-11 -translate-y-1/2 shadow-md md:inline-flex"
           aria-label={t("treatments.nextDoctor")}
           onClick={() => scrollBySlide(1)}
         >
@@ -85,7 +85,7 @@ export function DoctorCarousel({ doctors }: Props) {
           ref={scrollerRef}
           dir="ltr"
           className={cn(
-            "flex gap-6 overflow-x-auto overflow-y-hidden pb-6 snap-x snap-mandatory [-ms-overflow-style:none] [scrollbar-width:none]",
+            "flex gap-4 overflow-x-auto overflow-y-hidden pb-6 snap-x snap-mandatory [-ms-overflow-style:none] [scrollbar-width:none] sm:gap-6",
             "[&::-webkit-scrollbar]:hidden",
             "px-1 md:px-12",
           )}

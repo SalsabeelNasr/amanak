@@ -37,7 +37,7 @@ export async function SiteFooter() {
           href="https://wa.me/201159187434"
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex h-11 w-11 shrink-0 items-center justify-center self-end rounded-md text-muted-foreground transition-colors hover:text-[#25D366] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring sm:self-center"
+          className="flex h-11 w-full shrink-0 items-center justify-start rounded-md text-muted-foreground transition-colors hover:text-[#25D366] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring sm:inline-flex sm:w-11 sm:justify-center sm:self-center"
           aria-label={t("whatsappAria")}
         >
           <svg

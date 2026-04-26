@@ -55,7 +55,7 @@ function BodyText({ text }: { text: string }) {
   return (
     <div className="space-y-4">
       {paragraphs.map((p, i) => (
-        <p key={i} className="leading-relaxed text-muted-foreground text-lg">
+        <p key={i} className="text-base leading-relaxed text-muted-foreground sm:text-lg">
           {renderInlineBold(p)}
         </p>
       ))}
@@ -80,22 +80,26 @@ export default async function TreatmentDetailPage({ params }: Props) {
   const doctorsById = Object.fromEntries(doctors.map((d) => [d.id, d]));
 
   return (
-    <div className="mx-auto max-w-6xl space-y-12 px-4 py-16 sm:px-6">
-      <div className="space-y-4">
+    <div className="mx-auto max-w-6xl space-y-8 px-4 py-10 sm:space-y-12 sm:px-6 sm:py-16">
+      <div className="min-w-0 space-y-3 sm:space-y-4">
         <Link
           href={ROUTES.treatments}
-          className="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline"
+          className="inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-primary hover:underline"
           prefetch={false}
         >
           <span className="text-xs">←</span> {t("backToAllTreatments")}
         </Link>
-        <h1 className="text-4xl font-extrabold tracking-tight text-foreground sm:text-5xl">{labels(treatment.titleKey)}</h1>
-        <p className="text-xl text-muted-foreground leading-relaxed max-w-2xl">{labels(treatment.descriptionKey)}</p>
+        <h1 className="text-balance text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl md:text-5xl">
+          {labels(treatment.titleKey)}
+        </h1>
+        <p className="max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-xl">
+          {labels(treatment.descriptionKey)}
+        </p>
       </div>
 
-      <div className="grid gap-12 lg:grid-cols-3">
-        <div className="lg:col-span-2 space-y-12">
-          <section className="prose prose-slate dark:prose-invert max-w-none">
+      <div className="grid min-w-0 gap-8 sm:gap-12 lg:grid-cols-3">
+        <div className="min-w-0 space-y-8 sm:space-y-12 lg:col-span-2">
+          <section className="prose prose-slate max-w-none min-w-0 dark:prose-invert">
             <BodyText text={labels(treatment.bodyKey)} />
           </section>
 
@@ -117,15 +121,15 @@ export default async function TreatmentDetailPage({ params }: Props) {
           <TreatmentVideoCarousel videos={videos} doctorsById={doctorsById} />
         </div>
 
-        <aside className="space-y-8">
-          <div className="sticky top-24 space-y-6">
-            <div className="rounded-3xl border border-border bg-card p-8 shadow-sm space-y-6">
+        <aside className="min-w-0 space-y-8">
+          <div className="space-y-6 lg:sticky lg:top-24">
+            <div className="space-y-5 rounded-2xl border border-border bg-card p-5 shadow-sm sm:rounded-3xl sm:space-y-6 sm:p-8">
               {treatment.successRateKey && (
                 <div className="space-y-2">
                   <p className="text-xs font-semibold text-primary/70">
                     {t("successRateLabel")}
                   </p>
-                  <p className="w-full text-xl font-bold leading-relaxed text-foreground">
+                  <p className="w-full text-lg font-bold leading-relaxed text-foreground sm:text-xl">
                     {labels(treatment.successRateKey)}
                   </p>
                 </div>
@@ -159,7 +163,7 @@ export default async function TreatmentDetailPage({ params }: Props) {
                     <span className="text-xs font-semibold text-primary/70">
                       {t("priceLabel")}
                     </span>
-                    <span className="text-3xl font-black text-foreground">
+                    <span className="text-2xl font-black text-foreground sm:text-3xl">
                       ${treatment.priceUSD.toLocaleString()}
                     </span>
                   </div>

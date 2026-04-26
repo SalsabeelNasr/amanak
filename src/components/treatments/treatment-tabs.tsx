@@ -48,30 +48,30 @@ function TreatmentItemGrid({
   labels: TabLabels;
 }) {
   return (
-    <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+    <ul className="grid min-w-0 gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
       {items.map((item, index) => (
-        <li key={item.id} className="group">
-          <article className="flex h-full flex-col rounded-3xl border border-border bg-card p-8 shadow-sm transition-all hover:border-primary/20 hover:shadow-xl">
-            <div className="mb-6 flex items-center gap-4">
+        <li key={item.id} className="group min-w-0">
+          <article className="flex h-full min-w-0 flex-col rounded-2xl border border-border bg-card p-5 shadow-sm transition-all sm:rounded-3xl sm:p-6 lg:p-8 hover:border-primary/20 hover:shadow-xl">
+            <div className="mb-5 flex min-w-0 items-start gap-3 sm:mb-6 sm:items-center sm:gap-4">
               <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-base font-bold text-primary">
                 {index + 1}
               </span>
-              <h2 className="text-xl font-bold leading-tight text-foreground transition-colors group-hover:text-primary">
+              <h2 className="min-w-0 text-balance text-lg font-bold leading-tight text-foreground transition-colors group-hover:text-primary sm:text-xl">
                 {item.title}
               </h2>
             </div>
 
-            <p className="mb-8 grow text-sm leading-relaxed text-muted-foreground">
+            <p className="mb-6 grow text-sm leading-relaxed text-muted-foreground sm:mb-8">
               {item.description}
             </p>
 
-            <div className="space-y-6">
+            <div className="space-y-5 sm:space-y-6">
               {item.priceUSD != null && (
                 <div className="flex flex-col gap-1">
                   <span className="text-xs font-semibold text-primary/70">
                     {labels.priceLabel}
                   </span>
-                  <span className="text-2xl font-black text-foreground">
+                  <span className="text-xl font-black text-foreground sm:text-2xl">
                     ${item.priceUSD.toLocaleString()}
                   </span>
                 </div>
@@ -116,8 +116,8 @@ export function TreatmentTabs({ items, labels }: Props) {
       onValueChange={(v) => setActiveTab(v as CategoryId)}
       className="mt-0 gap-4"
     >
-      <div className="-mx-1 mt-0 overflow-x-auto overscroll-x-contain pb-px [scrollbar-width:thin]">
-        <TabsList variant="underline" className="inline-flex min-w-min flex-nowrap justify-start gap-1 px-1">
+      <div className="-mx-4 mt-0 overflow-x-auto overscroll-x-contain px-4 pb-px [scrollbar-width:thin] sm:-mx-1 sm:px-1">
+        <TabsList variant="underline" className="inline-flex min-w-min flex-nowrap justify-start gap-1">
           {categories.map((category) => (
             <TabsTrigger
               key={category.id}
