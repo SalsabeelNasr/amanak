@@ -351,6 +351,105 @@
         "techniques": "ADOS-informed assessment, ABA planning, speech therapy, occupational therapy, parent coaching",
         "success_rate": "Early intervention pathways with measurable developmental goals",
         "body": "Autism care works best when diagnosis, behavior plans, speech-language support, and caregiver training are coordinated in one pathway. We help families gather developmental history, reports, and school feedback before travel so the first consultation is clinically focused.\n\nBased on current Egypt market references, initial autism pathway costs often start around 15,000 EGP (about $300) for structured assessment and early-session planning, while comprehensive programs vary by weekly intensity. One-to-one ABA schedules are commonly planned at 10-40 hours per week, with separate pricing for speech and occupational therapy.\n\nAmanak coordinates case review, doctor matching, treatment scheduling, and follow-up milestones so families can track progress with clear goals and transparent cost planning."
+      },
+      "chest": {
+        "title": "Chest & Pulmonology Care",
+        "description": "Diagnosis and management of asthma, COPD, pneumonia, sleep apnea, and complex chest disorders by Egypt's senior pulmonologists.",
+        "doctors": "",
+        "hospitals": "Cairo University Hospital, Ain Shams Specialised Hospital, Cleopatra Hospital",
+        "techniques": "Flexible Bronchoscopy, EBUS, Polysomnography, Pulmonary Function Testing, Non-Invasive Ventilation",
+        "success_rate": "95% diagnostic accuracy on interventional bronchoscopy",
+        "body": "Chest disease care in Egypt covers the full spectrum from chronic conditions like asthma and COPD to acute interventions such as bronchoscopy and management of advanced respiratory failure.\n\nOur partner pulmonologists are senior consultants from Cairo and Ain Shams university hospitals with decades of experience in interventional bronchoscopy, sleep medicine, and pulmonary rehabilitation.\n\nWe coordinate the full pathway: pre-arrival imaging review, inpatient or outpatient scheduling, and structured follow-up after you return home."
+      },
+      "thoracic_surgery": {
+        "title": "Thoracic Surgery",
+        "description": "Lung resection, mediastinal tumor removal, and minimally invasive thoracoscopic procedures performed by Egypt's senior thoracic surgeons.",
+        "doctors": "",
+        "hospitals": "National Cancer Institute, Ain Shams Cardiothoracic Centre, Dar Al Fouad",
+        "techniques": "VATS Lobectomy, Mediastinal Tumor Resection, Pleurectomy, Tracheal Surgery, Pectus Repair",
+        "success_rate": "Under 2% major complication rate on elective VATS resections",
+        "body": "Thoracic surgery in Egypt now routinely uses Video-Assisted Thoracoscopic Surgery (VATS) for lung lobectomies, pleural disease, and mediastinal masses, drastically reducing recovery times.\n\nOur surgical partners come from established cardiothoracic units with experience across hundreds of major resections per year and structured oncology multidisciplinary review.\n\nWe coordinate pre-operative imaging review, anesthesia clearance, ICU planning, and post-discharge follow-up."
+      },
+      "cardiac_surgery": {
+        "title": "Cardiac Surgery — Open Heart & Valves",
+        "description": "Coronary bypass, valve replacement and repair, and adult congenital procedures by Egypt's most established cardiac surgeons.",
+        "doctors": "",
+        "hospitals": "Magrabi Cardiac Centre, Aswan Heart Centre, Dar Al Fouad, Cairo University Heart Hospital",
+        "techniques": "CABG (On-Pump & Off-Pump), Valve Repair & Replacement, Aortic Surgery, Adult Congenital Repair",
+        "success_rate": "Mortality under 2% for isolated CABG at high-volume partner centres",
+        "body": "Egypt's cardiac surgery centres perform thousands of bypass, valve, and combined procedures each year, with on-pump and increasingly off-pump techniques available.\n\nOur partner surgeons hold decades of operative experience and lead training programs at Cairo and Ain Shams universities, with established outcome data comparable to leading European centres at a fraction of the cost.\n\nWe assist with pre-op cardiology workup, ICU bed coordination, and structured cardiac rehab after discharge."
+      },
+      "neurosurgery": {
+        "title": "Neurosurgery — Brain & Spine",
+        "description": "Brain tumor removal, vascular neurosurgery, complex spine reconstruction and minimally invasive procedures by senior neurosurgical teams.",
+        "doctors": "",
+        "hospitals": "Cairo University Kasr Al Aini, Ain Shams Specialised, Dar Al Fouad",
+        "techniques": "Microsurgery, Neuronavigation, Awake Craniotomy, Endoscopic Skull Base, Minimally Invasive Spine",
+        "success_rate": "Outcomes benchmarked against international neurosurgical registries",
+        "body": "Egypt's neurosurgical centres handle the full spectrum of cranial and spinal pathology, including brain tumors, aneurysm clipping, AVM resection, and complex deformity correction.\n\nOur partner surgeons are professors at Cairo and Ain Shams universities and operate in centres equipped with neuronavigation, intra-operative monitoring and high-field MRI.\n\nWe coordinate imaging review, neuro-anaesthesia clearance, ICU planning, and structured rehabilitation pathways."
+      },
+      "general_surgery": {
+        "title": "General Surgery",
+        "description": "Abdominal, hernia, colorectal and laparoscopic surgery by senior consultants in established Cairo and Alexandria hospitals.",
+        "doctors": "",
+        "hospitals": "Cairo University Hospital, As-Salam International, Cleopatra Hospital",
+        "techniques": "Laparoscopic Cholecystectomy, Hernia Mesh Repair, Colorectal Resection, Anal/Pilonidal Surgery, Emergency Laparotomy",
+        "success_rate": "Length of stay and complication rates aligned with European benchmarks",
+        "body": "General surgery in Egypt covers laparoscopic cholecystectomy, hernia repair, colorectal procedures and emergency abdominal surgery, with most centres operating to international laparoscopic standards.\n\nOur partner surgeons hold consultant or professor positions and operate in JCI-recognised facilities with full anaesthesia and ICU support.\n\nWe coordinate pre-operative imaging and labs, surgical scheduling, and structured discharge with follow-up plans."
+      },
+      "oncosurgery": {
+        "title": "Surgical Oncology",
+        "description": "Curative cancer surgery for breast, GI, hepatobiliary and head & neck tumors with multidisciplinary tumor board review.",
+        "doctors": "",
+        "hospitals": "National Cancer Institute, Children's Cancer Hospital 57357, Baheya Foundation",
+        "techniques": "Breast Conservation, Whipple Procedure, Hepatic Resection, Sarcoma Surgery, Head & Neck Reconstruction",
+        "success_rate": "5-year outcomes published and peer-reviewed for major resections",
+        "body": "Surgical oncology in Egypt is delivered through dedicated cancer centres with structured multidisciplinary tumor boards covering medical oncology, radiation, pathology and surgery.\n\nOur partner surgeons work at the National Cancer Institute and Children's Cancer Hospital 57357 — both internationally accredited centres handling thousands of complex resections per year.\n\nWe coordinate pre-operative staging, multidisciplinary review, surgery scheduling and adjuvant care planning."
+      },
+      "vascular_surgery": {
+        "title": "Vascular Surgery",
+        "description": "Aneurysm repair, peripheral bypass, varicose vein treatment and limb-salvage procedures by Egypt's leading vascular surgeons.",
+        "doctors": "",
+        "hospitals": "Cairo University Vascular Unit, Cleopatra Hospital, Dar Al Fouad",
+        "techniques": "EVAR/TEVAR, Peripheral Angioplasty & Stenting, Carotid Endarterectomy, AV Fistula, Varicose Vein Ablation",
+        "success_rate": "Limb salvage rate above 92% in high-risk diabetic referrals",
+        "body": "Vascular surgery in Egypt covers both open and endovascular procedures — including EVAR for abdominal aneurysms, peripheral angioplasty, and limb salvage in diabetic patients.\n\nOur partner surgeons run dedicated vascular units with hybrid operating theatres and 24/7 interventional radiology support.\n\nWe coordinate vascular imaging review, perioperative anaesthesia, and structured follow-up with duplex surveillance."
+      },
+      "internal_medicine": {
+        "title": "Internal Medicine — Geriatrics, Gastroenterology & Endoscopy",
+        "description": "Comprehensive internal medicine review, gastrointestinal endoscopy, and geriatric care by senior internists across Cairo.",
+        "doctors": "",
+        "hospitals": "Cairo University Hospital, Ain Shams Specialised, As-Salam International",
+        "techniques": "Gastroscopy, Colonoscopy, ERCP, EUS, Comprehensive Geriatric Assessment",
+        "success_rate": "Diagnostic yield aligned with international gastroenterology benchmarks",
+        "body": "Internal medicine partners cover geriatric assessments, gastrointestinal endoscopy (gastroscopy, colonoscopy, ERCP) and management of complex chronic disease.\n\nWe match you with a consultant whose sub-specialty fits your case — geriatric, gastroenterology, or general internal medicine — and coordinate same-week diagnostic workup.\n\nReports are translated to your home physician for continuity of care after you return."
+      },
+      "pediatric_orthopedics": {
+        "title": "Pediatric Orthopedic Surgery",
+        "description": "Specialised orthopedic care for children — congenital deformities, growth-plate injuries, and pediatric trauma — by dedicated pediatric orthopedic surgeons.",
+        "doctors": "",
+        "hospitals": "Children's Cancer Hospital 57357, Abu El-Reesh Pediatric Hospital, As-Salam International",
+        "techniques": "DDH Reduction, Clubfoot (Ponseti), Growth Modulation, Pediatric Deformity Correction, Limb Reconstruction",
+        "success_rate": "Long-term outcomes tracked through dedicated pediatric ortho registries",
+        "body": "Pediatric orthopedic care addresses congenital conditions like clubfoot and DDH, growth-plate fractures, and complex deformity correction in growing skeletons.\n\nOur partner surgeons are dedicated pediatric orthopedists with specialised fellowship training and child-friendly recovery pathways.\n\nWe coordinate child-appropriate imaging, anaesthesia consultation, and family-centred follow-up."
+      },
+      "ankle_surgery": {
+        "title": "Foot & Ankle Surgery",
+        "description": "Ankle arthroscopy, fusion, ligament reconstruction and complex foot reconstruction by sub-specialised foot & ankle surgeons.",
+        "doctors": "",
+        "hospitals": "As-Salam International, Cleopatra Hospital, Dar Al Fouad",
+        "techniques": "Ankle Arthroscopy, Ankle Fusion, Total Ankle Replacement, Hallux Valgus Correction, Ligament Reconstruction",
+        "success_rate": "High patient-reported satisfaction on ankle arthroscopy and Hallux Valgus repair",
+        "body": "Foot and ankle care in Egypt is delivered by sub-specialised orthopedic surgeons handling sports injuries, post-traumatic deformities, hallux valgus, and ankle fusion or replacement.\n\nOur partner surgeons combine arthroscopic and open techniques and integrate physiotherapy from week one of recovery.\n\nWe coordinate weight-bearing imaging review, surgical scheduling and structured rehab plans."
+      },
+      "deformities_revision": {
+        "title": "Bone Deformity Correction & Revision Surgery",
+        "description": "Complex deformity correction and revision arthroplasty for previously failed orthopedic procedures.",
+        "doctors": "",
+        "hospitals": "As-Salam International, Cleopatra Hospital, Dar Al Fouad",
+        "techniques": "Revision Hip & Knee Arthroplasty, Ilizarov Frame, Axial Deformity Correction, Custom Mega-Prosthesis, Two-Stage Revision for Infection",
+        "success_rate": "Revision arthroplasty outcomes benchmarked against international registries",
+        "body": "Revision orthopedic surgery in Egypt addresses cases that need re-do hip and knee arthroplasty, complex axial deformities, malunion or non-union of long bones, and post-infection reconstruction.\n\nOur partner surgeons are sub-specialised in revision arthroplasty and complex deformity, with access to custom implants and modular revision systems.\n\nWe coordinate detailed pre-op imaging review, infection workup where relevant, and a realistic recovery timeline given case complexity."
       }
     }
   },
@@ -971,6 +1070,550 @@
       "ahmed_elashry": {
         "name": "Prof. Mohamed Saad El Ashry",
         "title": "Professor of Oncology - Mansoura University"
+      },
+      "hatem_galal_zaki": {
+        "name": "Dr. Hatem Galal Zaki",
+        "title": "Consultant of Orthopedic Surgery"
+      },
+      "mahmoud_abdelkarem": {
+        "name": "Dr. Mahmoud Abdelkarem",
+        "title": "Consultant of Orthopedic Surgery"
+      },
+      "mohamed_asal": {
+        "name": "Dr. Mohamed Asal",
+        "title": "Consultant of Orthopedic Surgery"
+      },
+      "mohamed_mokhtar": {
+        "name": "Dr. Mohamed Mokhtar",
+        "title": "Consultant of Orthopedic Surgery"
+      },
+      "nasef_mohamed_nasef": {
+        "name": "Dr. Nasef Mohamed Nasef",
+        "title": "Consultant of Orthopedic Surgery"
+      },
+      "saleh_gamil": {
+        "name": "Dr. Saleh Gamil",
+        "title": "Consultant of Orthopedic Surgery"
+      },
+      "ahmed_rezk_2": {
+        "name": "Dr. Ahmed Rezk",
+        "title": "Consultant of Orthopedic Surgery"
+      },
+      "mohamed_amr": {
+        "name": "Dr. Mohamed Amr",
+        "title": "Consultant of Orthopedic Surgery"
+      },
+      "waleed_alnahal": {
+        "name": "Dr. Waleed Alnahal",
+        "title": "Consultant of Orthopedic Surgery"
+      },
+      "wael_samir": {
+        "name": "Dr. Wael Samir",
+        "title": "Consultant of Orthopedic Surgery"
+      },
+      "haitham_abdelazeem": {
+        "name": "Dr. Haitham Abdelazeem",
+        "title": "Consultant of Orthopedic Surgery"
+      },
+      "hisham_abdelbaky": {
+        "name": "Dr. Hisham Abdelbaky",
+        "title": "Consultant of Orthopedic Surgery"
+      },
+      "mostafa_baraka": {
+        "name": "Dr. Mostafa Baraka",
+        "title": "Consultant of Orthopedic Surgery"
+      },
+      "mohamed_elkersh": {
+        "name": "Dr. Mohamed Elkersh",
+        "title": "Consultant of Orthopedic Surgery"
+      },
+      "ahmed_salama": {
+        "name": "Dr. Ahmed Salama",
+        "title": "Consultant of Orthopedic Surgery"
+      },
+      "waheed_yousry": {
+        "name": "Dr. Waheed Yousry",
+        "title": "Consultant of Orthopedic Surgery"
+      },
+      "hany_abdelgawad": {
+        "name": "Dr. Hany Abdelgawad",
+        "title": "Consultant of Orthopedic Surgery"
+      },
+      "yehia_bromboly": {
+        "name": "Dr. Yehia Bromboly",
+        "title": "Consultant of Orthopedic Surgery"
+      },
+      "ahmed_hosny": {
+        "name": "Dr. Ahmed Hosny",
+        "title": "Consultant of Orthopedic Surgery"
+      },
+      "mohamed_gebeily": {
+        "name": "Dr. Mohamed Gebeily",
+        "title": "Consultant of Orthopedic Surgery"
+      },
+      "yasser_batrawy": {
+        "name": "Dr. Yasser Batrawy",
+        "title": "Consultant of Orthopedic Surgery"
+      },
+      "yasser_sadek": {
+        "name": "Dr. Yasser Sadek",
+        "title": "Consultant of Cardiology"
+      },
+      "reda_abolatta": {
+        "name": "Dr. Reda Abolatta",
+        "title": "Consultant of Cardiology"
+      },
+      "khaled_aly": {
+        "name": "Dr. Khaled Aly",
+        "title": "Consultant of Cardiology"
+      },
+      "mohamed_mandour": {
+        "name": "Dr. Mohamed Mandour",
+        "title": "Consultant of Cardiology"
+      },
+      "hossam_mansour": {
+        "name": "Dr. Hossam Mansour",
+        "title": "Consultant of Cardiology"
+      },
+      "osama_amen": {
+        "name": "Dr. Osama Amen",
+        "title": "Consultant of Cardiology"
+      },
+      "abdallah_alasry": {
+        "name": "Dr. Abdallah Alasry",
+        "title": "Consultant of Cardiology"
+      },
+      "wael_kelany": {
+        "name": "Dr. Wael Kelany",
+        "title": "Consultant of Cardiology"
+      },
+      "ayman_mortada": {
+        "name": "Dr. Ayman Mortada",
+        "title": "Consultant of Cardiology"
+      },
+      "mervat_abolmaaty": {
+        "name": "Dr. Mervat Abolmaaty",
+        "title": "Consultant of Cardiology"
+      },
+      "ghalia_almhanny": {
+        "name": "Dr. Ghalia Almhanny",
+        "title": "Consultant of Cardiology"
+      },
+      "tarek_abdelsalam": {
+        "name": "Dr. Tarek Abdelsalam",
+        "title": "Consultant of Cardiology"
+      },
+      "mohamed_damaty": {
+        "name": "Dr. Mohamed Damaty",
+        "title": "Consultant of Cardiology"
+      },
+      "tarek_rasheed": {
+        "name": "Dr. Tarek Rasheed",
+        "title": "Consultant of Cardiology"
+      },
+      "ahmed_alsawaah": {
+        "name": "Dr. Ahmed Alsawaah",
+        "title": "Consultant of Cardiology"
+      },
+      "nabil_farag": {
+        "name": "Dr. Nabil Farag",
+        "title": "Consultant of Cardiology"
+      },
+      "tamer_alnahas": {
+        "name": "Dr. Tamer Alnahas",
+        "title": "Consultant of Oncology"
+      },
+      "emad_ebeid": {
+        "name": "Dr. Emad Ebeid",
+        "title": "Consultant of Oncology"
+      },
+      "emad_barsoum": {
+        "name": "Dr. Emad Barsoum",
+        "title": "Consultant of Oncology"
+      },
+      "ramy_ghali": {
+        "name": "Dr. Ramy Ghali",
+        "title": "Consultant of Oncology"
+      },
+      "ola_khorshid": {
+        "name": "Dr. Ola Khorshid",
+        "title": "Consultant of Oncology"
+      },
+      "karim_mashhour": {
+        "name": "Dr. Karim Mashhour",
+        "title": "Consultant of Oncology"
+      },
+      "hamdy_abdelazeem": {
+        "name": "Dr. Hamdy Abdelazeem",
+        "title": "Consultant of Oncology"
+      },
+      "lobna_ezz_elarab": {
+        "name": "Dr. Lobna Ezz Elarab",
+        "title": "Consultant of Oncology"
+      },
+      "yasser_moustafa": {
+        "name": "Dr. Yasser Moustafa",
+        "title": "Consultant of Pulmonology"
+      },
+      "nasr_hafez": {
+        "name": "Dr. Nasr Hafez",
+        "title": "Consultant of Pulmonology"
+      },
+      "hossam_hosny": {
+        "name": "Dr. Hossam Hosny",
+        "title": "Consultant of Pulmonology"
+      },
+      "gehan_alasal": {
+        "name": "Dr. Gehan Alasal",
+        "title": "Consultant of Pulmonology"
+      },
+      "mohamed_awad_tag_eldin": {
+        "name": "Dr. Mohamed Awad Tag Eldin",
+        "title": "Consultant of Pulmonology"
+      },
+      "emad_qoraa": {
+        "name": "Dr. Emad Qoraa",
+        "title": "Consultant of Pulmonology"
+      },
+      "ashraf_madkour": {
+        "name": "Dr. Ashraf Madkour",
+        "title": "Consultant of Pulmonology"
+      },
+      "ashraf_almaraghy": {
+        "name": "Dr. Ashraf Almaraghy",
+        "title": "Consultant of Pulmonology"
+      },
+      "mahmoud_zorkany": {
+        "name": "Dr. Mahmoud Zorkany",
+        "title": "Consultant of Pulmonology"
+      },
+      "hany_hassan": {
+        "name": "Dr. Hany Hassan",
+        "title": "Consultant of Thoracic Surgery"
+      },
+      "tarek_mohsen": {
+        "name": "Dr. Tarek Mohsen",
+        "title": "Consultant of Thoracic Surgery"
+      },
+      "mohamed_hussein": {
+        "name": "Dr. Mohamed Hussein",
+        "title": "Consultant of Thoracic Surgery"
+      },
+      "ahmed_mostafa": {
+        "name": "Dr. Ahmed Mostafa",
+        "title": "Consultant of Thoracic Surgery"
+      },
+      "ahmed_elnouri": {
+        "name": "Dr. Ahmed Elnouri",
+        "title": "Consultant of Thoracic Surgery"
+      },
+      "mohamed_abdelgayed": {
+        "name": "Dr. Mohamed Abdelgayed",
+        "title": "Consultant of Thoracic Surgery"
+      },
+      "tarek_helmy": {
+        "name": "Dr. Tarek Helmy",
+        "title": "Consultant of Cardiac Surgery"
+      },
+      "yasser_elnahas": {
+        "name": "Dr. Yasser Elnahas",
+        "title": "Consultant of Cardiac Surgery"
+      },
+      "mohamed_ghannam": {
+        "name": "Dr. Mohamed Ghannam",
+        "title": "Consultant of Cardiac Surgery"
+      },
+      "osama_abbas": {
+        "name": "Dr. Osama Abbas",
+        "title": "Consultant of Cardiac Surgery"
+      },
+      "saeed_abdelaziz": {
+        "name": "Dr. Saeed Abdelaziz",
+        "title": "Consultant of Cardiac Surgery"
+      },
+      "tarek_eltaweel": {
+        "name": "Dr. Tarek Eltaweel",
+        "title": "Consultant of Cardiac Surgery"
+      },
+      "ahmed_gabr": {
+        "name": "Dr. Ahmed Gabr",
+        "title": "Consultant of Neurology"
+      },
+      "hossam_salah": {
+        "name": "Dr. Hossam Salah",
+        "title": "Consultant of Neurology"
+      },
+      "adel_hasanen": {
+        "name": "Dr. Adel Hasanen",
+        "title": "Consultant of Neurology"
+      },
+      "dina_zamzam": {
+        "name": "Dr. Dina Zamzam",
+        "title": "Consultant of Neurology"
+      },
+      "ahmed_abdelaleem": {
+        "name": "Dr. Ahmed Abdelaleem",
+        "title": "Consultant of Neurology"
+      },
+      "ahmed_elsaeed": {
+        "name": "Dr. Ahmed Elsaeed",
+        "title": "Consultant of Neurology"
+      },
+      "azza_abdelnaseer": {
+        "name": "Dr. Azza Abdelnaseer",
+        "title": "Consultant of Neurology"
+      },
+      "ahmed_esmat": {
+        "name": "Dr. Ahmed Esmat",
+        "title": "Consultant of Neurology"
+      },
+      "amr_saeed": {
+        "name": "Dr. Amr Saeed",
+        "title": "Consultant of Neurology"
+      },
+      "assem_mounir": {
+        "name": "Dr. Assem Mounir",
+        "title": "Consultant of Neurology"
+      },
+      "mostafada_farid": {
+        "name": "Dr. Mostafada Farid",
+        "title": "Consultant of Neurology"
+      },
+      "mahmoud_hemeda": {
+        "name": "Dr. Mahmoud Hemeda",
+        "title": "Consultant of Neurology"
+      },
+      "tarek_lotfy": {
+        "name": "Dr. Tarek Lotfy",
+        "title": "Consultant of Neurosurgery"
+      },
+      "mazen_thabet": {
+        "name": "Dr. Mazen Thabet",
+        "title": "Consultant of Neurosurgery"
+      },
+      "ahmed_sameh_nada": {
+        "name": "Dr. Ahmed Sameh Nada",
+        "title": "Consultant of Neurosurgery"
+      },
+      "ahmed_maamoun": {
+        "name": "Dr. Ahmed Maamoun",
+        "title": "Consultant of Neurosurgery"
+      },
+      "ahmed_faisal_toubar": {
+        "name": "Dr. Ahmed Faisal Toubar",
+        "title": "Consultant of Neurosurgery"
+      },
+      "moahamed_elmashad": {
+        "name": "Dr. Moahamed Elmashad",
+        "title": "Consultant of Neurosurgery"
+      },
+      "amr_hassan": {
+        "name": "Dr. Amr Hassan",
+        "title": "Consultant of Neurosurgery"
+      },
+      "salah_hamada": {
+        "name": "Dr. Salah Hamada",
+        "title": "Consultant of Neurosurgery"
+      },
+      "osama_alghanam": {
+        "name": "Dr. Osama Alghanam",
+        "title": "Consultant of Neurosurgery"
+      },
+      "ahmed_zahran": {
+        "name": "Dr. Ahmed Zahran",
+        "title": "Consultant of Neurosurgery"
+      },
+      "ahmed_abdelaziz": {
+        "name": "Dr. Ahmed Abdelaziz",
+        "title": "Consultant of General Surgery"
+      },
+      "mohamed_abdelrazek": {
+        "name": "Dr. Mohamed Abdelrazek",
+        "title": "Consultant of General Surgery"
+      },
+      "mohamed_nada": {
+        "name": "Dr. Mohamed Nada",
+        "title": "Consultant of General Surgery"
+      },
+      "mohy_albanna": {
+        "name": "Dr. Mohy Albanna",
+        "title": "Consultant of General Surgery"
+      },
+      "alaa_eldin_hussein": {
+        "name": "Dr. Alaa Eldin Hussein",
+        "title": "Consultant of General Surgery"
+      },
+      "tarek_elnaggar": {
+        "name": "Dr. Tarek Elnaggar",
+        "title": "Consultant of General Surgery"
+      },
+      "ahmed_shukry": {
+        "name": "Dr. Ahmed Shukry",
+        "title": "Consultant of General Surgery"
+      },
+      "hossam_elfol": {
+        "name": "Dr. Hossam Elfol",
+        "title": "Consultant of Surgical Oncology"
+      },
+      "haitham_fekry": {
+        "name": "Dr. Haitham Fekry",
+        "title": "Consultant of Surgical Oncology"
+      },
+      "abdelwahab_raafat": {
+        "name": "Dr. Abdelwahab Raafat",
+        "title": "Consultant of Surgical Oncology"
+      },
+      "moahmed_zidan": {
+        "name": "Dr. Moahmed Zidan",
+        "title": "Consultant of Surgical Oncology"
+      },
+      "asseem_barashy": {
+        "name": "Dr. Asseem Barashy",
+        "title": "Consultant of Surgical Oncology"
+      },
+      "ahmed_farahat": {
+        "name": "Dr. Ahmed Farahat",
+        "title": "Consultant of Surgical Oncology"
+      },
+      "ayman_abdelwahab": {
+        "name": "Dr. Ayman Abdelwahab",
+        "title": "Consultant of Surgical Oncology"
+      },
+      "ashraf_alziat": {
+        "name": "Dr. Ashraf Alziat",
+        "title": "Consultant of Surgical Oncology"
+      },
+      "ashraf_elzoghby": {
+        "name": "Dr. Ashraf Elzoghby",
+        "title": "Consultant of Surgical Oncology"
+      },
+      "mamdouh_abdelsalam": {
+        "name": "Dr. Mamdouh Abdelsalam",
+        "title": "Consultant of Vascular Surgery"
+      },
+      "sherif_essam": {
+        "name": "Dr. Sherif Essam",
+        "title": "Consultant of Vascular Surgery"
+      },
+      "atef_abdelhamid": {
+        "name": "Dr. Atef Abdelhamid",
+        "title": "Consultant of Vascular Surgery"
+      },
+      "mohamed_isameil": {
+        "name": "Dr. Mohamed Isameil",
+        "title": "Consultant of Vascular Surgery"
+      },
+      "nehad_fouad": {
+        "name": "Dr. Nehad Fouad",
+        "title": "Consultant of Vascular Surgery"
+      },
+      "yasser_elsayed": {
+        "name": "Dr. Yasser Elsayed",
+        "title": "Consultant of Vascular Surgery"
+      },
+      "hesham_bassiouny": {
+        "name": "Dr. Hesham Bassiouny",
+        "title": "Consultant of Vascular Surgery"
+      },
+      "osama_taha": {
+        "name": "Dr. Osama Taha",
+        "title": "Consultant of Bariatric Surgery"
+      },
+      "khaled_gawdat": {
+        "name": "Dr. Khaled Gawdat",
+        "title": "Consultant of Bariatric Surgery"
+      },
+      "ahmed_elmasry": {
+        "name": "Dr. Ahmed Elmasry",
+        "title": "Consultant of Bariatric Surgery"
+      },
+      "mohamed_matar": {
+        "name": "Dr. Mohamed Matar",
+        "title": "Consultant of Bariatric Surgery"
+      },
+      "hossam_tahseen": {
+        "name": "Dr. Hossam Tahseen",
+        "title": "Consultant of Plastic Surgery"
+      },
+      "mohamed_elghalban": {
+        "name": "Dr. Mohamed Elghalban",
+        "title": "Consultant of Plastic Surgery"
+      },
+      "sara_abdallah": {
+        "name": "Dr. Sara Abdallah",
+        "title": "Consultant of Plastic Surgery"
+      },
+      "mukhibat": {
+        "name": "Dr. Mukhibat",
+        "title": "Consultant of Plastic Surgery"
+      },
+      "mohamed_mamdouh": {
+        "name": "Dr. Mohamed Mamdouh",
+        "title": "Consultant of Plastic Surgery"
+      },
+      "obada_samanody": {
+        "name": "Dr. Obada Samanody",
+        "title": "Consultant of Plastic Surgery"
+      },
+      "samir_ghoraba": {
+        "name": "Dr. Samir Ghoraba",
+        "title": "Consultant of Plastic Surgery"
+      },
+      "khaled_sami": {
+        "name": "Dr. Khaled Sami",
+        "title": "Consultant of Plastic Surgery"
+      },
+      "wael_ghannem": {
+        "name": "Dr. Wael Ghannem",
+        "title": "Consultant of Plastic Surgery"
+      },
+      "ashraf_abolfotoh": {
+        "name": "Dr. Ashraf Abolfotoh",
+        "title": "Consultant of Plastic Surgery"
+      },
+      "tarek_amer": {
+        "name": "Dr. Tarek Amer",
+        "title": "Consultant of Plastic Surgery"
+      },
+      "hossam_abolatta": {
+        "name": "Dr. Hossam Abolatta",
+        "title": "Consultant of Plastic Surgery"
+      },
+      "ahmed_taalab": {
+        "name": "Dr. Ahmed Taalab",
+        "title": "Consultant of Plastic Surgery"
+      },
+      "mohamed_elsayed": {
+        "name": "Dr. Mohamed Elsayed",
+        "title": "Consultant of Plastic Surgery"
+      },
+      "mohamed_abdelkader": {
+        "name": "Dr. Mohamed Abdelkader",
+        "title": "Consultant of Plastic Surgery"
+      },
+      "mohamed_shawky_khater": {
+        "name": "Dr. Mohamed Shawky Khater",
+        "title": "Consultant of Internal Medicine"
+      },
+      "hala_sweed": {
+        "name": "Dr. Hala Sweed",
+        "title": "Consultant of Internal Medicine"
+      },
+      "mohamed_elsherbeny": {
+        "name": "Dr. Mohamed Elsherbeny",
+        "title": "Consultant of Internal Medicine"
+      },
+      "rami_nakhka": {
+        "name": "Dr. Rami Nakhka",
+        "title": "Consultant of Internal Medicine"
+      },
+      "ahmed_taee": {
+        "name": "Dr. Ahmed Taee",
+        "title": "Consultant of Internal Medicine"
+      },
+      "hany_haroun": {
+        "name": "Dr. Hany Haroun",
+        "title": "Consultant of Internal Medicine"
       }
     }
   },
@@ -980,8 +1623,18 @@
     "reachSectionBadge": "Our reach",
     "reachRegionalPresenceLabel": "Regional presence",
     "reachDestinationsTitle": "Destinations",
-    "reachPresenceCountries": ["Libya", "Iraq", "Jordan"],
-    "reachDestinationCountries": ["Jordan", "Turkey", "Dubai", "Egypt", "Europe"],
+    "reachPresenceCountries": [
+      "Libya",
+      "Iraq",
+      "Jordan"
+    ],
+    "reachDestinationCountries": [
+      "Jordan",
+      "Turkey",
+      "Dubai",
+      "Egypt",
+      "Europe"
+    ],
     "reachTitle": "Our International Presence",
     "reachBody": "With dedicated offices in Libya, Iraq, and Jordan, Amanak has successfully helped international patients access top-tier treatments in Jordan, Turkey, Dubai, Egypt, and Europe. We understand the regional needs and bridge the distance between you and the best medical care.",
     "addressTitle": "Our Headquarters",
