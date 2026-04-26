@@ -43,21 +43,21 @@ export function DoctorCarousel({ doctors }: Props) {
   if (!doctors || doctors.length === 0) return null;
 
   return (
-    <div className="space-y-6 py-8">
-      <h3 className="text-2xl font-bold text-foreground px-1">
+    <div className="space-y-5 py-6">
+      <h3 className="px-1 text-xl font-bold text-foreground sm:text-2xl">
         {t("treatments.doctorsLabel")}
       </h3>
       
-      <div className="flex gap-6 overflow-x-auto pb-6 scrollbar-hide snap-x snap-mandatory">
+      <div className="scrollbar-hide flex snap-x snap-mandatory gap-4 overflow-x-auto pb-4">
         {doctors.map((doctor) => (
           <div 
             key={doctor.id}
-            className="flex-none w-[280px] snap-start group"
+            className="group w-[220px] flex-none snap-start sm:w-[240px]"
           >
-            <div className="relative aspect-[4/5] overflow-hidden rounded-2xl border border-border bg-muted mb-4 flex items-center justify-center">
+            <div className="relative mb-3 flex aspect-[4/5] items-center justify-center overflow-hidden rounded-xl border border-border bg-muted">
               {/* Fallback that shows behind the image, or if the image is hidden/missing */}
               <div className="absolute inset-0 flex h-full w-full items-center justify-center bg-secondary/20 text-secondary-foreground/40">
-                <span className="text-4xl font-bold">{t(doctor.nameKey).charAt(0)}</span>
+                <span className="text-3xl font-bold">{t(doctor.nameKey).charAt(0)}</span>
               </div>
 
               {doctor.image && (
@@ -65,7 +65,7 @@ export function DoctorCarousel({ doctors }: Props) {
                   src={doctor.image}
                   alt={t(doctor.nameKey)}
                   referrerPolicy="no-referrer"
-                  className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105 z-10"
+                  className="absolute inset-0 z-10 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                   onError={(e) => {
                     // Hide the image if it fails to load so the fallback initials show
                     e.currentTarget.style.opacity = '0';
@@ -74,27 +74,27 @@ export function DoctorCarousel({ doctors }: Props) {
               )}
             </div>
             
-            <div className="space-y-2 px-1">
+            <div className="space-y-1.5 px-1">
               <div>
-                <h4 className="text-lg font-bold text-foreground">
+                <h4 className="text-base font-bold text-foreground sm:text-lg">
                   {t(doctor.nameKey)}
                 </h4>
-                <p className="text-sm text-muted-foreground leading-relaxed">
+                <p className="text-xs leading-relaxed text-muted-foreground sm:text-sm">
                   {t(doctor.titleKey)}
                 </p>
               </div>
 
               {/* Social Links */}
-              <div className="flex flex-wrap items-center gap-3 pt-2">
+              <div className="flex flex-wrap items-center gap-2 pt-1.5">
                 {doctor.instagram && (
                   <a
                     href={doctor.instagram}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex h-8 w-8 items-center justify-center rounded-full bg-muted text-muted-foreground transition-all hover:bg-[#E1306C]/10 hover:text-[#E1306C]"
+                    className="flex h-7 w-7 items-center justify-center rounded-full bg-muted text-muted-foreground transition-all hover:bg-[#E1306C]/10 hover:text-[#E1306C]"
                     aria-label="Instagram"
                   >
-                    <InstagramIcon className="h-4 w-4" />
+                    <InstagramIcon className="h-3.5 w-3.5" />
                   </a>
                 )}
                 {doctor.facebook && (
@@ -102,10 +102,10 @@ export function DoctorCarousel({ doctors }: Props) {
                     href={doctor.facebook}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex h-8 w-8 items-center justify-center rounded-full bg-muted text-muted-foreground transition-all hover:bg-[#1877F2]/10 hover:text-[#1877F2]"
+                    className="flex h-7 w-7 items-center justify-center rounded-full bg-muted text-muted-foreground transition-all hover:bg-[#1877F2]/10 hover:text-[#1877F2]"
                     aria-label="Facebook"
                   >
-                    <FacebookIcon className="h-4 w-4" />
+                    <FacebookIcon className="h-3.5 w-3.5" />
                   </a>
                 )}
                 {doctor.linkedin && (
@@ -113,10 +113,10 @@ export function DoctorCarousel({ doctors }: Props) {
                     href={doctor.linkedin}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex h-8 w-8 items-center justify-center rounded-full bg-muted text-muted-foreground transition-all hover:bg-[#0A66C2]/10 hover:text-[#0A66C2]"
+                    className="flex h-7 w-7 items-center justify-center rounded-full bg-muted text-muted-foreground transition-all hover:bg-[#0A66C2]/10 hover:text-[#0A66C2]"
                     aria-label="LinkedIn"
                   >
-                    <LinkedinIcon className="h-4 w-4" />
+                    <LinkedinIcon className="h-3.5 w-3.5" />
                   </a>
                 )}
                 {doctor.website && (
@@ -124,10 +124,10 @@ export function DoctorCarousel({ doctors }: Props) {
                     href={doctor.website}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex h-8 w-8 items-center justify-center rounded-full bg-muted text-muted-foreground transition-all hover:bg-primary/10 hover:text-primary"
+                    className="flex h-7 w-7 items-center justify-center rounded-full bg-muted text-muted-foreground transition-all hover:bg-primary/10 hover:text-primary"
                     aria-label="Website"
                   >
-                    <Globe className="h-4 w-4" />
+                    <Globe className="h-3.5 w-3.5" />
                   </a>
                 )}
               </div>

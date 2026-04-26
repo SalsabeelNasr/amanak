@@ -67,6 +67,8 @@ export default async function AboutPage() {
         </div>
       </section>
 
+      <SupervisionLogosBanner className="py-24 sm:py-32" />
+
       {/* Reach — second section (restored) */}
       <section className="border-b border-border/40 bg-background py-24 sm:py-32">
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
@@ -124,7 +126,6 @@ export default async function AboutPage() {
         </div>
       </section>
 
-      <SupervisionLogosBanner className="py-24 sm:py-32" />
     </div>
   );
 }

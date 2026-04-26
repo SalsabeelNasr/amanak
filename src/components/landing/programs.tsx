@@ -51,7 +51,7 @@ export async function Programs() {
               key={item.id}
               className="group relative flex flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/25 hover:shadow-lg"
             >
-              <div className="relative aspect-[16/10] w-full shrink-0 overflow-hidden">
+              <div className="relative aspect-[4/3] w-full shrink-0 overflow-hidden">
                 <Image
                   src={item.imageSrc}
                   alt={t(`items.${item.id}.title`)}
@@ -68,15 +68,15 @@ export async function Programs() {
                 </div>
               </div>
 
-              <div className="flex flex-1 flex-col p-6 sm:p-7">
-                <p className="grow text-pretty text-sm leading-relaxed text-muted-foreground line-clamp-3">
+              <div className="flex flex-1 flex-col p-5 sm:p-6">
+                <p className="grow text-pretty text-sm leading-relaxed text-muted-foreground line-clamp-2">
                   {t(`items.${item.id}.description`)}
                 </p>
                 <Link
                   href={`${ROUTES.treatments}/${item.treatment.slug}`}
                   className={cn(
                     buttonVariants({ variant: "default", size: "lg" }),
-                    "mt-5 w-full rounded-full font-bold shadow-sm transition-shadow group-hover:shadow-md",
+                    "mt-4 w-full rounded-full font-bold shadow-sm transition-shadow group-hover:shadow-md",
                   )}
                   prefetch={false}
                 >
