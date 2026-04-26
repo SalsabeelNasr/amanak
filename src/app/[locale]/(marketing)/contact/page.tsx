@@ -54,8 +54,8 @@ export default async function ContactPage({ searchParams }: Props) {
   return (
     <>
       <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 gap-12 lg:grid-cols-2">
-          <div className="space-y-8">
+        <div className="grid grid-cols-1 items-stretch gap-12 lg:grid-cols-2">
+          <div className="min-h-0 space-y-8">
             <header className="space-y-3 text-start">
               <h1 className="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
                 {tContact("title")}
@@ -76,7 +76,8 @@ export default async function ContactPage({ searchParams }: Props) {
                   </p>
                   <a
                     href="tel:+201159187434"
-                    className="text-base font-semibold text-foreground transition-colors hover:text-primary"
+                    dir="ltr"
+                    className="block text-base font-semibold text-foreground transition-colors hover:text-primary"
                   >
                     +20 115 918 7434
                   </a>
@@ -95,7 +96,8 @@ export default async function ContactPage({ searchParams }: Props) {
                     href="https://wa.me/201159187434"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-base font-semibold text-foreground transition-colors hover:text-[#25D366]"
+                    dir="ltr"
+                    className="block text-base font-semibold text-foreground transition-colors hover:text-[#25D366]"
                   >
                     +20 115 918 7434
                   </a>
@@ -132,8 +134,8 @@ export default async function ContactPage({ searchParams }: Props) {
             </div>
           </div>
 
-          <div className="lg:pt-4">
-            <InquiryForm treatments={treatments} />
+          <div className="flex min-h-0 h-full flex-col">
+            <InquiryForm treatments={treatments} className="min-h-0 flex-1" />
           </div>
         </div>
       </div>

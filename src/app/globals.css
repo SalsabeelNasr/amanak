@@ -225,9 +225,14 @@
   }
 }
 
-@keyframes amanak-marquee {
-  from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
+/** Seamless loop: `--marquee-shift` = measured width of one repeated segment (px). */
+@keyframes marquee-seamless-px {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(calc(-1 * var(--marquee-shift, 0px)), 0, 0);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

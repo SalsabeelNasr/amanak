@@ -11,8 +11,17 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { cn } from "@/lib/utils";
 
 type TreatmentOption = { slug: string; label: string };
+
+type InquiryFormProps = {
+  treatments: TreatmentOption[];
+  className?: string;
+};
+
+/** Temporarily disable inquiry submissions */
+const INQUIRY_SUBMIT_DISABLED = true;
 
 function errorMessage(
   tErr: (key: string) => string,
@@ -30,7 +39,7 @@ function errorMessage(
   return map[code] ?? code;
 }
 
-export function InquiryForm({ treatments }: { treatments: TreatmentOption[] }) {
+export function InquiryForm({ treatments, className }: InquiryFormProps) {
   const t = useTranslations("inquiry");
   const [submittedId, setSubmittedId] = useState<string | null>(null);
 
@@ -59,14 +68,21 @@ export function InquiryForm({ treatments }: { treatments: TreatmentOption[] }) {
   });
 
   return (
-    <Card className="border-border shadow-sm">
-      <CardContent className="p-6 text-start sm:p-8">
+    <Card className={cn("h-full min-h-0 border-border shadow-sm", className)}>
+      <CardContent className="flex min-h-0 flex-1 flex-col p-6 text-start sm:p-8">
         {submittedId ? (
-          <p className="text-center font-medium text-primary" role="status">
+          <p
+            className="flex flex-1 items-center justify-center text-center font-medium text-primary"
+            role="status"
+          >
             {t("success")}
           </p>
         ) : (
-          <form className="space-y-6" onSubmit={onSubmit} noValidate>
+          <form
+            className="flex min-h-0 flex-1 flex-col gap-6"
+            onSubmit={onSubmit}
+            noValidate
+          >
             <div className="space-y-2">
               <Label htmlFor="fullName">{t("fullName")}</Label>
               <Input
@@ -91,7 +107,7 @@ export function InquiryForm({ treatments }: { treatments: TreatmentOption[] }) {
                 autoComplete="tel"
                 inputMode="tel"
                 className="text-start"
-                dir="auto"
+                dir="ltr"
                 aria-invalid={!!form.formState.errors.phone}
                 {...form.register("phone")}
               />
@@ -142,12 +158,12 @@ export function InquiryForm({ treatments }: { treatments: TreatmentOption[] }) {
               />
             </div>
 
-            <div className="space-y-2">
+            <div className="flex min-h-0 flex-1 flex-col gap-2">
               <Label htmlFor="message">{t("message")}</Label>
               <textarea
                 id="message"
                 rows={4}
-                className="flex min-h-24 w-full rounded-lg border border-input bg-background px-3 py-2 text-start text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+                className="min-h-24 w-full flex-1 resize-y rounded-lg border border-input bg-background px-3 py-2 text-start text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
                 dir="auto"
                 aria-invalid={!!form.formState.errors.message}
                 {...form.register("message")}
@@ -163,7 +179,7 @@ export function InquiryForm({ treatments }: { treatments: TreatmentOption[] }) {
               <Button
                 type="submit"
                 className="min-h-11 w-full sm:w-auto"
-                disabled={form.formState.isSubmitting}
+                disabled={form.formState.isSubmitting || INQUIRY_SUBMIT_DISABLED}
                 data-testid="inquiry-submit"
               >
               {t("submit")}

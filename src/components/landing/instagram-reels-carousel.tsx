@@ -41,7 +41,7 @@ export function InstagramReelsCarousel({ items, className }: Props) {
         aria-label={t("prevReel")}
         onClick={() => scrollBySlide(-1)}
       >
-        <ChevronLeft className="size-5" aria-hidden />
+        <ChevronLeft className="size-5 rtl:-scale-x-100" aria-hidden />
       </Button>
       <Button
         type="button"
@@ -51,7 +51,7 @@ export function InstagramReelsCarousel({ items, className }: Props) {
         aria-label={t("nextReel")}
         onClick={() => scrollBySlide(1)}
       >
-        <ChevronRight className="size-5" aria-hidden />
+        <ChevronRight className="size-5 rtl:-scale-x-100" aria-hidden />
       </Button>
 
       <div

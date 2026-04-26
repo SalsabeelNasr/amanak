@@ -50,6 +50,9 @@ type Props = {
   consultant: ConsultantProfile;
 };
 
+/** Temporarily disable consultation booking submissions */
+const CONSULTATION_BOOKING_SUBMIT_DISABLED = true;
+
 export function ConsultationBookingForm({ initialSlots, consultant }: Props) {
   const t = useTranslations("consultationBooking");
   const locale = useLocale();
@@ -482,6 +485,7 @@ export function ConsultationBookingForm({ initialSlots, consultant }: Props) {
                       id="cb-phone"
                       type="tel"
                       autoComplete="tel"
+                      dir="ltr"
                       disabled={contactStep !== "details"}
                       {...form.register("phone")}
                       aria-invalid={!!form.formState.errors.phone}
@@ -510,7 +514,9 @@ export function ConsultationBookingForm({ initialSlots, consultant }: Props) {
                     size="default"
                     className="mt-1 h-10 w-full rounded-md px-6 text-sm font-semibold sm:w-auto"
                     disabled={
-                      form.formState.isSubmitting || contactStep !== "details"
+                      form.formState.isSubmitting ||
+                      contactStep !== "details" ||
+                      CONSULTATION_BOOKING_SUBMIT_DISABLED
                     }
                     data-testid="consultation-book-submit"
                   >

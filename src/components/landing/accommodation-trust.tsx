@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { getTranslations } from "next-intl/server";
-import { MapPin, Home, BedDouble, ChevronRight } from "lucide-react";
+import { MapPin, Home, ChevronRight } from "lucide-react";
 
 const LISTING_MSG = {
   listing1: {

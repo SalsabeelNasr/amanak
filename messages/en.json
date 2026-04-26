@@ -357,33 +357,33 @@
   "landing": {
     "hero": {
       "title": "Reclaim your wellbeing in Egypt with integrated care",
-      "subtitle": "From around the world to Egypt’s leading hospitals. Amanak holds hospitals, specialists, accommodation, and transport under one accountable team, so recovery stays safe and your budget is clear before you travel.",
-      "cta": "Start your free consultation",
+      "subtitle": "Expert medical care, simplified. We bring together Egypt's top surgeons, world-class hospitals, and comfortable stays into one seamless, stress-free experience. Focus on your recovery while we handle the rest.",
+      "cta": "Start Your Free Consultation",
       "imageAlt": "Aerial view of the Nile River and Cairo skyline"
     },
     "whyEgypt": {
-      "title": "Why choose Egypt, and why Amanak?",
-      "lead": "Egypt offers world-class medical expertise at exceptional value. Amanak is your trusted partner, managing every detail across top-tier hospitals and doctors, comfortable stays, and safe transport, with all costs transparent and fixed upfront.",
-      "bullet1Title": "Medical Expertise in Egypt",
-      "bullet1": "Elite surgeons and consultants in modern hospitals achieving world-class results, at carefully planned costs that suit families in our region.",
-      "bullet2Title": "The Amanak Team by Your Side",
-      "bullet2": "We are a licensed Egyptian company and a member of the Travel Agents Association (ETAA). Our team accompanies you every step of the way, from record review to your safe return.",
-      "bullet3Title": "Comprehensive Journey Management",
-      "bullet3": "We handle scheduling, physician selection, and arranging accommodation and transfers. Having one accountable partner ensures the highest standards of care.",
-      "bullet4Title": "Total Cost Transparency",
-      "bullet4": "Treatment, stay, and transport costs are determined upfront. You receive a clear plan before traveling, so you can make your family decision with confidence."
+      "title": "Why Trust Amanak with Your Care?",
+      "lead": "Egypt is a global hub for medical excellence, offering world-class expertise at a fraction of the cost. Amanak makes it easy by managing every detail of your trip—from medical records to your safe return home.",
+      "bullet1Title": "World-Class Medical Experts",
+      "bullet1": "Access elite surgeons and modern hospitals with proven success rates, all at prices that make sense for your family.",
+      "bullet2Title": "A Partner You Can Count On",
+      "bullet2": "As a licensed Egyptian company (ETAA member), we are your legal and personal guide on the ground, every step of the way.",
+      "bullet3Title": "Stress-Free Journey",
+      "bullet3": "We handle the hard parts—scheduling, doctor selection, and booking your stay—so you can focus entirely on getting better.",
+      "bullet4Title": "No Hidden Costs",
+      "bullet4": "Know exactly what you'll pay before you even leave home. Our transparent, fixed pricing means no surprises for your budget."
     },
     "accreditedHospitals": {
-      "title": "Internationally Accredited Care in Egypt",
-      "lead": "We partner with hospitals that meet rigorous global and national standards, ensuring your safety and the highest quality of medical service.",
-      "gaharTitle": "GAHAR: Egypt's Gold Standard",
-      "gaharBody": "The General Authority for Healthcare Accreditation and Regulation (GAHAR) is Egypt's official body. Its standards are ISQua-accredited, matching the highest global benchmarks for patient safety and clinical excellence.",
-      "jciTitle": "JCI: Global Recognition",
-      "jciBody": "Joint Commission International (JCI) is the world's leader in healthcare accreditation. JCI-accredited hospitals in Egypt demonstrate a commitment to the same safety standards found in the top medical centers in the US and Europe.",
-      "trustBadge1": "Patient Safety First",
-      "trustBadge2": "ISQua Accredited Standards",
-      "trustBadge3": "Rigorous Clinical Audits",
-      "tableCaption": "A selection of our accredited hospital partners",
+      "title": "Care You Can Trust: Our Accredited Partners",
+      "lead": "Your safety is our priority. We only partner with hospitals that meet the highest international and national standards for clinical excellence.",
+      "gaharTitle": "GAHAR: The Gold Standard in Egypt",
+      "gaharBody": "Egypt's official accreditation body, GAHAR, follows strict international (ISQua) standards to ensure every patient receives safe, high-quality care.",
+      "jciTitle": "JCI: Globally Recognized Excellence",
+      "jciBody": "Many of our partners hold JCI accreditation—the same safety and quality benchmark used by the top medical centers in the US and Europe.",
+      "trustBadge1": "Safety First",
+      "trustBadge2": "Global Standards",
+      "trustBadge3": "Expert Audits",
+      "tableCaption": "A selection of our trusted hospital partners",
       "colHospital": "Hospital",
       "colAccreditations": "Accreditation",
       "colDepartments": "Key Specialties",
@@ -429,14 +429,14 @@
       }
     },
     "accommodation": {
-      "sealTitle": "Your Licensed Partner for a Safe and Comfortable Stay",
-      "sealBody": "Amanak is an official member of the ETAA, ensuring organized logistics in carefully selected accommodations near major medical centers. We offer special rates for long stays and a familiar family atmosphere that meets all your needs.",
+      "sealTitle": "A Safe, Comfortable Home Away from Home",
+      "sealBody": "As an official ETAA member, we arrange high-quality stays near your medical center. Enjoy a warm, family-friendly atmosphere with special rates for long-term recovery.",
       "logoAlt": "Egyptian Travel Agents Association (ETAA)",
-      "verifyLinkText": "Verify membership on the official portal",
-      "officialMemberEtaa": "Official Member of ETAA",
+      "verifyLinkText": "Verify our membership",
+      "officialMemberEtaa": "Official ETAA Member",
       "verifyLinkUrl": "https://www.etaa-egypt.org",
-      "staysTitle": "Accommodation Focused on Your Comfort and Recovery",
-      "staysLead": "We understand that our patients from the region prefer traveling with their families, so we prioritize providing accommodation options that suit companions and offer an atmosphere for healing and family support, at preferential rates for Amanak patients.",
+      "staysTitle": "Rest and Recover in Comfort",
+      "staysLead": "We know family support is key to healing. We provide spacious, comfortable options that feel like home, all at exclusive rates for Amanak patients.",
       "badgeLabel": "Certified Coordination",
       "viewAll": "View all listings",
       "listing1": {
@@ -459,105 +459,105 @@
       }
     },
     "transportationTeaser": {
-      "title": "Safe and reliable transport throughout your journey",
-      "lead": "We coordinate with licensed partners to ensure your movement between the airport, hospital, and stay is comfortable, secure, and always on time.",
-      "jtnyBrand": "Premium Electric Fleet",
-      "jtnyBlurb": "Experience silent and smooth recovery on the road with our fully electric, Ministry-licensed partners.",
+      "title": "Reliable Transport, Every Step of the Way",
+      "lead": "From the moment you land until you head home, we ensure your travel between the airport, hospital, and hotel is safe, comfortable, and always on time.",
+      "jtnyBrand": "Quiet Electric Fleet",
+      "jtnyBlurb": "Recover in peace with our silent, fully electric vehicles—perfect for a smooth ride after your procedure.",
       "jtnyImageAlt": "Modern electric vehicle for quiet transport",
       "arrwBrand": "Verified City Travel",
-      "arrwBlurb": "Reliable ride-hailing with vetted drivers and transparent upfront pricing for all your city trips.",
+      "arrwBlurb": "Safe, reliable rides across the city with vetted drivers and clear, upfront pricing.",
       "arrwImageAlt": "City transport service",
       "privateBrand": "Private Medical Escort",
-      "privateBlurb": "Dedicated VIP reception and specialized vehicles tailored for patient comfort and medical needs.",
+      "privateBlurb": "VIP reception and specialized vehicles designed for patient comfort and medical needs.",
       "privateImageAlt": "Spacious private vehicle for comfortable medical transport"
     },
     "programs": {
-      "title": "Featured treatments for medical travelers",
+      "title": "Specialized Care for International Patients",
       "learnMore": "Learn more",
       "items": {
         "ivf": {
-          "title": "IVF & Fertility Treatments",
-          "description": "Comprehensive fertility evaluation, IVF lab coordination, and clear step-by-step treatment plans."
+          "title": "IVF & Fertility",
+          "description": "Start your journey to parenthood with expert evaluation and advanced lab coordination."
         },
         "dental": {
           "title": "Dental Implants & Veneers",
-          "description": "Digital imaging and specialist planning for implant cases and aesthetic veneer smile design."
+          "description": "Restore your smile with specialist-led planning and modern digital imaging."
         },
         "eyeSurgery": {
           "title": "LASIK & Eye Surgery",
-          "description": "Advanced refractive and ophthalmic procedures with pre-op screening and structured post-op checks."
+          "description": "See the world clearly with advanced refractive procedures and structured follow-up care."
         },
         "bariatric": {
           "title": "Bariatric Surgery",
-          "description": "Weight-loss surgery programs combining surgical expertise, nutrition planning, and recovery follow-up."
+          "description": "Take control of your health with expert surgery, nutrition planning, and recovery support."
         },
         "cosmetic": {
           "title": "Cosmetic Surgery",
-          "description": "Personalized aesthetic surgery plans with transparent expectations, safety-first protocols, and recovery support."
+          "description": "Enhance your confidence with personalized plans focused on safety and natural results."
         },
         "jointReplacement": {
-          "title": "Joint Replacements",
-          "description": "Hip and knee replacement pathways with experienced orthopedic teams and rehabilitation-focused outcomes."
+          "title": "Joint Replacement",
+          "description": "Regain your mobility with experienced orthopedic teams and focused rehabilitation."
         }
       }
     },
     "topDoctorsReels": {
-      "title": "Leading doctors in Egypt",
-      "lead": "Egypt is home to surgeons and consultants who routinely manage complex cases with outcomes that compare well across the region. Scroll these Instagram highlights: from patient stories and clinical excellence at centres we trust for your Amanak journey.",
-      "scrollHint": "Swipe sideways for more reels",
-      "prevReel": "Previous reel",
-      "nextReel": "Next reel",
+      "title": "Meet Egypt's Leading Medical Experts",
+      "lead": "Egypt is home to world-renowned surgeons and consultants. Watch these highlights to see patient stories and the clinical excellence that defines the Amanak journey.",
+      "scrollHint": "Swipe to see more",
+      "prevReel": "Previous",
+      "nextReel": "Next",
       "openInstagram": "Open in Instagram",
       "iframeTitle": "Instagram reel"
     },
     "painPoints": {
-      "title": "Goodbye to medical travel headaches: a smooth journey with Amanak",
-      "colProblem": "The challenge you might face",
-      "colSolution": "The Amanak solution",
-      "row1p": "Budget confusion and unexpected costs",
-      "row1s": "Defined packages covering everything, from airport to hospital.",
-      "row2p": "Delays in coordination and appointments",
-      "row2s": "We coordinate your appointments with hospitals and labs before you arrive, so you can start treatment immediately.",
-      "row3p": "Concerns about service quality or reliability",
-      "row3s": "We are your official and legal partner in Egypt, ensuring your rights and the highest standards of quality.",
-      "row4p": "Difficulty arranging accommodation and transport",
-      "row4s": "We provide comfortable accommodation and a dedicated private transport throughout your stay."
+      "title": "We Make Medical Travel Simple",
+      "colProblem": "Common Challenges",
+      "colSolution": "The Amanak Solution",
+      "row1p": "Budget confusion and hidden costs",
+      "row1s": "Clear, all-inclusive packages with fixed pricing.",
+      "row2p": "Long waits and coordination delays",
+      "row2s": "We pre-book everything so your treatment starts the moment you arrive.",
+      "row3p": "Worries about quality and safety",
+      "row3s": "We are your official, licensed partner on the ground, ensuring your rights.",
+      "row4p": "Trouble finding a place to stay",
+      "row4s": "We provide comfortable, family-friendly housing and private transport."
     },
     "process": {
-      "title": "Your journey with us in 4 simple steps",
-      "step1Title": "Create your account:",
-      "step1": "Upload your medical records in a secure environment that ensures your privacy.",
-      "step2Title": "Initial Consultation:",
-      "step2": "Our medical team carefully reviews your case and presents it to the specialist physician.",
-      "step3Title": "Choose Your Package:",
-      "step3": "Select from our diverse packages (Economy, VIP, Integrated) to suit your needs.",
-      "step4Title": "Arrival and Treatment:",
-      "step4": "We receive you from the airport and begin the healing journey with continuous follow-up at every step."
+      "title": "Your Path to Recovery in 4 Easy Steps",
+      "step1Title": "Create Your Account",
+      "step1": "Securely upload your medical records. Your privacy is our top priority.",
+      "step2Title": "Medical Review",
+      "step2": "Our team and specialist doctors carefully review your case to build your plan.",
+      "step3Title": "Choose Your Package",
+      "step3": "Select the tier that fits your needs—from Essential to VIP.",
+      "step4Title": "Arrival & Healing",
+      "step4": "We meet you at the airport and guide you through every step of your recovery."
     },
     "trust": {
-      "stats": "More than 500 patients from the region have trusted us with their medical journey.",
+      "stats": "Over 500 patients have trusted Amanak for their medical journey.",
       "items": {
         "1": {
-          "quote": "\"I was worried about the arrangements for treatment in Egypt, but with Amanak, every detail was clear and costs were defined before my travel.\"",
+          "quote": "\"I was worried about the arrangements, but Amanak made everything clear and the costs were fixed before I even traveled.\"",
           "attribution": "Ahmed M., Iraq",
           "treatment": "Hip Replacement Surgery"
         },
         "2": {
-          "quote": "\"The medical team in Egypt is world-class. Amanak coordinated everything from my arrival to the final check-up. I felt at home.\"",
+          "quote": "\"The medical team was world-class. Amanak handled everything from my arrival to the final check-up. I felt right at home.\"",
           "attribution": "Sarah K., Libya",
           "treatment": "IVF & Fertility"
         },
         "3": {
-          "quote": "\"Professionalism and transparency are what define Amanak. The diabetic foot care I received saved my limb when others said it was impossible.\"",
+          "quote": "\"Professionalism and transparency. The care I received for my diabetic foot saved my limb when I thought it was impossible.\"",
           "attribution": "Mohamed A., Yemen",
           "treatment": "Diabetic Foot Care"
         }
       }
     },
     "finalCta": {
-      "title": "Don’t leave health to chance.",
-      "body": "Register and upload your records; your Amanak medical advisor will reach out within 24 hours to finalize details.",
-      "button": "Create a free medical file"
+      "title": "Take the First Step Toward Healing",
+      "body": "Register today and upload your records. Our medical advisors will reach out within 24 hours to help you plan your journey.",
+      "button": "Create Your Free Medical File"
     }
   },
   "estimate": {
@@ -844,7 +844,9 @@
     "whatsappAria": "Contact us on WhatsApp",
     "supervisionIntro": "Under the supervision of",
     "supervisionMinistryAlt": "Logo of the Egyptian Ministry of Health and Population",
-    "supervisionCouncilAlt": "Logo of the National Council for Health Tourism"
+    "supervisionCouncilAlt": "Logo of the National Council for Health Tourism",
+    "supervisionMinistryCaption": "Egyptian Ministry of Health and Population",
+    "supervisionCouncilCaption": "National Council for Health Tourism"
   },
   "doctors": {
     "items": {

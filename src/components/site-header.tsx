@@ -70,6 +70,9 @@ function NavLinks({
     >
       {linkItem("/", t("home"))}
       {linkItem(ROUTES.treatments, t("treatments"))}
+      {linkItem(ROUTES.partners, t("partners"))}
+      {linkItem(ROUTES.aboutUs, t("aboutUs"))}
+      {linkItem(ROUTES.contactUs, t("contactUs"))}
     </nav>
   );
 }

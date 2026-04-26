@@ -44,57 +44,57 @@ export async function AccreditedHospitals() {
   ) => t(`rows.${id}.${key}` as Parameters<typeof t>[0]);
 
   return (
-    <section className="bg-background py-20 sm:py-24 border-t border-border/40 overflow-hidden">
+    <section className="border-t border-primary/20 bg-primary py-20 sm:py-24 overflow-hidden">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <div className="grid gap-10 lg:grid-cols-5 lg:gap-16 items-start">
           {/* Left: Accreditations Focus (3/5) */}
           <div className="lg:col-span-3 space-y-10">
             <div className="space-y-4">
-              <h2 className="text-balance text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+              <h2 className="text-balance text-3xl font-bold tracking-tight text-primary-foreground sm:text-4xl">
                 {t("title")}
               </h2>
-              <p className="text-pretty text-lg text-muted-foreground max-w-2xl">
+              <p className="text-pretty text-lg text-primary-foreground/85 max-w-2xl leading-relaxed">
                 {t("lead")}
               </p>
             </div>
 
             <div className="grid gap-6 sm:grid-cols-2">
-              <div className="group relative rounded-2xl border border-primary/10 bg-primary/5 p-6 transition-all hover:bg-primary/[0.08]">
-                <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
+              <div className="group relative rounded-2xl border border-primary-foreground/15 bg-primary-foreground/[0.08] p-6 backdrop-blur-sm transition-all hover:bg-primary-foreground/[0.12]">
+                <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-lg bg-primary-foreground/15 text-primary-foreground">
                   <ShieldCheck className="h-6 w-6" />
                 </div>
-                <h3 className="text-lg font-bold text-foreground mb-2">
+                <h3 className="mb-2 text-lg font-bold text-primary-foreground">
                   {t("gaharTitle")}
                 </h3>
-                <p className="text-muted-foreground leading-relaxed text-sm">
+                <p className="text-sm leading-relaxed text-primary-foreground/80">
                   {t("gaharBody")}
                 </p>
               </div>
 
-              <div className="group relative rounded-2xl border border-primary/10 bg-primary/5 p-6 transition-all hover:bg-primary/[0.08]">
-                <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
+              <div className="group relative rounded-2xl border border-primary-foreground/15 bg-primary-foreground/[0.08] p-6 backdrop-blur-sm transition-all hover:bg-primary-foreground/[0.12]">
+                <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-lg bg-primary-foreground/15 text-primary-foreground">
                   <Globe2 className="h-6 w-6" />
                 </div>
-                <h3 className="text-lg font-bold text-foreground mb-2">
+                <h3 className="mb-2 text-lg font-bold text-primary-foreground">
                   {t("jciTitle")}
                 </h3>
-                <p className="text-muted-foreground leading-relaxed text-sm">
+                <p className="text-sm leading-relaxed text-primary-foreground/80">
                   {t("jciBody")}
                 </p>
               </div>
             </div>
 
-            <div className="flex flex-wrap gap-4 items-center pt-2">
-              <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
-                <CheckCircle2 className="h-4 w-4 text-primary" />
+            <div className="flex flex-wrap items-center gap-4 pt-2">
+              <div className="flex items-center gap-2 text-sm font-medium text-primary-foreground/85">
+                <CheckCircle2 className="h-4 w-4 shrink-0 text-primary-foreground" />
                 <span>{t("trustBadge1")}</span>
               </div>
-              <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
-                <CheckCircle2 className="h-4 w-4 text-primary" />
+              <div className="flex items-center gap-2 text-sm font-medium text-primary-foreground/85">
+                <CheckCircle2 className="h-4 w-4 shrink-0 text-primary-foreground" />
                 <span>{t("trustBadge2")}</span>
               </div>
-              <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
-                <CheckCircle2 className="h-4 w-4 text-primary" />
+              <div className="flex items-center gap-2 text-sm font-medium text-primary-foreground/85">
+                <CheckCircle2 className="h-4 w-4 shrink-0 text-primary-foreground" />
                 <span>{t("trustBadge3")}</span>
               </div>
             </div>
