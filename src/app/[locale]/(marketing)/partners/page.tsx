@@ -6,6 +6,7 @@ import { Link } from "@/i18n/navigation";
 import { ROUTES } from "@/lib/routes";
 import { buttonVariants } from "@/components/ui/button";
 import { TransportationPartners } from "@/components/landing/transportation-partners";
+import { PartnerLogosMarquee } from "@/components/partners/partner-logos-marquee";
 import { cn } from "@/lib/utils";
 
 type Props = { params: Promise<{ locale: string }> };
@@ -273,6 +274,10 @@ export default async function PartnersPage() {
                 </div>
               </div>
             ))}
+          </div>
+
+          <div className="mt-16">
+            <PartnerLogosMarquee />
           </div>
         </div>
       </section>
