@@ -41,7 +41,23 @@ export type Treatment = {
   hospitalsKey?: string;
   techniquesKey?: string;
   successRateKey?: string;
-  videoUrlKey?: string;
+};
+
+export type VideoSource = "youtube" | "instagram" | "facebook";
+
+export type DoctorVideo = {
+  id: string;
+  source: VideoSource;
+  /** YouTube videoId, Instagram embedPath like "reel/SHORTCODE", or canonical Facebook video URL */
+  embedRef: string;
+  /** Public share URL — opens in source app */
+  canonicalUrl: string;
+  doctorId: string;
+  treatmentSlug: string;
+  /** i18n key for short caption shown under the embed */
+  captionKey?: string;
+  /** ISO date — newer videos sort first */
+  publishedAt?: string;
 };
 
 export type InquiryPayload = {
