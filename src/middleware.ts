@@ -37,6 +37,17 @@ export default function middleware(request: NextRequest) {
     return NextResponse.redirect(url, 308);
   }
 
+  const removedIvfVariants = /^\/(ar|en)\/treatments\/(conventional-ivf|icsi)\/?$/.exec(
+    request.nextUrl.pathname,
+  );
+  if (removedIvfVariants) {
+    const locale = removedIvfVariants[1];
+    const url = request.nextUrl.clone();
+    url.pathname = `/${locale}/treatments/ivf`;
+    return NextResponse.redirect(url, 308);
+  }
+
+
   const removedLipReduction = /^\/(ar|en)\/treatments\/lip-reduction\/?$/.exec(
     request.nextUrl.pathname,
   );

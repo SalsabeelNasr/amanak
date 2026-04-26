@@ -59,21 +59,3 @@ export function videoSlugsForHairTransplantPage(): ReadonlySet<string> {
   return LEGACY_HAIR_VIDEO_SLUGS;
 }
 
-/** Title message keys for carousel “top service” lines (subset rule vs main roster). */
-export function topHairServiceTitleKeysForDoctor(
-  doctorId: string,
-  mainDoctorIds: readonly string[],
-): string[] {
-  if (!mainDoctorIds.length) return [];
-  const main = new Set(mainDoctorIds);
-  const keys: string[] = [];
-  for (const v of HAIR_TRANSPLANT_VARIANTS) {
-    if (!v.doctorIds.includes(doctorId)) continue;
-    const subset =
-      v.doctorIds.length > 0 &&
-      v.doctorIds.length < mainDoctorIds.length &&
-      v.doctorIds.every((id) => main.has(id));
-    if (subset) keys.push(v.titleKey);
-  }
-  return keys;
-}

@@ -149,7 +149,7 @@ const TREATMENTS: Treatment[] = [
     hospitalsKey: "treatments.items.breast_augmentation.hospitals",
     techniquesKey: "treatments.items.breast_augmentation.techniques",
     successRateKey: "treatments.items.breast_augmentation.success_rate",
-    doctorIds: ["yasser_badi", "mohamed_abdallah_tawfik"],
+    doctorIds: ["yasser_badi", "mohamed_abdallah_tawfik", "hossam_tahseen", "mohamed_elghalban", "sara_abdallah", "mukhibat", "mohamed_mamdouh", "obada_samanody", "samir_ghoraba", "khaled_sami", "wael_ghannem", "ashraf_abolfotoh", "tarek_amer", "hossam_abolatta", "ahmed_taalab", "mohamed_elsayed", "mohamed_abdelkader"],
     priceUSD: 600,
   },
   {
@@ -164,7 +164,7 @@ const TREATMENTS: Treatment[] = [
     hospitalsKey: "treatments.items.bbl.hospitals",
     techniquesKey: "treatments.items.bbl.techniques",
     successRateKey: "treatments.items.bbl.success_rate",
-    doctorIds: ["yasser_badi", "mohamed_abdallah_tawfik"],
+    doctorIds: ["yasser_badi", "mohamed_abdallah_tawfik", "hossam_tahseen", "mohamed_elghalban", "sara_abdallah", "mukhibat", "mohamed_mamdouh", "obada_samanody", "samir_ghoraba", "khaled_sami", "wael_ghannem", "ashraf_abolfotoh", "tarek_amer", "hossam_abolatta", "ahmed_taalab", "mohamed_elsayed", "mohamed_abdelkader"],
     priceUSD: 700,
   },
   {
@@ -179,7 +179,7 @@ const TREATMENTS: Treatment[] = [
     hospitalsKey: "treatments.items.gynecomastia.hospitals",
     techniquesKey: "treatments.items.gynecomastia.techniques",
     successRateKey: "treatments.items.gynecomastia.success_rate",
-    doctorIds: ["yasser_badi", "mohamed_abdallah_tawfik"],
+    doctorIds: ["yasser_badi", "mohamed_abdallah_tawfik", "hossam_tahseen", "mohamed_elghalban", "sara_abdallah", "mukhibat", "mohamed_mamdouh", "obada_samanody", "samir_ghoraba", "khaled_sami", "wael_ghannem", "ashraf_abolfotoh", "tarek_amer", "hossam_abolatta", "ahmed_taalab", "mohamed_elsayed", "mohamed_abdelkader"],
     priceUSD: 600,
   },
   {
@@ -194,7 +194,7 @@ const TREATMENTS: Treatment[] = [
     hospitalsKey: "treatments.items.vaser_liposuction.hospitals",
     techniquesKey: "treatments.items.vaser_liposuction.techniques",
     successRateKey: "treatments.items.vaser_liposuction.success_rate",
-    doctorIds: ["yasser_badi", "mohamed_abdallah_tawfik"],
+    doctorIds: ["yasser_badi", "mohamed_abdallah_tawfik", "hossam_tahseen", "mohamed_elghalban", "sara_abdallah", "mukhibat", "mohamed_mamdouh", "obada_samanody", "samir_ghoraba", "khaled_sami", "wael_ghannem", "ashraf_abolfotoh", "tarek_amer", "hossam_abolatta", "ahmed_taalab", "mohamed_elsayed", "mohamed_abdelkader"],
     priceUSD: 1000,
   },
   {
@@ -209,7 +209,7 @@ const TREATMENTS: Treatment[] = [
     hospitalsKey: "treatments.items.cosmetic.hospitals",
     techniquesKey: "treatments.items.cosmetic.techniques",
     successRateKey: "treatments.items.cosmetic.success_rate",
-    doctorIds: ["yasser_badi", "mohamed_abdallah_tawfik"],
+    doctorIds: ["yasser_badi", "mohamed_abdallah_tawfik", "hossam_tahseen", "mohamed_elghalban", "sara_abdallah", "mukhibat", "mohamed_mamdouh", "obada_samanody", "samir_ghoraba", "khaled_sami", "wael_ghannem", "ashraf_abolfotoh", "tarek_amer", "hossam_abolatta", "ahmed_taalab", "mohamed_elsayed", "mohamed_abdelkader"],
     priceUSD: 2000,
   },
   {
