@@ -1,0 +1,41 @@
+---
+description: Amanak CRM — CrmClient seam, shared crm/ components, modals, forms, i18n.
+globs:
+  - "src/app/**/(crm)/**"
+  - "src/components/crm/**"
+  - "src/lib/crm/**"
+alwaysApply: false
+---
+
+# Amanak CRM
+
+## Data access
+
+- Call sites use `crm` from `@/lib/crm/client` only — not `@/lib/api/leads` or lead-conversations directly in UI.
+- Do not change `leads.ts`, `lead-conversations.ts`, `state-machine.service.ts`, `lead-task-rules.ts`, or `src/types/index.ts` for seam refactors without an explicit request.
+
+## Shared UI
+
+- **Dates:** use `@/components/crm/date-format` in server-agnostic code; `DateTime` from `@/components/crm/date-display` in client components; do not add new ad-hoc `formatDate` copies in CRM.
+- **Language key:** `getLangKey` from `@/components/crm/lang` (server-safe); `useLangKey` from `@/components/crm/use-lang-key` in client components.
+- **Status:** `StatusBadge` / `statusTableBadgeClass` / `statusOverviewBadgeClass` from `@/components/crm/status-badge`.
+- **Empty states:** `EmptyState` from `@/components/crm/empty-state`.
+- **Money (USD):** `formatUSD` / `Money` from `@/components/crm/money`.
+- **Modals:** prefer `useLeadModals` + `LeadModalsProvider` from `@/lib/crm/hooks/use-lead-modals` instead of many `useState` open flags; use `DialogShell` when focus restore on close matters.
+
+## Forms
+
+- New multi-field CRM dialogs: `react-hook-form` + `zod` + `@hookform/resolvers`; use field primitives under `@/components/crm/forms/`.
+- Schemas live under `src/lib/crm/schemas/`; prefer `z.infer<typeof Schema>` for input types aligned with `CrmClient`.
+
+## i18n & RTL
+
+- New copy under `messages/en.json` and `messages/ar.json` in the `crm` namespace; use logical properties for layout (`ps-`, `pe-`, `start`, `end`).
+
+## Prototype constraints
+
+- No TanStack Query / SWR; keep async + server components for reads and `crm.*` for mutations from client.
+
+## File size
+
+- Avoid growing a single lead page file past ~400 lines without splitting (tabs, header, feed) using existing patterns in `_components/`.
