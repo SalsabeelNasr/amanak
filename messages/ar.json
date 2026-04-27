@@ -1912,6 +1912,13 @@
       "admin_1": "المسؤول",
       "spec_dr_kareem": "د. كريم (أخصائي)"
     },
+    "actorRoles": {
+      "admin": "المسؤول",
+      "cs": "خدمة العملاء",
+      "consultant_doctor": "طبيب استشاري",
+      "specialized_doctor": "طبيب أخصائي",
+      "patient": "المريض"
+    },
     "email": "البريد الإلكتروني",
     "convSectionTitle": "المحادثات",
     "convFilterAll": "الكل",

@@ -20,6 +20,11 @@ import { JourneyTimelineVertical } from "@/components/portal/journey-timeline-ve
 import { LeadActivityLog } from "./lead-activity-log";
 import { LeadCommunicateDialog } from "./lead-communicate-dialog";
 import { InfiniteCardList } from "@/components/crm/infinite-card-list";
+import { formatDateTime, formatDueDate } from "@/components/crm/date-format";
+import { useLangKey } from "@/components/crm/use-lang-key";
+import { statusOverviewBadgeClass } from "@/components/crm/status-badge";
+import { formatUSD } from "@/components/crm/money";
+import { EmptyState } from "@/components/crm/empty-state";
 import { LeadAddTaskDialog } from "./lead-add-task-dialog";
 import { LeadTaskDetailDialog } from "./lead-task-detail-dialog";
 import {
@@ -116,44 +121,6 @@ function conversationBodyText(item: LeadConversationItem): string {
   }
 }
 
-function formatDateTime(iso: string, locale: string): string {
-  return new Date(iso).toLocaleString(locale === "ar" ? "ar-EG" : "en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-}
-
-function formatDueDate(iso: string, locale: string): string {
-  return new Date(iso).toLocaleDateString(locale === "ar" ? "ar-EG" : "en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  });
-}
-
-function statusOverviewClass(status: Lead["status"]): string {
-  switch (status) {
-    case "rejected":
-      return "bg-destructive/10 text-destructive border-transparent";
-    case "in_treatment":
-    case "post_treatment":
-    case "specialized_doctor_assigned":
-    case "order_created":
-      return "bg-primary text-primary-foreground border-transparent shadow-sm";
-    case "approved":
-    case "quotation_generated":
-    case "contract_sent":
-    case "customer_accepted":
-    case "payment_verified":
-      return "bg-primary/10 text-primary border-transparent shadow-sm";
-    default:
-      return "bg-muted text-muted-foreground border-transparent shadow-sm";
-  }
-}
-
 export function LeadDetail({
   initialLead,
   initialConversations,
@@ -168,7 +135,7 @@ export function LeadDetail({
   const t = useTranslations("crm");
   const tPortal = useTranslations("portal");
   const locale = useLocale();
-  const langKey = locale === "ar" ? "ar" : "en";
+  const langKey = useLangKey();
   const { session } = useSession();
   const [lead, setLead] = useState<Lead>(initialLead);
   const [tab, setTab] = useState<TabId>("overview");
@@ -404,7 +371,7 @@ export function LeadDetail({
                   <Badge
                     className={cn(
                       "cursor-pointer px-2 py-0.5 text-xs font-semibold tracking-tight shadow-sm ring-1 ring-black/5 transition-all group-hover:ring-primary/50",
-                      statusOverviewClass(lead.status),
+                      statusOverviewBadgeClass(lead.status),
                     )}
                   >
                     {getStatusLabel(lead.status)[langKey]}
@@ -977,7 +944,7 @@ export function LeadDetail({
                               <Badge
                                 className={cn(
                                   "px-2 py-0 text-xs font-semibold tracking-tight shadow-sm",
-                                  statusOverviewClass(ol.status),
+                                  statusOverviewBadgeClass(ol.status),
                                 )}
                               >
                                 {getStatusLabel(ol.status)[langKey]}
@@ -1327,15 +1294,11 @@ export function LeadDetail({
 
           <TabsContent value="quotes" className="animate-in fade-in slide-in-from-bottom-2 duration-300">
             {sortedQuotations.length === 0 ? (
-              <div className="rounded-2xl border border-dashed border-border bg-card/50 p-16 text-center shadow-sm ring-1 ring-black/5">
-                <FileCheck
-                  className="mx-auto mb-4 size-12 text-muted-foreground/20"
-                  aria-hidden
-                />
-                <p className="text-sm font-medium text-muted-foreground">
-                  {t("quotesTabEmpty")}
-                </p>
-              </div>
+              <EmptyState
+                icon={FileCheck}
+                title={t("quotesTabEmpty")}
+                className="rounded-2xl bg-card/50 p-16 shadow-sm ring-1 ring-black/5"
+              />
             ) : (
               <div className="space-y-4">
                 {sortedQuotations.map((q) => {
@@ -1418,7 +1381,7 @@ export function LeadDetail({
                               isActive ? "text-white" : "text-primary",
                             )}
                           >
-                            ${q.totalUSD.toLocaleString()}
+                            {formatUSD(q.totalUSD, locale)}
                           </p>
                           <p
                             className={cn(

@@ -1912,6 +1912,13 @@
       "admin_1": "Admin",
       "spec_dr_kareem": "Dr. Kareem (Specialist)"
     },
+    "actorRoles": {
+      "admin": "Admin",
+      "cs": "Customer service",
+      "consultant_doctor": "Consultant doctor",
+      "specialized_doctor": "Specialist doctor",
+      "patient": "Patient"
+    },
     "email": "Email",
     "convSectionTitle": "Conversations",
     "convFilterAll": "All",

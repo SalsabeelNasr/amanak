@@ -8,22 +8,15 @@
 import { useLocale, useTranslations } from "next-intl";
 import { ScrollText } from "lucide-react";
 import { getStatusLabel } from "@/lib/services/state-machine.service";
+import { formatDateTime } from "@/components/crm/date-format";
+import { useLangKey } from "@/components/crm/use-lang-key";
+import { RolePill } from "@/components/crm/role-pill";
 import type { Lead } from "@/types";
-
-function formatDateTime(iso: string, locale: string): string {
-  return new Date(iso).toLocaleString(locale === "ar" ? "ar-EG" : "en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-}
 
 export function LeadActivityLog({ lead }: { lead: Lead }) {
   const t = useTranslations("crm");
   const locale = useLocale();
-  const langKey = locale === "ar" ? "ar" : "en";
+  const langKey = useLangKey();
 
   return (
     <section className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm ring-1 ring-black/5">
@@ -60,9 +53,9 @@ export function LeadActivityLog({ lead }: { lead: Lead }) {
                       {formatDateTime(entry.timestamp, locale)}
                     </span>
                   </div>
-                  <p className="text-xs font-medium text-primary/80">
-                    {entry.actorRole}
-                  </p>
+                  <div>
+                    <RolePill role={entry.actorRole} />
+                  </div>
                   {entry.note ? (
                     <div className="mt-3 rounded-xl border border-border/40 bg-muted/30 p-4 text-[13px] font-medium leading-relaxed text-muted-foreground shadow-sm">
                       {entry.note}

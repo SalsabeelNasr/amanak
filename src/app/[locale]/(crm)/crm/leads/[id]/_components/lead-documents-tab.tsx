@@ -13,6 +13,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { DocumentUploadDialog } from "@/components/leads/document-upload-dialog";
 import { InfiniteCardList } from "@/components/crm/infinite-card-list";
+import { EmptyState } from "@/components/crm/empty-state";
 import { useSession } from "@/lib/mock-session";
 import { cn } from "@/lib/utils";
 import type { Lead, LeadDocument } from "@/types";
@@ -113,12 +114,11 @@ export const LeadDocumentsTab = forwardRef<LeadDocumentsTabRef, Props>(
           initialVisible={10}
           pageSize={10}
           empty={
-            <div className="py-12 text-center">
-              <FileText className="mx-auto mb-3 size-10 text-muted-foreground/20" aria-hidden />
-              <p className="text-xs font-medium text-muted-foreground">
-                {filter === "all" ? tPortal("noDocs") : t("docEmptyFiltered")}
-              </p>
-            </div>
+            <EmptyState
+              icon={FileText}
+              title={filter === "all" ? tPortal("noDocs") : t("docEmptyFiltered")}
+              className="py-12"
+            />
           }
           renderItem={(doc) => {
             const Icon = iconFor(doc.type);

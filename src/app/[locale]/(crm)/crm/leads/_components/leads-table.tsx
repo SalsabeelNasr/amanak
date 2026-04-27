@@ -6,6 +6,10 @@ import { Link } from "@/i18n/navigation";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { EmptyState } from "@/components/crm/empty-state";
+import { formatDate } from "@/components/crm/date-format";
+import { useLangKey } from "@/components/crm/use-lang-key";
+import { StatusBadge } from "@/components/crm/status-badge";
 import {
   ORDERED_STATES,
   getStatusLabel,
@@ -24,38 +28,10 @@ import {
 
 const ALL_STATUSES: (LeadStatus | "all")[] = ["all", ...ORDERED_STATES, "rejected"];
 
-function statusBadgeClass(status: LeadStatus): string {
-  switch (status) {
-    case "rejected":
-      return "bg-destructive/10 text-destructive border-transparent hover:bg-destructive/20";
-    case "in_treatment":
-    case "post_treatment":
-    case "specialized_doctor_assigned":
-    case "order_created":
-      return "bg-primary text-primary-foreground border-transparent hover:bg-primary/90";
-    case "approved":
-    case "quotation_generated":
-    case "contract_sent":
-    case "customer_accepted":
-    case "payment_verified":
-      return "bg-primary/10 text-primary border-transparent hover:bg-primary/20";
-    default:
-      return "bg-muted text-muted-foreground border-transparent hover:bg-muted/80";
-  }
-}
-
-function formatDate(iso: string, locale: string): string {
-  return new Date(iso).toLocaleDateString(locale === "ar" ? "ar-EG" : "en-US", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  });
-}
-
 export function LeadsTable({ leads }: { leads: Lead[] }) {
   const t = useTranslations("crm");
   const locale = useLocale();
-  const langKey = locale === "ar" ? "ar" : "en";
+  const langKey = useLangKey();
   const [statusFilter, setStatusFilter] = useState<LeadStatus | "all">("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [filterOpen, setFilterOpen] = useState(false);
@@ -223,10 +199,7 @@ export function LeadsTable({ leads }: { leads: Lead[] }) {
 
       <div className="grid gap-4">
         {filtered.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-12 bg-card rounded-xl border border-dashed border-border">
-            <Search className="size-12 text-muted-foreground/20 mb-4" />
-            <p className="text-muted-foreground font-medium">{t("noResults")}</p>
-          </div>
+          <EmptyState icon={Search} title={t("noResults")} />
         ) : (
           <div className="grid gap-3">
             {/* Desktop Header */}
@@ -264,9 +237,7 @@ export function LeadsTable({ leads }: { leads: Lead[] }) {
                       </div>
                     </div>
                     <div className="lg:hidden">
-                      <Badge className={cn("text-[10px] px-2 py-0.5 font-bold shadow-sm", statusBadgeClass(lead.status))}>
-                        {getStatusLabel(lead.status)[langKey]}
-                      </Badge>
+                      <StatusBadge status={lead.status} langKey={langKey} variant="table" className="px-2 py-0.5" />
                     </div>
                   </div>
 
@@ -280,9 +251,12 @@ export function LeadsTable({ leads }: { leads: Lead[] }) {
                     <span className="truncate">{lead.treatmentSlug}</span>
                   </div>
                   <div className="hidden lg:block">
-                    <Badge className={cn("text-[10px] px-2.5 py-0.5 font-bold shadow-sm", statusBadgeClass(lead.status))}>
-                      {getStatusLabel(lead.status)[langKey]}
-                    </Badge>
+                    <StatusBadge
+                      status={lead.status}
+                      langKey={langKey}
+                      variant="table"
+                      className="px-2.5"
+                    />
                   </div>
                   <div className="hidden lg:block">
                     <span className="text-xs font-medium text-muted-foreground bg-muted px-2 py-0.5 rounded">

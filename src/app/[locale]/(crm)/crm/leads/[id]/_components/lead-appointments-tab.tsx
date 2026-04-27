@@ -28,8 +28,10 @@ import { useSession } from "@/lib/mock-session";
 import { cn } from "@/lib/utils";
 import type { Lead, LeadAppointment, LeadAppointmentKind } from "@/types";
 import type { ConsultationSlot } from "@/types";
-import { Clock, Globe, Link2, ListTodo, MapPin, Phone, Stethoscope, Video } from "lucide-react";
+import { CalendarDays, Clock, Globe, Link2, ListTodo, MapPin, Phone, Stethoscope, Video } from "lucide-react";
 import { InfiniteCardList } from "@/components/crm/infinite-card-list";
+import { formatDateTime } from "@/components/crm/date-format";
+import { EmptyState } from "@/components/crm/empty-state";
 
 export type LeadAppointmentsTabFilter = "all" | LeadAppointmentKind;
 
@@ -46,16 +48,6 @@ function dateToLocalKey(date: Date): string {
 
 function startOfLocalDay(d: Date): number {
   return new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
-}
-
-function formatDateTime(iso: string, locale: string): string {
-  return new Date(iso).toLocaleString(locale === "ar" ? "ar-EG" : "en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
 }
 
 type Props = {
@@ -328,9 +320,11 @@ export const LeadAppointmentsTab = forwardRef<LeadAppointmentsTabRef, Props>(
       initialVisible={8}
       pageSize={8}
       empty={
-        <p className="py-6 text-center text-sm text-muted-foreground">
-          {filter === "all" ? t("apptEmptyAll") : t("apptEmptyKind")}
-        </p>
+        <EmptyState
+          icon={CalendarDays}
+          title={filter === "all" ? t("apptEmptyAll") : t("apptEmptyKind")}
+          className="py-6 border-0"
+        />
       }
       renderItem={(appt) => {
         const Icon = kindIcon(appt.kind);

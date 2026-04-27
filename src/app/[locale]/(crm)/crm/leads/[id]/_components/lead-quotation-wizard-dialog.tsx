@@ -39,6 +39,8 @@ import {
   MapPin
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { formatUSD } from "@/components/crm/money";
+import { useLangKey } from "@/components/crm/use-lang-key";
 
 const PACKAGE_TIERS: PackageTier[] = ["normal", "silver", "gold", "vip"];
 
@@ -84,7 +86,7 @@ export function LeadQuotationWizardDialog({
   const t = useTranslations("crm.leadQuotation");
   const tDoctors = useTranslations("doctors");
   const locale = useLocale();
-  const langKey = locale === "ar" ? "ar" : "en";
+  const langKey = useLangKey();
   const isRtl = locale === "ar";
 
   const skipHotel = lead.clientType === "b2b" || lead.clientType === "g2b";
@@ -274,7 +276,7 @@ export function LeadQuotationWizardDialog({
                   {t("reviewTotal")}
                 </span>
                 <span className="text-lg font-bold text-primary tabular-nums">
-                  ${pricing.totalUSD.toLocaleString()}
+                  {formatUSD(pricing.totalUSD, locale)}
                 </span>
               </div>
             )}
@@ -527,12 +529,16 @@ export function LeadQuotationWizardDialog({
                     {pricing.items.map((item, idx) => (
                       <div key={idx} className="flex justify-between items-center">
                         <span className="text-xs text-muted-foreground">{item.label[langKey]}</span>
-                        <span className="text-xs font-bold tabular-nums">${item.amountUSD.toLocaleString()}</span>
+                        <span className="text-xs font-bold tabular-nums">
+                          {formatUSD(item.amountUSD, locale)}
+                        </span>
                       </div>
                     ))}
                     <div className="pt-3 mt-1 border-t border-border flex justify-between items-center">
                       <span className="text-sm font-bold text-primary">{t("reviewTotal")}</span>
-                      <span className="text-lg font-bold tabular-nums text-primary">${pricing.totalUSD.toLocaleString()}</span>
+                      <span className="text-lg font-bold tabular-nums text-primary">
+                        {formatUSD(pricing.totalUSD, locale)}
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -541,7 +547,10 @@ export function LeadQuotationWizardDialog({
                   <div className="bg-primary/5 rounded-xl p-4 border border-primary/10">
                     <p className="text-[10px] font-bold text-primary/60 uppercase tracking-widest mb-1">{t("downpaymentYes")}</p>
                     <p className="text-xl font-bold text-primary tabular-nums">
-                      {pricing.downpaymentRequired ? `$${(pricing.downpaymentUSD ?? 0).toLocaleString()}` : "$0"}
+                      {formatUSD(
+                        pricing.downpaymentRequired ? (pricing.downpaymentUSD ?? 0) : 0,
+                        locale,
+                      )}
                     </p>
                   </div>
                   <div className="bg-muted/20 rounded-xl p-4 border border-border">

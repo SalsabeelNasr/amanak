@@ -12,20 +12,7 @@ import type {
   CrmTodayMemberBucket,
   CrmTodayTaskItem,
 } from "@/lib/crm-today-digest";
-
-function formatTime(iso: string, locale: string): string {
-  return new Date(iso).toLocaleString(locale === "ar" ? "ar-EG" : "en-US", {
-    hour: "numeric",
-    minute: "2-digit",
-  });
-}
-
-function formatDueDate(iso: string, locale: string): string {
-  return new Date(iso).toLocaleDateString(locale === "ar" ? "ar-EG" : "en-US", {
-    month: "short",
-    day: "numeric",
-  });
-}
+import { formatMonthDay, formatTime } from "@/components/crm/date-format";
 
 type TimelineRow =
   | { variant: "appointment"; sortAt: number; data: CrmTodayAppointmentItem }
@@ -160,7 +147,9 @@ export function CrmToday({
                         </Link>
                         <div className="flex items-center gap-2">
                           <span className="amanak-app-meta text-muted-foreground/80 tabular-nums">
-                            {isAppointment ? formatTime((row as CrmTodayAppointmentItem).startsAt, locale) : formatDueDate((row as CrmTodayTaskItem).dueAt, locale)}
+                            {isAppointment
+                              ? formatTime((row as CrmTodayAppointmentItem).startsAt, locale)
+                              : formatMonthDay((row as CrmTodayTaskItem).dueAt, locale)}
                           </span>
                           {isAppointment ? (
                             <Badge variant="outline" className="h-4 border-primary/20 bg-primary/5 px-1 text-[9px] font-bold uppercase tracking-wider text-primary">
