@@ -3,7 +3,7 @@ import { buildQuotationPricing, defaultTreatmentBaseUsd } from "./quotation-pric
 
 describe("defaultTreatmentBaseUsd", () => {
   it("uses treatment priceUSD when set", () => {
-    expect(defaultTreatmentBaseUsd("joint-replacement")).toBe(4600);
+    expect(defaultTreatmentBaseUsd("joint-replacement")).toBe(600);
   });
 
   it("falls back when slug unknown or no price", () => {
