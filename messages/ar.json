@@ -1880,6 +1880,7 @@
     "previousTasks": "المهام السابقة",
     "noPreviousTasks": "لا توجد مهام سابقة.",
     "taskAdd": "إضافة مهمة",
+    "taskValidationInvalidAssignee": "اختر عضو فريق صالح أو اترك الحقل بدون تعيين.",
     "taskTitleLabel": "العنوان",
     "taskTitlePlaceholder": "ما المطلوب إنجازه؟",
     "taskDueLabel": "تاريخ الاستحقاق",

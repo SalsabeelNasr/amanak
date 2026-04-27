@@ -4,7 +4,6 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { useSearchParams } from "next/navigation";
 import { usePathname, useRouter } from "@/i18n/navigation";
-import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { LeadCommunicateDialog } from "./lead-communicate-dialog";
 import { LeadAddTaskDialog } from "./lead-add-task-dialog";
@@ -19,16 +18,14 @@ import {
   type LeadDocumentsTabFilter,
   type LeadDocumentsTabRef,
 } from "./lead-documents-tab";
-import {
-  LeadQuotationWizardDialog,
-  leadCanCreateQuotation,
-} from "./lead-quotation-wizard-dialog";
+import { LeadQuotationWizardDialog } from "./lead-quotation-wizard-dialog";
 import { LeadQuotationViewDialog } from "./lead-quotation-view-dialog";
 import { LeadHeader } from "./lead-header";
 import { LeadOverviewTab } from "./tabs/lead-overview-tab";
 import { LeadConversationsTab } from "./tabs/lead-conversations-tab";
 import { LeadQuotationsTab } from "./tabs/lead-quotations-tab";
 import { LeadTasksTab } from "./tabs/lead-tasks-tab";
+import { LeadTabToolbars } from "./lead-tab-toolbars";
 import { applyTransition, getAvailableTransitions } from "@/lib/services/state-machine.service";
 import { crm } from "@/lib/crm/client";
 import {
@@ -259,168 +256,27 @@ function LeadDetailContent({
             </TabsList>
           </div>
 
-          {tab === "conversations" ? (
-            <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
-              <div className="flex flex-wrap gap-2" role="group" aria-label={t("convFiltersAria")}>
-                {(
-                  [
-                    ["all", "convFilterAll"],
-                    ["whatsapp", "convFilterWhatsapp"],
-                    ["email", "convFilterEmail"],
-                    ["call", "convFilterCall"],
-                    ["sms", "convFilterSms"],
-                  ] as const
-                ).map(([id, labelKey]) => (
-                  <Button
-                    key={id}
-                    type="button"
-                    size="sm"
-                    variant={conversationFilter === id ? "default" : "outline"}
-                    className="h-8 rounded-full px-4 text-sm font-medium transition-all"
-                    onClick={() => setConversationFilter(id)}
-                  >
-                    {t(labelKey)}
-                  </Button>
-                ))}
-              </div>
-              {session.isAuthenticated ? (
-                <Button
-                  type="button"
-                  size="sm"
-                  className="h-8 shrink-0 rounded-xl px-4 text-sm font-semibold shadow-sm"
-                  onClick={() => modals.openCommunicate()}
-                >
-                  {t("convCommunicate")}
-                </Button>
-              ) : null}
-            </div>
-          ) : null}
-
-          {tab === "tasks" ? (
-            <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
-              <div className="flex flex-wrap gap-2" role="group" aria-label={t("taskFiltersAria")}>
-                {(
-                  [
-                    ["all", "taskFilterAll"],
-                    ["active", "taskFilterActive"],
-                    ["completed", "taskFilterCompleted"],
-                  ] as const
-                ).map(([id, labelKey]) => (
-                  <Button
-                    key={id}
-                    type="button"
-                    size="sm"
-                    variant={tasksTabFilter === id ? "default" : "outline"}
-                    className="h-8 rounded-full px-4 text-sm font-medium transition-all"
-                    onClick={() => setTasksTabFilter(id)}
-                  >
-                    {t(labelKey)}
-                  </Button>
-                ))}
-              </div>
-              {session.isAuthenticated ? (
-                <Button
-                  type="button"
-                  size="sm"
-                  className="h-8 shrink-0 rounded-xl px-4 text-sm font-semibold shadow-sm"
-                  onClick={() => modals.openTaskAdd()}
-                >
-                  {t("taskAdd")}
-                </Button>
-              ) : null}
-            </div>
-          ) : null}
-
-          {tab === "appointments" ? (
-            <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
-              <div className="flex flex-wrap gap-2" role="group" aria-label={t("apptFiltersAria")}>
-                {(
-                  [
-                    ["all", "apptFilterAll"],
-                    ["treatment", "apptFilterTreatment"],
-                    ["online_meeting", "apptFilterOnline"],
-                    ["team_consultation", "apptFilterConsultation"],
-                  ] as const
-                ).map(([id, labelKey]) => (
-                  <Button
-                    key={id}
-                    type="button"
-                    size="sm"
-                    variant={appointmentTabFilter === id ? "default" : "outline"}
-                    className="h-8 rounded-full px-4 text-sm font-medium transition-all"
-                    onClick={() => setAppointmentTabFilter(id)}
-                  >
-                    {t(labelKey)}
-                  </Button>
-                ))}
-              </div>
-              {session.isAuthenticated ? (
-                <Button
-                  type="button"
-                  size="sm"
-                  className="h-8 shrink-0 rounded-xl px-4 text-sm font-semibold shadow-sm"
-                  onClick={() => appointmentsTabRef.current?.openAddModal()}
-                >
-                  {t("apptAdd")}
-                </Button>
-              ) : null}
-            </div>
-          ) : null}
-
-          {tab === "files" ? (
-            <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
-              <div className="flex flex-wrap gap-2" role="group" aria-label={t("docFiltersAria")}>
-                {(
-                  [
-                    ["all", "docFilterAll"],
-                    ["pending", "docFilterPending"],
-                    ["uploaded", "docFilterUploaded"],
-                    ["verified", "docFilterVerified"],
-                  ] as const
-                ).map(([id, labelKey]) => (
-                  <Button
-                    key={id}
-                    type="button"
-                    size="sm"
-                    variant={documentsTabFilter === id ? "default" : "outline"}
-                    className="h-8 rounded-full px-4 text-sm font-medium transition-all"
-                    onClick={() => setDocumentsTabFilter(id)}
-                  >
-                    {t(labelKey)}
-                  </Button>
-                ))}
-              </div>
-              {session.isAuthenticated ? (
-                <Button
-                  type="button"
-                  size="sm"
-                  className="h-8 shrink-0 rounded-xl px-4 text-sm font-semibold shadow-sm"
-                  onClick={() => documentsTabRef.current?.openUpload()}
-                >
-                  {t("docUpload")}
-                </Button>
-              ) : null}
-            </div>
-          ) : null}
-
-          {tab === "quotes" ? (
-            <div className="flex flex-wrap items-center justify-end gap-x-3 gap-y-2">
-              {session.isAuthenticated ? (
-                <Button
-                  type="button"
-                  size="sm"
-                  disabled={!leadCanCreateQuotation(lead)}
-                  className="h-8 shrink-0 rounded-xl px-4 text-sm font-semibold shadow-sm"
-                  onClick={() => {
-                    setQuotationWizardKey((k) => k + 1);
-                    modals.openQuotationWizard();
-                  }}
-                >
-                  {t("leadQuotation.createButton")}
-                </Button>
-              ) : null}
-            </div>
-          ) : null}
+          <LeadTabToolbars
+            activeTab={tab}
+            isAuthenticated={session.isAuthenticated}
+            lead={lead}
+            conversationFilter={conversationFilter}
+            onConversationFilter={setConversationFilter}
+            onOpenCommunicate={() => modals.openCommunicate()}
+            tasksTabFilter={tasksTabFilter}
+            onTasksFilter={setTasksTabFilter}
+            onOpenTaskAdd={() => modals.openTaskAdd()}
+            appointmentTabFilter={appointmentTabFilter}
+            onAppointmentFilter={setAppointmentTabFilter}
+            onOpenAddAppointment={() => appointmentsTabRef.current?.openAddModal()}
+            documentsTabFilter={documentsTabFilter}
+            onDocumentsFilter={setDocumentsTabFilter}
+            onOpenDocumentUpload={() => documentsTabRef.current?.openUpload()}
+            onOpenQuotationWizard={() => {
+              setQuotationWizardKey((k) => k + 1);
+              modals.openQuotationWizard();
+            }}
+          />
         </div>
 
         {session.isAuthenticated ? (

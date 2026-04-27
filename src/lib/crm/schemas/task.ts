@@ -18,3 +18,19 @@ export const addLeadTaskBaseSchema = z.object({
 });
 
 export type AddLeadTaskBaseForm = z.infer<typeof addLeadTaskBaseSchema>;
+
+/** Due date + assignee row in add-task dialog (creation-type blocks stay outside RHF). */
+export function createAddTaskDialogMetaSchema(invalidAssigneeMessage: string) {
+  return z.object({
+    dueAt: z.string().optional(),
+    assigneeId: z
+      .string()
+      .optional()
+      .refine(
+        (v) => v === undefined || v === "" || (CRM_TASK_ASSIGNEE_IDS as readonly string[]).includes(v),
+        { message: invalidAssigneeMessage },
+      ),
+  });
+}
+
+export type AddTaskDialogMetaForm = z.infer<ReturnType<typeof createAddTaskDialogMetaSchema>>;

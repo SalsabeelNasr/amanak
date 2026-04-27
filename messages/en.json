@@ -1880,6 +1880,7 @@
     "previousTasks": "Previous Tasks",
     "noPreviousTasks": "No previous tasks found.",
     "taskAdd": "Add task",
+    "taskValidationInvalidAssignee": "Choose a valid team member or leave unassigned.",
     "taskTitleLabel": "Title",
     "taskTitlePlaceholder": "What needs to be done?",
     "taskDueLabel": "Due date",
