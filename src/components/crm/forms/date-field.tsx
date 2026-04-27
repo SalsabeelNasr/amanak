@@ -16,6 +16,7 @@ export type DateFieldProps<T extends FieldValues> = {
   label: string;
   type?: "date" | "datetime-local" | "time";
   required?: boolean;
+  disabled?: boolean;
   className?: string;
   id?: string;
 };
@@ -26,6 +27,7 @@ export function DateField<T extends FieldValues>({
   label,
   type = "datetime-local",
   required,
+  disabled,
   className,
   id,
 }: DateFieldProps<T>) {
@@ -40,6 +42,7 @@ export function DateField<T extends FieldValues>({
       <Input
         id={inputId}
         type={type}
+        disabled={disabled}
         aria-invalid={fieldState.invalid}
         aria-describedby={fieldState.error ? `${inputId}-error` : undefined}
         className="min-h-10"

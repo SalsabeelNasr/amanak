@@ -25,6 +25,7 @@ export type SelectFieldProps<T extends FieldValues> = {
   options: SelectOption[];
   placeholderOption?: { value: string; label: string };
   required?: boolean;
+  disabled?: boolean;
   className?: string;
   id?: string;
 };
@@ -36,6 +37,7 @@ export function SelectField<T extends FieldValues>({
   options,
   placeholderOption,
   required,
+  disabled,
   className,
   id,
 }: SelectFieldProps<T>) {
@@ -50,6 +52,7 @@ export function SelectField<T extends FieldValues>({
       <select
         id={inputId}
         className={selectClass}
+        disabled={disabled}
         aria-invalid={fieldState.invalid}
         aria-describedby={fieldState.error ? `${inputId}-error` : undefined}
         {...field}

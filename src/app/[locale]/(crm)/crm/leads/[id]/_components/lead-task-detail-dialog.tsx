@@ -1,10 +1,11 @@
 "use client";
 
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import {
-  Dialog,
   DialogBody,
   DialogContent,
   DialogDescription,
@@ -12,10 +13,17 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { DialogShell } from "@/components/crm/dialog-shell";
+import { DateField } from "@/components/crm/forms/date-field";
+import { SelectField } from "@/components/crm/forms/select-field";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { crm } from "@/lib/crm/client";
+import {
+  createAddTaskDialogMetaSchema,
+  type AddTaskDialogMetaForm,
+} from "@/lib/crm/schemas/task";
 import {
   CRM_TASK_ASSIGNEE_IDS,
   type AddLeadTaskAttachmentInput,
@@ -82,12 +90,20 @@ export function LeadTaskDetailDialog({
     [lead, taskId],
   );
 
-  const [dueDate, setDueDate] = useState(() =>
-    dueDateFromIso(resolveTask(lead, taskId)?.dueAt),
+  const metaSchema = useMemo(
+    () => createAddTaskDialogMetaSchema(t("taskValidationInvalidAssignee")),
+    [t],
   );
-  const [assigneeId, setAssigneeId] = useState(
-    () => resolveTask(lead, taskId)?.assigneeId ?? "",
-  );
+  const form = useForm<AddTaskDialogMetaForm>({
+    resolver: zodResolver(metaSchema),
+    defaultValues: { dueAt: "", assigneeId: "" },
+  });
+  const { control, reset, handleSubmit } = form;
+
+  const lastDialogSyncRef = useRef<{ open: boolean; taskId: string | null }>({
+    open: false,
+    taskId: null,
+  });
   const [fieldValues, setFieldValues] = useState(() =>
     initialFieldValuesForTask(resolveTask(lead, taskId)),
   );
@@ -104,6 +120,32 @@ export function LeadTaskDetailDialog({
     },
     [onError, onOpenChange],
   );
+
+  const assigneeOptions = useMemo(
+    () =>
+      CRM_TASK_ASSIGNEE_IDS.map((id) => ({
+        value: id,
+        label: t(`taskAssignees.${id}` as Parameters<typeof t>[0]),
+      })),
+    [t],
+  );
+
+  useEffect(() => {
+    if (!open || !task) return;
+    const prev = lastDialogSyncRef.current;
+    const shouldSync = (!prev.open && open) || prev.taskId !== taskId;
+    if (shouldSync) {
+      reset({
+        dueAt: dueDateFromIso(task.dueAt),
+        assigneeId: task.assigneeId ?? "",
+      });
+      setFieldValues(initialFieldValuesForTask(task));
+      setSlotFiles({});
+      setPipelineNote("");
+      setFormError(null);
+    }
+    lastDialogSyncRef.current = { open, taskId };
+  }, [open, taskId, task, reset]);
 
   const creationDef = task?.creationTypeId
     ? getLeadTaskCreationTypeDef(task.creationTypeId)
@@ -146,55 +188,72 @@ export function LeadTaskDetailDialog({
     }));
   };
 
-  async function handleSaveMetadata() {
-    if (!task || !isAuthenticated) return;
-    setFormError(null);
-    onError?.(null);
-    const urls: string[] = [];
-    const newAttachments: AddLeadTaskAttachmentInput[] = [];
-    if (creationDef) {
-      for (const s of creationDef.uploadSlots) {
-        for (const file of slotFiles[s.id] ?? []) {
-          const mockUrl = URL.createObjectURL(file);
-          urls.push(mockUrl);
-          newAttachments.push({
-            slotId: s.id,
-            fileName: file.name,
-            sizeBytes: file.size,
-            mockUrl,
-          });
+  const runSaveMetadata = useCallback(
+    async (values: AddTaskDialogMetaForm) => {
+      if (!task || !isAuthenticated) return;
+      setFormError(null);
+      onError?.(null);
+      const urls: string[] = [];
+      const newAttachments: AddLeadTaskAttachmentInput[] = [];
+      if (creationDef) {
+        for (const s of creationDef.uploadSlots) {
+          for (const file of slotFiles[s.id] ?? []) {
+            const mockUrl = URL.createObjectURL(file);
+            urls.push(mockUrl);
+            newAttachments.push({
+              slotId: s.id,
+              fileName: file.name,
+              sizeBytes: file.size,
+              mockUrl,
+            });
+          }
         }
       }
-    }
 
-    setSaving(true);
-    try {
-      const updated = await crm.leads.updateTask(
-        lead.id,
-        task.id,
-        {
-          dueAt: dueAtFromDateInput(dueDate),
-          assigneeId: assigneeId.trim() ? assigneeId.trim() : "",
-          ...(creationDef ? { creationFields: fieldValues } : {}),
-          ...(newAttachments.length ? { attachments: newAttachments } : {}),
-        },
-        {},
-      );
-      urls.forEach((u) => URL.revokeObjectURL(u));
-      onLeadUpdated(updated);
-      setSlotFiles({});
-      onSuccess?.();
-    } catch (e) {
-      urls.forEach((u) => URL.revokeObjectURL(u));
-      const msg =
-        e instanceof Error ? e.message : t("taskCompleteErrorGeneric");
-      setFormError(msg);
-      onError?.(msg);
-      console.error(e);
-    } finally {
-      setSaving(false);
-    }
-  }
+      const dueStr = values.dueAt?.trim() ?? "";
+      setSaving(true);
+      try {
+        const updated = await crm.leads.updateTask(
+          lead.id,
+          task.id,
+          {
+            dueAt: dueAtFromDateInput(dueStr),
+            assigneeId: values.assigneeId?.trim()
+              ? values.assigneeId.trim()
+              : "",
+            ...(creationDef ? { creationFields: fieldValues } : {}),
+            ...(newAttachments.length ? { attachments: newAttachments } : {}),
+          },
+          {},
+        );
+        urls.forEach((u) => URL.revokeObjectURL(u));
+        onLeadUpdated(updated);
+        setSlotFiles({});
+        onSuccess?.();
+      } catch (e) {
+        urls.forEach((u) => URL.revokeObjectURL(u));
+        const msg =
+          e instanceof Error ? e.message : t("taskCompleteErrorGeneric");
+        setFormError(msg);
+        onError?.(msg);
+        console.error(e);
+      } finally {
+        setSaving(false);
+      }
+    },
+    [
+      task,
+      isAuthenticated,
+      creationDef,
+      slotFiles,
+      fieldValues,
+      lead.id,
+      onLeadUpdated,
+      onSuccess,
+      onError,
+      t,
+    ],
+  );
 
   async function handleCompleteOrReopen() {
     if (!task || !isAuthenticated) return;
@@ -225,58 +284,63 @@ export function LeadTaskDetailDialog({
       return;
     }
 
-    if (requiresPipelineNote && !pipelineNote.trim()) {
-      const msg = t("taskCompleteNoteDescription");
-      setFormError(msg);
-      onError?.(msg);
-      return;
-    }
+    void handleSubmit(async (values: AddTaskDialogMetaForm) => {
+      if (requiresPipelineNote && !pipelineNote.trim()) {
+        const msg = t("taskCompleteNoteDescription");
+        setFormError(msg);
+        onError?.(msg);
+        return;
+      }
 
-    const urls: string[] = [];
-    const newAttachments: AddLeadTaskAttachmentInput[] = [];
-    if (creationDef) {
-      for (const s of creationDef.uploadSlots) {
-        for (const file of slotFiles[s.id] ?? []) {
-          const mockUrl = URL.createObjectURL(file);
-          urls.push(mockUrl);
-          newAttachments.push({
-            slotId: s.id,
-            fileName: file.name,
-            sizeBytes: file.size,
-            mockUrl,
-          });
+      const urls: string[] = [];
+      const newAttachments: AddLeadTaskAttachmentInput[] = [];
+      if (creationDef) {
+        for (const s of creationDef.uploadSlots) {
+          for (const file of slotFiles[s.id] ?? []) {
+            const mockUrl = URL.createObjectURL(file);
+            urls.push(mockUrl);
+            newAttachments.push({
+              slotId: s.id,
+              fileName: file.name,
+              sizeBytes: file.size,
+              mockUrl,
+            });
+          }
         }
       }
-    }
 
-    setSaving(true);
-    try {
-      const updated = await crm.leads.updateTask(
-        lead.id,
-        task.id,
-        {
-          completed: true,
-          dueAt: dueAtFromDateInput(dueDate),
-          assigneeId: assigneeId.trim() ? assigneeId.trim() : "",
-          ...(creationDef ? { creationFields: fieldValues } : {}),
-          ...(newAttachments.length ? { attachments: newAttachments } : {}),
-        },
-        { actor: user ?? undefined, note: pipelineNote.trim() || undefined },
-      );
-      urls.forEach((u) => URL.revokeObjectURL(u));
-      onLeadUpdated(updated);
-      onSuccess?.();
-      onOpenChange(false);
-    } catch (e) {
-      urls.forEach((u) => URL.revokeObjectURL(u));
-      const msg =
-        e instanceof Error ? e.message : t("taskCompleteErrorGeneric");
-      setFormError(msg);
-      onError?.(msg);
-      console.error(e);
-    } finally {
-      setSaving(false);
-    }
+      const dueStr = values.dueAt?.trim() ?? "";
+      setSaving(true);
+      try {
+        const updated = await crm.leads.updateTask(
+          lead.id,
+          task.id,
+          {
+            completed: true,
+            dueAt: dueAtFromDateInput(dueStr),
+            assigneeId: values.assigneeId?.trim()
+              ? values.assigneeId.trim()
+              : "",
+            ...(creationDef ? { creationFields: fieldValues } : {}),
+            ...(newAttachments.length ? { attachments: newAttachments } : {}),
+          },
+          { actor: user ?? undefined, note: pipelineNote.trim() || undefined },
+        );
+        urls.forEach((u) => URL.revokeObjectURL(u));
+        onLeadUpdated(updated);
+        onSuccess?.();
+        onOpenChange(false);
+      } catch (e) {
+        urls.forEach((u) => URL.revokeObjectURL(u));
+        const msg =
+          e instanceof Error ? e.message : t("taskCompleteErrorGeneric");
+        setFormError(msg);
+        onError?.(msg);
+        console.error(e);
+      } finally {
+        setSaving(false);
+      }
+    })();
   }
 
   async function handleDelete() {
@@ -304,7 +368,7 @@ export function LeadTaskDetailDialog({
   const notFound = open && taskId && !task;
 
   return (
-    <Dialog open={open} onOpenChange={handleDialogOpenChange}>
+    <DialogShell open={open} onOpenChange={handleDialogOpenChange}>
       <DialogContent
         dir={locale === "ar" ? "rtl" : "ltr"}
         size="xl"
@@ -366,42 +430,26 @@ export function LeadTaskDetailDialog({
                 </div>
               ) : null}
 
-              <div className="grid gap-5 sm:grid-cols-2">
-                <div className="space-y-2">
-                  <Label htmlFor="task-detail-due" className="amanak-app-field-label">
-                    {t("taskDueLabel")}
-                  </Label>
-                  <Input
-                    id="task-detail-due"
-                    type="date"
-                    value={dueDate}
-                    onChange={(e) => setDueDate(e.target.value)}
-                    disabled={!isAuthenticated || task.completed}
-                    className="h-11 rounded-xl border-border bg-background font-medium focus-visible:ring-primary/20"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label
-                    htmlFor="task-detail-assignee"
-                    className="amanak-app-field-label"
-                  >
-                    {t("taskAssigneeLabel")}
-                  </Label>
-                  <select
-                    id="task-detail-assignee"
-                    value={assigneeId}
-                    onChange={(e) => setAssigneeId(e.target.value)}
-                    disabled={!isAuthenticated || task.completed}
-                    className="flex h-11 w-full rounded-xl border border-border bg-background px-3 text-sm font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20"
-                  >
-                    <option value="">{t("taskAssigneeNone")}</option>
-                    {CRM_TASK_ASSIGNEE_IDS.map((id) => (
-                      <option key={id} value={id}>
-                        {t(`taskAssignees.${id}` as Parameters<typeof t>[0])}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+              <div className="grid gap-5 sm:grid-cols-2 [&_label]:amanak-app-field-label">
+                <DateField
+                  control={control}
+                  name="dueAt"
+                  label={t("taskDueLabel")}
+                  type="date"
+                  id="task-detail-due"
+                  disabled={!isAuthenticated || task.completed}
+                  className="space-y-2.5 [&_input]:h-11 [&_input]:rounded-xl [&_input]:border-border [&_input]:font-medium"
+                />
+                <SelectField
+                  control={control}
+                  name="assigneeId"
+                  label={t("taskAssigneeLabel")}
+                  placeholderOption={{ value: "", label: t("taskAssigneeNone") }}
+                  options={assigneeOptions}
+                  id="task-detail-assignee"
+                  disabled={!isAuthenticated || task.completed}
+                  className="space-y-2.5 [&_select]:h-11 [&_select]:min-h-11 [&_select]:w-full [&_select]:rounded-xl [&_select]:border-border [&_select]:px-3 [&_select]:text-sm [&_select]:font-medium"
+                />
               </div>
 
               {creationDef && creationDef.fields.length > 0 ? (
@@ -614,7 +662,7 @@ export function LeadTaskDetailDialog({
                     variant="secondary"
                     className="rounded-xl"
                     disabled={saving}
-                    onClick={() => void handleSaveMetadata()}
+                    onClick={() => void handleSubmit(runSaveMetadata)()}
                   >
                     {t("taskSaveChanges")}
                   </Button>
@@ -639,6 +687,6 @@ export function LeadTaskDetailDialog({
           </>
         ) : null}
       </DialogContent>
-    </Dialog>
+    </DialogShell>
   );
 }
