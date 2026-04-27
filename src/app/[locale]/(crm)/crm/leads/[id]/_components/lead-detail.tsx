@@ -49,6 +49,10 @@ import {
 } from "@/lib/services/state-machine.service";
 import { crm } from "@/lib/crm/client";
 import {
+  LeadModalsProvider,
+  useLeadModals,
+} from "@/lib/crm/hooks/use-lead-modals";
+import {
   CRM_TASK_ASSIGNEE_IDS,
   sortLeadTasksForDisplay,
 } from "@/lib/crm/client.types";
@@ -121,7 +125,7 @@ function conversationBodyText(item: LeadConversationItem): string {
   }
 }
 
-export function LeadDetail({
+function LeadDetailContent({
   initialLead,
   initialConversations,
   initialConsultationSlots,
@@ -137,6 +141,7 @@ export function LeadDetail({
   const locale = useLocale();
   const langKey = useLangKey();
   const { session } = useSession();
+  const modals = useLeadModals();
   const [lead, setLead] = useState<Lead>(initialLead);
   const [tab, setTab] = useState<TabId>("overview");
   const [pendingTransition, setPendingTransition] =
@@ -149,30 +154,26 @@ export function LeadDetail({
     Set<string>
   >(() => new Set());
   const [taskActionError, setTaskActionError] = useState<string | null>(null);
-  const [taskDetailOpen, setTaskDetailOpen] = useState(false);
-  const [taskDetailTaskId, setTaskDetailTaskId] = useState<string | null>(null);
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
   const [tasksTabFilter, setTasksTabFilter] = useState<TaskTabFilter>("all");
   const [isActivityExpanded, setIsActivityExpanded] = useState(false);
-  const [isStatusDialogOpen, setIsStatusDialogOpen] = useState(false);
-  const [isOwnerDialogOpen, setIsOwnerDialogOpen] = useState(false);
-  const [isDueDateDialogOpen, setIsDueDateDialogOpen] = useState(false);
   const [documentsTabFilter, setDocumentsTabFilter] =
     useState<LeadDocumentsTabFilter>("all");
   const [appointmentTabFilter, setAppointmentTabFilter] =
     useState<LeadAppointmentsTabFilter>("all");
-  const [taskAddDialogOpen, setTaskAddDialogOpen] = useState(false);
-  const [quotationWizardOpen, setQuotationWizardOpen] = useState(false);
   const [conversations, setConversations] =
     useState<LeadConversationItem[]>(initialConversations);
-  const [communicateDialogOpen, setCommunicateDialogOpen] = useState(false);
   const [viewQuotation, setViewQuotation] = useState<Quotation | null>(null);
   const [quotationWizardKey, setQuotationWizardKey] = useState(0);
   const [nowMs, setNowMs] = useState(() => Date.now());
   const documentsTabRef = useRef<LeadDocumentsTabRef>(null);
   const appointmentsTabRef = useRef<LeadAppointmentsTabRef>(null);
+
+  const taskDetailOpen = modals.state.open === "task-detail";
+  const taskDetailTaskId =
+    modals.state.open === "task-detail" ? modals.state.payload.taskId : null;
 
   useEffect(() => {
     const id = window.setInterval(() => {
@@ -198,18 +199,17 @@ export function LeadDetail({
   useEffect(() => {
     const tid = searchParams.get("task");
     if (!tid) return;
-    const exists = lead.tasks.some((t) => t.id === tid);
+    const exists = lead.tasks.some((tk) => tk.id === tid);
     if (!exists) return;
     requestAnimationFrame(() => {
-      setTaskDetailTaskId(tid);
-      setTaskDetailOpen(true);
+      modals.openTaskDetail(tid);
+      setTaskActionError(null);
       router.replace(pathname, { scroll: false });
     });
-  }, [searchParams, lead.tasks, pathname, router]);
+  }, [searchParams, lead.tasks, pathname, router, modals.openTaskDetail]);
 
   function openTaskDetail(taskId: string) {
-    setTaskDetailTaskId(taskId);
-    setTaskDetailOpen(true);
+    modals.openTaskDetail(taskId);
     setTaskActionError(null);
   }
 
@@ -317,7 +317,7 @@ export function LeadDetail({
     try {
       const updated = await crm.leads.update(lead.id, { ownerId }, {});
       setLead(updated);
-      setIsOwnerDialogOpen(false);
+      modals.close();
     } catch (e) {
       console.error(e);
     }
@@ -331,7 +331,7 @@ export function LeadDetail({
       // but we can simulate it by updating the lead.
       const updated = await crm.leads.update(lead.id, { updatedAt: new Date(date).toISOString() }, {});
       setLead(updated);
-      setIsDueDateDialogOpen(false);
+      modals.close();
     } catch (e) {
       console.error(e);
     }
@@ -362,11 +362,16 @@ export function LeadDetail({
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-3">
               <h1 className="amanak-app-page-title">{lead.patientName}</h1>
-              <Dialog open={isStatusDialogOpen} onOpenChange={setIsStatusDialogOpen}>
+              <Dialog
+                open={modals.state.open === "status-change"}
+                onOpenChange={(o) => {
+                  if (!o) modals.close();
+                }}
+              >
                 <button
                   type="button"
                   className="group"
-                  onClick={() => setIsStatusDialogOpen(true)}
+                  onClick={() => modals.openStatusChange()}
                 >
                   <Badge
                     className={cn(
@@ -397,7 +402,7 @@ export function LeadDetail({
                           className="justify-start text-sm font-medium"
                           onClick={() => {
                             setPendingTransition(tr);
-                            setIsStatusDialogOpen(false);
+                            modals.close();
                           }}
                         >
                           {tr.label[langKey]}
@@ -411,13 +416,18 @@ export function LeadDetail({
           </div>
 
           <div className="flex items-center gap-2 border-t border-border/40 pt-4 sm:border-t-0 sm:pt-0">
-            <Dialog open={isOwnerDialogOpen} onOpenChange={setIsOwnerDialogOpen}>
+            <Dialog
+              open={modals.state.open === "owner"}
+              onOpenChange={(o) => {
+                if (!o) modals.close();
+              }}
+            >
               <Button
                 type="button"
                 variant="outline"
                 size="sm"
                 className="h-9 gap-2 rounded-xl border-border/60 px-4 text-sm font-medium hover:bg-muted"
-                onClick={() => setIsOwnerDialogOpen(true)}
+                onClick={() => modals.openOwner()}
               >
                 <UserPlus className="size-3.5 text-muted-foreground" />
                 <span className="text-muted-foreground">{t("owner")}:</span>
@@ -447,13 +457,18 @@ export function LeadDetail({
               </DialogContent>
             </Dialog>
 
-            <Dialog open={isDueDateDialogOpen} onOpenChange={setIsDueDateDialogOpen}>
+            <Dialog
+              open={modals.state.open === "due-date"}
+              onOpenChange={(o) => {
+                if (!o) modals.close();
+              }}
+            >
               <Button
                 type="button"
                 variant="outline"
                 size="sm"
                 className="h-9 gap-2 rounded-xl border-border/60 px-4 text-sm font-medium hover:bg-muted"
-                onClick={() => setIsDueDateDialogOpen(true)}
+                onClick={() => modals.openDueDate()}
               >
                 <Clock className="size-3.5 text-muted-foreground" />
                 <span className="text-muted-foreground">{t("dueDate")}:</span>
@@ -539,7 +554,7 @@ export function LeadDetail({
                   type="button"
                   size="sm"
                   className="h-8 shrink-0 rounded-xl px-4 text-sm font-semibold shadow-sm"
-                  onClick={() => setCommunicateDialogOpen(true)}
+                  onClick={() => modals.openCommunicate()}
                 >
                   {t("convCommunicate")}
                 </Button>
@@ -578,7 +593,7 @@ export function LeadDetail({
                   type="button"
                   size="sm"
                   className="h-8 shrink-0 rounded-xl px-4 text-sm font-semibold shadow-sm"
-                  onClick={() => setTaskAddDialogOpen(true)}
+                  onClick={() => modals.openTaskAdd()}
                 >
                   {t("taskAdd")}
                 </Button>
@@ -676,7 +691,7 @@ export function LeadDetail({
                   className="h-8 shrink-0 rounded-xl px-4 text-sm font-semibold shadow-sm"
                   onClick={() => {
                     setQuotationWizardKey((k) => k + 1);
-                    setQuotationWizardOpen(true);
+                    modals.openQuotationWizard();
                   }}
                 >
                   {t("leadQuotation.createButton")}
@@ -689,8 +704,10 @@ export function LeadDetail({
         {session.isAuthenticated ? (
           <>
             <LeadCommunicateDialog
-              open={communicateDialogOpen}
-              onOpenChange={setCommunicateDialogOpen}
+              open={modals.state.open === "communicate"}
+              onOpenChange={(o) => {
+                if (!o) modals.close();
+              }}
               lead={lead}
               locale={locale}
               actorEmail={session.user.email}
@@ -714,15 +731,19 @@ export function LeadDetail({
               isAuthenticated={session.isAuthenticated}
               userId={session.user.id}
               onLeadUpdated={setLead}
-              open={taskAddDialogOpen}
-              onOpenChange={setTaskAddDialogOpen}
+              open={modals.state.open === "task-add"}
+              onOpenChange={(o) => {
+                if (!o) modals.close();
+              }}
               hideTrigger
             />
             <LeadQuotationWizardDialog
               key={quotationWizardKey}
               lead={lead}
-              open={quotationWizardOpen}
-              onOpenChange={setQuotationWizardOpen}
+              open={modals.state.open === "quotation-wizard"}
+              onOpenChange={(o) => {
+                if (!o) modals.close();
+              }}
               onSaved={(next) => {
                 setLead(next);
                 setSuccessFlash(true);
@@ -750,8 +771,7 @@ export function LeadDetail({
           taskId={taskDetailTaskId}
           open={taskDetailOpen}
           onOpenChange={(o) => {
-            setTaskDetailOpen(o);
-            if (!o) setTaskDetailTaskId(null);
+            if (!o) modals.close();
           }}
           locale={locale}
           isAuthenticated={session.isAuthenticated}
@@ -1546,5 +1566,18 @@ export function LeadDetail({
         </div>
       </Tabs>
     </div>
+  );
+}
+
+export function LeadDetail(props: {
+  initialLead: Lead;
+  initialConversations: LeadConversationItem[];
+  initialConsultationSlots: ConsultationSlot[];
+  otherLeads?: Lead[];
+}) {
+  return (
+    <LeadModalsProvider>
+      <LeadDetailContent {...props} />
+    </LeadModalsProvider>
   );
 }
