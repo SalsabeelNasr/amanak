@@ -1,11 +1,12 @@
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
-import { getLeadById } from "@/lib/api/leads";
+import { crm } from "@/lib/crm/client";
+import { getServerCrmCtx } from "@/lib/crm/ctx";
 import { PatientProfileTabs } from "./_components/patient-profile-tabs";
 
 export default async function PatientProfilePage() {
   const tAuth = await getTranslations("auth");
-  const lead = await getLeadById("lead_1");
+  const lead = await crm.leads.get("lead_1", getServerCrmCtx());
   if (!lead) notFound();
 
   const firstName = lead.patientName.split(/\s+/)[0] ?? lead.patientName;

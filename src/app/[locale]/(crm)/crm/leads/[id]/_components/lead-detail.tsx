@@ -42,11 +42,11 @@ import {
   getAvailableTransitions,
   getStatusLabel,
 } from "@/lib/services/state-machine.service";
+import { crm } from "@/lib/crm/client";
 import {
   CRM_TASK_ASSIGNEE_IDS,
   sortLeadTasksForDisplay,
-  updateLead,
-} from "@/lib/api/leads";
+} from "@/lib/crm/client.types";
 import { useSession } from "@/lib/mock-session";
 import type {
   ConsultationSlot,
@@ -256,7 +256,7 @@ export function LeadDetail({
         session.user,
         note.trim() || undefined,
       );
-      const persisted = await updateLead(lead.id, updated);
+      const persisted = await crm.leads.update(lead.id, updated, {});
       setLead(persisted);
       setPendingTransition(null);
       setNote("");
@@ -348,7 +348,7 @@ export function LeadDetail({
   async function handleUpdateOwner(ownerId: string) {
     if (!session.isAuthenticated) return;
     try {
-      const updated = await updateLead(lead.id, { ownerId });
+      const updated = await crm.leads.update(lead.id, { ownerId }, {});
       setLead(updated);
       setIsOwnerDialogOpen(false);
     } catch (e) {
@@ -362,7 +362,7 @@ export function LeadDetail({
       // For now we'll update the updatedAt as a proxy for a main lead due date if one existed, 
       // or we can just update the lead. In this mock, leads don't have a top-level dueAt, 
       // but we can simulate it by updating the lead.
-      const updated = await updateLead(lead.id, { updatedAt: new Date(date).toISOString() });
+      const updated = await crm.leads.update(lead.id, { updatedAt: new Date(date).toISOString() }, {});
       setLead(updated);
       setIsDueDateDialogOpen(false);
     } catch (e) {

@@ -14,7 +14,8 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { addLeadTask, CRM_TASK_ASSIGNEE_IDS } from "@/lib/api/leads";
+import { crm } from "@/lib/crm/client";
+import { CRM_TASK_ASSIGNEE_IDS } from "@/lib/crm/client.types";
 import {
   LEAD_TASK_CREATION_TYPES,
   getLeadTaskCreationTypeDef,
@@ -198,15 +199,19 @@ export function LeadAddTaskDialog({
 
     setSaving(true);
     try {
-      const updated = await addLeadTask(leadId, {
-        title: resolvedTitle,
-        creationTypeId,
-        creationFields: fieldValues,
-        attachments,
-        dueAt,
-        assigneeId: assigneeId.trim() || undefined,
-        createdByUserId: userId,
-      });
+      const updated = await crm.leads.addTask(
+        leadId,
+        {
+          title: resolvedTitle,
+          creationTypeId,
+          creationFields: fieldValues,
+          attachments,
+          dueAt,
+          assigneeId: assigneeId.trim() || undefined,
+          createdByUserId: userId,
+        },
+        {},
+      );
       urls.forEach((u) => URL.revokeObjectURL(u));
       onLeadUpdated(updated);
       handleOpenChange(false);

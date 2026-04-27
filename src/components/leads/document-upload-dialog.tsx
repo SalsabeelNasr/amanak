@@ -13,7 +13,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import { LEAD_DOCUMENT_TYPE_ORDER, uploadLeadDocument } from "@/lib/api/leads";
+import { crm } from "@/lib/crm/client";
+import { LEAD_DOCUMENT_TYPE_ORDER } from "@/lib/crm/client.types";
 import { cn } from "@/lib/utils";
 import type { Lead, LeadDocument } from "@/types";
 
@@ -67,11 +68,15 @@ export function DocumentUploadDialog({
     }
     setSaving(true);
     try {
-      const updated = await uploadLeadDocument(leadId, {
-        type: docType,
-        fileName: file.name,
-        uploadedByUserId,
-      });
+      const updated = await crm.leads.uploadDocument(
+        leadId,
+        {
+          type: docType,
+          fileName: file.name,
+          uploadedByUserId,
+        },
+        {},
+      );
       onUploaded(updated);
       handleOpenChange(false);
     } catch (err) {

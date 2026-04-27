@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { appendLeadConversation } from "@/lib/api/lead-conversations";
+import { crm } from "@/lib/crm/client";
 import {
   MESSAGE_TEMPLATE_IDS,
   type MessageTemplateId,
@@ -240,7 +240,7 @@ export function LeadCommunicateDialog({
       };
       setSaving(true);
       try {
-        await appendLeadConversation(lead.id, item);
+        await crm.conversations.append(lead.id, item, {});
         onAppended(item);
         onOpenChange(false);
       } catch (e) {
@@ -275,7 +275,7 @@ export function LeadCommunicateDialog({
       };
       setSaving(true);
       try {
-        await appendLeadConversation(lead.id, item);
+        await crm.conversations.append(lead.id, item, {});
         onAppended(item);
         onOpenChange(false);
       } catch (e) {
@@ -316,7 +316,7 @@ export function LeadCommunicateDialog({
       };
       setSaving(true);
       try {
-        await appendLeadConversation(lead.id, item);
+        await crm.conversations.append(lead.id, item, {});
         onAppended(item);
         onOpenChange(false);
       } catch (e) {
@@ -360,7 +360,7 @@ export function LeadCommunicateDialog({
     };
     setSaving(true);
     try {
-      await appendLeadConversation(lead.id, item);
+      await crm.conversations.append(lead.id, item, {});
       onAppended(item);
       onOpenChange(false);
     } catch (e) {

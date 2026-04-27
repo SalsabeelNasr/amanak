@@ -20,7 +20,7 @@ import {
   listQuotationHospitalsForDoctor,
   listQuotationHotelsForHospital,
 } from "@/lib/api/quotation-catalog";
-import { createDraftQuotation } from "@/lib/api/leads";
+import { crm } from "@/lib/crm/client";
 import { buildQuotationPricing } from "@/lib/quotation-price-engine";
 import type { Lead, LeadStatus, PackageTier } from "@/types";
 import type { Doctor } from "@/types";
@@ -197,19 +197,23 @@ export function LeadQuotationWizardDialog({
     setSaveError(null);
     setSaving(true);
     try {
-      const updated = await createDraftQuotation(lead.id, {
-        packageTier,
-        doctorId,
-        hospitalId: hospitalId ?? undefined,
-        hotelName: hotelName ?? undefined,
-        transportMode: transport.modeLabel,
-        transportRouteCount: transport.routeCount,
-        items: pricing.items,
-        totalUSD: pricing.totalUSD,
-        downpaymentRequired: pricing.downpaymentRequired,
-        downpaymentUSD: pricing.downpaymentUSD,
-        termsAndConditions: pricing.termsAndConditions,
-      });
+      const updated = await crm.leads.createDraftQuotation(
+        lead.id,
+        {
+          packageTier,
+          doctorId,
+          hospitalId: hospitalId ?? undefined,
+          hotelName: hotelName ?? undefined,
+          transportMode: transport.modeLabel,
+          transportRouteCount: transport.routeCount,
+          items: pricing.items,
+          totalUSD: pricing.totalUSD,
+          downpaymentRequired: pricing.downpaymentRequired,
+          downpaymentUSD: pricing.downpaymentUSD,
+          termsAndConditions: pricing.termsAndConditions,
+        },
+        {},
+      );
       onSaved(updated);
       onOpenChange(false);
     } catch {

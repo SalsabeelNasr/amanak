@@ -15,12 +15,11 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
+import { crm } from "@/lib/crm/client";
 import {
   CRM_TASK_ASSIGNEE_IDS,
-  deleteLeadTask,
-  updateLeadTask,
   type AddLeadTaskAttachmentInput,
-} from "@/lib/api/leads";
+} from "@/lib/crm/client.types";
 import { getLeadTaskCreationTypeDef } from "@/lib/config/lead-task-creation-types";
 import { ALL_TRANSITIONS } from "@/lib/services/state-machine.service";
 import { getTransitionActionForSystemTaskCompletion } from "@/lib/services/lead-task-rules";
@@ -170,7 +169,7 @@ export function LeadTaskDetailDialog({
 
     setSaving(true);
     try {
-      const updated = await updateLeadTask(
+      const updated = await crm.leads.updateTask(
         lead.id,
         task.id,
         {
@@ -179,6 +178,7 @@ export function LeadTaskDetailDialog({
           ...(creationDef ? { creationFields: fieldValues } : {}),
           ...(newAttachments.length ? { attachments: newAttachments } : {}),
         },
+        {},
       );
       urls.forEach((u) => URL.revokeObjectURL(u));
       onLeadUpdated(updated);
@@ -204,9 +204,12 @@ export function LeadTaskDetailDialog({
     if (task.completed) {
       setSaving(true);
       try {
-        const updated = await updateLeadTask(lead.id, task.id, {
-          completed: false,
-        });
+        const updated = await crm.leads.updateTask(
+          lead.id,
+          task.id,
+          { completed: false },
+          {},
+        );
         onLeadUpdated(updated);
         onSuccess?.();
         onOpenChange(false);
@@ -248,7 +251,7 @@ export function LeadTaskDetailDialog({
 
     setSaving(true);
     try {
-      const updated = await updateLeadTask(
+      const updated = await crm.leads.updateTask(
         lead.id,
         task.id,
         {
@@ -258,10 +261,7 @@ export function LeadTaskDetailDialog({
           ...(creationDef ? { creationFields: fieldValues } : {}),
           ...(newAttachments.length ? { attachments: newAttachments } : {}),
         },
-        {
-          actor: user,
-          note: pipelineNote.trim() || undefined,
-        },
+        { actor: user ?? undefined, note: pipelineNote.trim() || undefined },
       );
       urls.forEach((u) => URL.revokeObjectURL(u));
       onLeadUpdated(updated);
@@ -286,7 +286,7 @@ export function LeadTaskDetailDialog({
     setFormError(null);
     onError?.(null);
     try {
-      const updated = await deleteLeadTask(lead.id, task.id);
+      const updated = await crm.leads.deleteTask(lead.id, task.id, {});
       onLeadUpdated(updated);
       onSuccess?.();
       onOpenChange(false);

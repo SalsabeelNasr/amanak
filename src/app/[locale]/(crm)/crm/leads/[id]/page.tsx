@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
-import { getLeadConversations } from "@/lib/api/lead-conversations";
-import { getLeadById, listLeads } from "@/lib/api/leads";
+import { crm } from "@/lib/crm/client";
+import { getServerCrmCtx } from "@/lib/crm/ctx";
 import { listAvailableSlots } from "@/lib/api/consultation-booking";
 import { LeadDetail } from "./_components/lead-detail";
 
@@ -10,7 +10,8 @@ export default async function CrmLeadDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const lead = await getLeadById(id);
+  const ctx = getServerCrmCtx();
+  const lead = await crm.leads.get(id, ctx);
   if (!lead) notFound();
 
   const now = new Date();
@@ -21,8 +22,8 @@ export default async function CrmLeadDetailPage({
 
   const [initialConversations, otherLeads, initialConsultationSlots] =
     await Promise.all([
-      getLeadConversations(id),
-      listLeads({ patientId: lead.patientId }),
+      crm.conversations.list(id, undefined, ctx),
+      crm.leads.list({ patientId: lead.patientId }, ctx),
       listAvailableSlots({ from: slotFrom, to: slotTo }),
     ]);
 

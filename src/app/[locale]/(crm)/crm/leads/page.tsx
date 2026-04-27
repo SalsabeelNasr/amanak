@@ -1,10 +1,11 @@
 import { getTranslations } from "next-intl/server";
-import { listLeads } from "@/lib/api/leads";
+import { crm } from "@/lib/crm/client";
+import { getServerCrmCtx } from "@/lib/crm/ctx";
 import { LeadsTable } from "./_components/leads-table";
 
 export default async function CrmLeadsPage() {
   const t = await getTranslations("crm");
-  const leads = await listLeads();
+  const leads = await crm.leads.list(undefined, getServerCrmCtx());
 
   return (
     <div className="mx-auto max-w-7xl space-y-4 p-4 sm:p-8">

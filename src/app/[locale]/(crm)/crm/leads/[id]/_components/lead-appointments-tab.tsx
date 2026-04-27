@@ -22,7 +22,8 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { addLeadAppointment, CRM_TASK_ASSIGNEE_IDS } from "@/lib/api/leads";
+import { crm } from "@/lib/crm/client";
+import { CRM_TASK_ASSIGNEE_IDS } from "@/lib/crm/client.types";
 import { useSession } from "@/lib/mock-session";
 import { cn } from "@/lib/utils";
 import type { Lead, LeadAppointment, LeadAppointmentKind } from "@/types";
@@ -232,13 +233,17 @@ export const LeadAppointmentsTab = forwardRef<LeadAppointmentsTabRef, Props>(
           setSaving(false);
           return;
         }
-        const updated = await addLeadAppointment(lead.id, {
-          kind: "treatment",
-          startsAt: new Date(startMs).toISOString(),
-          locationLabel: treatmentLocation.trim(),
-          notes: notes.trim() || undefined,
-          createdByUserId: session.user.id,
-        });
+        const updated = await crm.leads.addAppointment(
+          lead.id,
+          {
+            kind: "treatment",
+            startsAt: new Date(startMs).toISOString(),
+            locationLabel: treatmentLocation.trim(),
+            notes: notes.trim() || undefined,
+            createdByUserId: session.user.id,
+          },
+          {},
+        );
         onLeadUpdated(updated);
       } else if (modalKind === "online_meeting") {
         if (!onlineUrl.trim() || !onlineWhen) {
@@ -252,14 +257,18 @@ export const LeadAppointmentsTab = forwardRef<LeadAppointmentsTabRef, Props>(
           setSaving(false);
           return;
         }
-        const updated = await addLeadAppointment(lead.id, {
-          kind: "online_meeting",
-          startsAt: new Date(startMs).toISOString(),
-          meetingUrl: onlineUrl.trim(),
-          title: onlineTitle.trim() || undefined,
-          notes: notes.trim() || undefined,
-          createdByUserId: session.user.id,
-        });
+        const updated = await crm.leads.addAppointment(
+          lead.id,
+          {
+            kind: "online_meeting",
+            startsAt: new Date(startMs).toISOString(),
+            meetingUrl: onlineUrl.trim(),
+            title: onlineTitle.trim() || undefined,
+            notes: notes.trim() || undefined,
+            createdByUserId: session.user.id,
+          },
+          {},
+        );
         onLeadUpdated(updated);
       } else {
         if (!consultSlotId) {
@@ -276,14 +285,18 @@ export const LeadAppointmentsTab = forwardRef<LeadAppointmentsTabRef, Props>(
         const taskTitle = t("apptConsultationTaskTitle", {
           datetime: formatDateTime(slot.startsAt, locale),
         });
-        const updated = await addLeadAppointment(lead.id, {
-          kind: "team_consultation",
-          slotId: consultSlotId,
-          taskTitle,
-          notes: notes.trim() || undefined,
-          assigneeId: consultAssignee.trim() || undefined,
-          createdByUserId: session.user.id,
-        });
+        const updated = await crm.leads.addAppointment(
+          lead.id,
+          {
+            kind: "team_consultation",
+            slotId: consultSlotId,
+            taskTitle,
+            notes: notes.trim() || undefined,
+            assigneeId: consultAssignee.trim() || undefined,
+            createdByUserId: session.user.id,
+          },
+          {},
+        );
         onLeadUpdated(updated);
       }
       setModalOpen(false);
