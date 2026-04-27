@@ -1,10 +1,11 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useForm, type Resolver } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import {
-  Dialog,
   DialogBody,
   DialogContent,
   DialogDescription,
@@ -12,9 +13,19 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { DialogShell } from "@/components/crm/dialog-shell";
+import { DateField } from "@/components/crm/forms/date-field";
+import { TextareaField } from "@/components/crm/forms/textarea-field";
+import { TextField } from "@/components/crm/forms/text-field";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { crm } from "@/lib/crm/client";
+import {
+  createCommunicateFormSchema,
+  getDefaultCommunicateFormValues,
+  type CommunicateDialogMode,
+  type CommunicateFormValues,
+} from "@/lib/crm/schemas/communicate";
 import {
   MESSAGE_TEMPLATE_IDS,
   type MessageTemplateId,
@@ -24,7 +35,7 @@ import { cn } from "@/lib/utils";
 import type { Lead, LeadConversationItem, Quotation } from "@/types";
 import { Mail, MessageSquare, PenLine, Phone, Smartphone, X } from "lucide-react";
 
-export type CommunicateMode = "log_call" | "app_call" | "whatsapp" | "email" | "sms";
+export type { CommunicateDialogMode as CommunicateMode } from "@/lib/crm/schemas/communicate";
 
 type TemplateSelection = "" | MessageTemplateId;
 
@@ -69,22 +80,45 @@ export function LeadCommunicateDialog({
   const t = useTranslations("crm");
   const tplVars = useMemo(() => ({ name: lead.patientName }), [lead.patientName]);
 
-  const [mode, setMode] = useState<CommunicateMode>("log_call");
-  const [whenLocal, setWhenLocal] = useState(() => toDatetimeLocalValue(new Date()));
-  const [callNotes, setCallNotes] = useState("");
+  const [mode, setMode] = useState<CommunicateDialogMode>("log_call");
   const [waTemplateId, setWaTemplateId] = useState<TemplateSelection>("");
-  const [waMessage, setWaMessage] = useState("");
   const [emailTemplateId, setEmailTemplateId] = useState<TemplateSelection>("");
-  const [emailSubject, setEmailSubject] = useState("");
-  const [emailBody, setEmailBody] = useState("");
   const [smsTemplateId, setSmsTemplateId] = useState<TemplateSelection>("");
-  const [smsMessage, setSmsMessage] = useState("");
   const [attachedQuotationIds, setAttachedQuotationIds] = useState<string[]>([]);
   const [attachSearch, setAttachSearch] = useState("");
   const [attachPanelOpen, setAttachPanelOpen] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [commitError, setCommitError] = useState<string | null>(null);
   const attachPopoverRef = useRef<HTMLDivElement>(null);
+  const modeRef = useRef<CommunicateDialogMode>(mode);
+  modeRef.current = mode;
+
+  const zodFormResolver: Resolver<CommunicateFormValues> = useCallback(
+    async (values, context, options) => {
+      const schema = createCommunicateFormSchema({
+        mode: modeRef.current,
+        messages: {
+          when: t("convComposeErrorWhen"),
+          callNotes: t("convComposeErrorNotes"),
+          message: t("convComposeErrorMessage"),
+          emailFields: t("convComposeErrorEmailFields"),
+          noPatientEmail: t("convComposeErrorNoPatientEmail"),
+          noPatientPhone: t("convComposeErrorNoPatientPhone"),
+        },
+        hasPatientEmail: Boolean(lead.patientEmail?.trim()),
+        hasPatientPhone: Boolean(lead.patientPhone?.trim()),
+      });
+      return zodResolver(schema)(values, context, options);
+    },
+    [t, lead.patientEmail, lead.patientPhone],
+  );
+
+  const form = useForm<CommunicateFormValues>({
+    resolver: zodFormResolver,
+    defaultValues: getDefaultCommunicateFormValues(() => toDatetimeLocalValue(new Date())),
+  });
+
+  const { control, setValue, handleSubmit, reset, clearErrors } = form;
 
   const langKey = locale === "ar" ? "ar" : "en";
   const attachExcludeIds = useMemo(
@@ -118,20 +152,17 @@ export function LeadCommunicateDialog({
 
   const resetForm = useCallback(() => {
     setMode("log_call");
-    setWhenLocal(toDatetimeLocalValue(new Date()));
-    setCallNotes("");
+    reset(
+      getDefaultCommunicateFormValues(() => toDatetimeLocalValue(new Date())),
+    );
     setWaTemplateId("");
-    setWaMessage("");
     setEmailTemplateId("");
-    setEmailSubject("");
-    setEmailBody("");
     setSmsTemplateId("");
-    setSmsMessage("");
     setAttachedQuotationIds([]);
     setAttachSearch("");
     setAttachPanelOpen(false);
-    setError(null);
-  }, []);
+    setCommitError(null);
+  }, [reset]);
 
   const handleDialogOpenChange = useCallback(
     (next: boolean) => {
@@ -166,9 +197,10 @@ export function LeadCommunicateDialog({
 
   function applyWhatsappTemplate(id: TemplateSelection) {
     setWaTemplateId(id);
-    if (id === "") setWaMessage("");
+    if (id === "") setValue("waMessage", "");
     else
-      setWaMessage(
+      setValue(
+        "waMessage",
         t(`convComposeTpl_${id}_wa` as Parameters<typeof t>[0], tplVars),
       );
   }
@@ -176,13 +208,15 @@ export function LeadCommunicateDialog({
   function applyEmailTemplate(id: TemplateSelection) {
     setEmailTemplateId(id);
     if (id === "") {
-      setEmailSubject("");
-      setEmailBody("");
+      setValue("emailSubject", "");
+      setValue("emailBody", "");
     } else {
-      setEmailSubject(
+      setValue(
+        "emailSubject",
         t(`convComposeTpl_${id}_emailSubject` as Parameters<typeof t>[0], tplVars),
       );
-      setEmailBody(
+      setValue(
+        "emailBody",
         t(`convComposeTpl_${id}_emailBody` as Parameters<typeof t>[0], tplVars),
       );
     }
@@ -190,9 +224,10 @@ export function LeadCommunicateDialog({
 
   function applySmsTemplate(id: TemplateSelection) {
     setSmsTemplateId(id);
-    if (id === "") setSmsMessage("");
+    if (id === "") setValue("smsMessage", "");
     else
-      setSmsMessage(
+      setValue(
+        "smsMessage",
         t(`convComposeTpl_${id}_sms` as Parameters<typeof t>[0], tplVars),
       );
   }
@@ -212,62 +247,123 @@ export function LeadCommunicateDialog({
     }
   }, [mode, t]);
 
-  async function handleSubmit() {
-    if (!isAuthenticated || mode === "app_call") return;
-    setError(null);
-    const occurredAtMs = Date.parse(whenLocal);
-    if (Number.isNaN(occurredAtMs)) {
-      setError(t("convComposeErrorWhen"));
-      return;
-    }
-    const occurredAt = new Date(occurredAtMs).toISOString();
+  const commitConversation = useCallback(
+    async (values: CommunicateFormValues) => {
+      if (!isAuthenticated || mode === "app_call") return;
+      setCommitError(null);
+      const occurredAtMs = Date.parse(values.whenLocal);
+      const occurredAt = new Date(occurredAtMs).toISOString();
 
-    if (mode === "log_call") {
-      const notes = callNotes.trim();
-      if (!notes) {
-        setError(t("convComposeErrorNotes"));
+      if (mode === "log_call") {
+        const notes = values.callNotes.trim();
+        const item: LeadConversationItem = {
+          id: newConversationId(lead.id),
+          leadId: lead.id,
+          channel: "call",
+          callKind: "manual_log",
+          occurredAt,
+          direction: "internal",
+          transcript: notes,
+          preview: previewFromText(notes),
+        };
+        setSaving(true);
+        try {
+          await crm.conversations.append(lead.id, item, {});
+          onAppended(item);
+          onOpenChange(false);
+        } catch (e) {
+          console.error(e);
+          setCommitError(t("convComposeErrorGeneric"));
+        } finally {
+          setSaving(false);
+        }
         return;
       }
+
+      if (mode === "whatsapp") {
+        const body = values.waMessage.trim();
+        const item: LeadConversationItem = {
+          id: newConversationId(lead.id),
+          leadId: lead.id,
+          channel: "whatsapp",
+          occurredAt,
+          direction: "outbound",
+          body,
+          preview: previewWithQuotes(body, attachedQuotationIds.length),
+          attachmentHint: buildOutboundAttachmentHint(
+            waTemplateId,
+            attachedQuotationIds.length,
+          ),
+          attachedQuotationIds:
+            attachedQuotationIds.length > 0 ? [...attachedQuotationIds] : undefined,
+        };
+        setSaving(true);
+        try {
+          await crm.conversations.append(lead.id, item, {});
+          onAppended(item);
+          onOpenChange(false);
+        } catch (e) {
+          console.error(e);
+          setCommitError(t("convComposeErrorGeneric"));
+        } finally {
+          setSaving(false);
+        }
+        return;
+      }
+
+      if (mode === "sms") {
+        const phone = lead.patientPhone!.trim();
+        const body = values.smsMessage.trim();
+        const item: LeadConversationItem = {
+          id: newConversationId(lead.id),
+          leadId: lead.id,
+          channel: "sms",
+          occurredAt,
+          direction: "outbound",
+          body,
+          toPhone: phone,
+          preview: previewWithQuotes(body, attachedQuotationIds.length),
+          attachmentHint: buildOutboundAttachmentHint(
+            smsTemplateId,
+            attachedQuotationIds.length,
+          ),
+          attachedQuotationIds:
+            attachedQuotationIds.length > 0 ? [...attachedQuotationIds] : undefined,
+        };
+        setSaving(true);
+        try {
+          await crm.conversations.append(lead.id, item, {});
+          onAppended(item);
+          onOpenChange(false);
+        } catch (e) {
+          console.error(e);
+          setCommitError(t("convComposeErrorGeneric"));
+        } finally {
+          setSaving(false);
+        }
+        return;
+      }
+
+      const to = lead.patientEmail!.trim();
+      const subject = values.emailSubject.trim();
+      const body = values.emailBody.trim();
       const item: LeadConversationItem = {
         id: newConversationId(lead.id),
         leadId: lead.id,
-        channel: "call",
-        callKind: "manual_log",
-        occurredAt,
-        direction: "internal",
-        transcript: notes,
-        preview: previewFromText(notes),
-      };
-      setSaving(true);
-      try {
-        await crm.conversations.append(lead.id, item, {});
-        onAppended(item);
-        onOpenChange(false);
-      } catch (e) {
-        console.error(e);
-        setError(t("convComposeErrorGeneric"));
-      } finally {
-        setSaving(false);
-      }
-      return;
-    }
-
-    if (mode === "whatsapp") {
-      const body = waMessage.trim();
-      if (!body) {
-        setError(t("convComposeErrorMessage"));
-        return;
-      }
-      const item: LeadConversationItem = {
-        id: newConversationId(lead.id),
-        leadId: lead.id,
-        channel: "whatsapp",
+        channel: "email",
         occurredAt,
         direction: "outbound",
+        subject,
         body,
-        preview: previewWithQuotes(body, attachedQuotationIds.length),
+        snippet: previewFromText(body),
+        from: actorEmail,
+        to,
+        preview: previewWithQuotes(
+          `${subject} — ${body}`,
+          attachedQuotationIds.length,
+        ),
         attachmentHint: buildOutboundAttachmentHint(
-          waTemplateId,
+          emailTemplateId,
           attachedQuotationIds.length,
         ),
         attachedQuotationIds:
@@ -280,99 +376,28 @@ export function LeadCommunicateDialog({
         onOpenChange(false);
       } catch (e) {
         console.error(e);
-        setError(t("convComposeErrorGeneric"));
+        setCommitError(t("convComposeErrorGeneric"));
       } finally {
         setSaving(false);
       }
-      return;
-    }
-
-    if (mode === "sms") {
-      const phone = lead.patientPhone?.trim();
-      if (!phone) {
-        setError(t("convComposeErrorNoPatientPhone"));
-        return;
-      }
-      const body = smsMessage.trim();
-      if (!body) {
-        setError(t("convComposeErrorMessage"));
-        return;
-      }
-      const item: LeadConversationItem = {
-        id: newConversationId(lead.id),
-        leadId: lead.id,
-        channel: "sms",
-        occurredAt,
-        direction: "outbound",
-        body,
-        toPhone: phone,
-        preview: previewWithQuotes(body, attachedQuotationIds.length),
-        attachmentHint: buildOutboundAttachmentHint(
-          smsTemplateId,
-          attachedQuotationIds.length,
-        ),
-        attachedQuotationIds:
-          attachedQuotationIds.length > 0 ? [...attachedQuotationIds] : undefined,
-      };
-      setSaving(true);
-      try {
-        await crm.conversations.append(lead.id, item, {});
-        onAppended(item);
-        onOpenChange(false);
-      } catch (e) {
-        console.error(e);
-        setError(t("convComposeErrorGeneric"));
-      } finally {
-        setSaving(false);
-      }
-      return;
-    }
-
-    const to = lead.patientEmail?.trim();
-    if (!to) {
-      setError(t("convComposeErrorNoPatientEmail"));
-      return;
-    }
-    const subject = emailSubject.trim();
-    const body = emailBody.trim();
-    if (!subject || !body) {
-      setError(t("convComposeErrorEmailFields"));
-      return;
-    }
-    const item: LeadConversationItem = {
-      id: newConversationId(lead.id),
-      leadId: lead.id,
-      channel: "email",
-      occurredAt,
-      direction: "outbound",
-      subject,
-      body,
-      snippet: previewFromText(body),
-      from: actorEmail,
-      to,
-      preview: previewWithQuotes(`${subject} — ${body}`, attachedQuotationIds.length),
-      attachmentHint: buildOutboundAttachmentHint(
-        emailTemplateId,
-        attachedQuotationIds.length,
-      ),
-      attachedQuotationIds:
-        attachedQuotationIds.length > 0 ? [...attachedQuotationIds] : undefined,
-    };
-    setSaving(true);
-    try {
-      await crm.conversations.append(lead.id, item, {});
-      onAppended(item);
-      onOpenChange(false);
-    } catch (e) {
-      console.error(e);
-      setError(t("convComposeErrorGeneric"));
-    } finally {
-      setSaving(false);
-    }
-  }
+    },
+    [
+      isAuthenticated,
+      mode,
+      lead,
+      t,
+      waTemplateId,
+      attachedQuotationIds,
+      onAppended,
+      onOpenChange,
+      smsTemplateId,
+      emailTemplateId,
+      actorEmail,
+    ],
+  );
 
   const modeButtons: {
-    id: CommunicateMode;
+    id: CommunicateDialogMode;
     labelKey: Parameters<typeof t>[0];
     Icon: typeof PenLine;
   }[] = [
@@ -513,7 +538,7 @@ export function LeadCommunicateDialog({
   }
 
   return (
-    <Dialog open={open} onOpenChange={handleDialogOpenChange}>
+    <DialogShell open={open} onOpenChange={handleDialogOpenChange}>
       <DialogContent
         dir={locale === "ar" ? "rtl" : "ltr"}
         size="lg"
@@ -546,7 +571,8 @@ export function LeadCommunicateDialog({
                   )}
                   onClick={() => {
                     setMode(id);
-                    setError(null);
+                    setCommitError(null);
+                    clearErrors();
                   }}
                 >
                   <Icon className="size-3.5 shrink-0" aria-hidden />
@@ -558,31 +584,25 @@ export function LeadCommunicateDialog({
 
           {mode === "log_call" ? (
             <div className="space-y-4 rounded-2xl border border-border/60 bg-muted/20 p-4 ring-1 ring-black/5">
-              <div className="space-y-2">
-                <Label htmlFor="conv-when" className="amanak-app-field-label">
-                  {t("convComposeWhenCall")}
-                </Label>
-                <Input
-                  id="conv-when"
+              <div className="[&_label]:amanak-app-field-label">
+                <DateField
+                  control={control}
+                  name="whenLocal"
+                  label={t("convComposeWhenCall")}
                   type="datetime-local"
-                  value={whenLocal}
-                  onChange={(e) => setWhenLocal(e.target.value)}
-                  className="rounded-xl font-medium"
+                  id="conv-when"
+                  className="space-y-2.5 [&_input]:min-h-11 [&_input]:rounded-xl [&_input]:font-medium"
                 />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="conv-call-notes" className="amanak-app-field-label">
-                  {t("convComposeCallNotes")}
-                </Label>
-                <textarea
-                  id="conv-call-notes"
-                  value={callNotes}
-                  onChange={(e) => setCallNotes(e.target.value)}
-                  rows={5}
-                  placeholder={t("convComposeCallNotesPlaceholder")}
-                  className="min-h-[120px] w-full resize-y rounded-xl border border-border bg-background p-3 text-sm font-medium outline-none transition-all focus-visible:ring-2 focus-visible:ring-primary/20"
-                />
-              </div>
+              <TextareaField
+                control={control}
+                name="callNotes"
+                label={t("convComposeCallNotes")}
+                rows={5}
+                placeholder={t("convComposeCallNotesPlaceholder")}
+                id="conv-call-notes"
+                className="space-y-2.5 [&_label]:amanak-app-field-label [&_textarea]:min-h-[120px] [&_textarea]:rounded-xl [&_textarea]:border-border [&_textarea]:bg-background [&_textarea]:p-3 [&_textarea]:text-sm [&_textarea]:font-medium [&_textarea]:focus-visible:ring-2 [&_textarea]:focus-visible:ring-primary/20"
+              />
             </div>
           ) : null}
 
@@ -602,76 +622,60 @@ export function LeadCommunicateDialog({
 
           {mode === "whatsapp" && (
             <div className="space-y-4 rounded-2xl border border-border/60 bg-muted/20 p-4 ring-1 ring-black/5">
-              <div className="space-y-2">
-                <Label htmlFor="conv-wa-when" className="amanak-app-field-label">
-                  {t("convComposeWhenSent")}
-                </Label>
-                <Input
-                  id="conv-wa-when"
+              <div className="[&_label]:amanak-app-field-label">
+                <DateField
+                  control={control}
+                  name="whenLocal"
+                  label={t("convComposeWhenSent")}
                   type="datetime-local"
-                  value={whenLocal}
-                  onChange={(e) => setWhenLocal(e.target.value)}
-                  className="rounded-xl font-medium"
+                  id="conv-wa-when"
+                  className="space-y-2.5 [&_input]:min-h-11 [&_input]:rounded-xl [&_input]:font-medium"
                 />
               </div>
               {renderTemplateSelect("conv-wa-template", waTemplateId, applyWhatsappTemplate)}
               {renderAttachQuotationsField("conv-wa-attach-search")}
-              <div className="space-y-2">
-                <Label htmlFor="conv-wa-msg" className="amanak-app-field-label">
-                  {t("convComposeMessage")}
-                </Label>
-                <textarea
-                  id="conv-wa-msg"
-                  value={waMessage}
-                  onChange={(e) => setWaMessage(e.target.value)}
-                  rows={5}
-                  placeholder={t("convComposeMessagePlaceholder")}
-                  className="min-h-[120px] w-full resize-y rounded-xl border border-border bg-background p-3 text-sm font-medium outline-none transition-all focus-visible:ring-2 focus-visible:ring-primary/20"
-                />
-              </div>
+              <TextareaField
+                control={control}
+                name="waMessage"
+                label={t("convComposeMessage")}
+                rows={5}
+                placeholder={t("convComposeMessagePlaceholder")}
+                id="conv-wa-msg"
+                className="space-y-2.5 [&_label]:amanak-app-field-label [&_textarea]:min-h-[120px] [&_textarea]:rounded-xl [&_textarea]:border-border [&_textarea]:bg-background [&_textarea]:p-3 [&_textarea]:text-sm [&_textarea]:font-medium [&_textarea]:focus-visible:ring-2 [&_textarea]:focus-visible:ring-primary/20"
+              />
             </div>
           )}
 
           {mode === "email" && (
             <div className="space-y-4 rounded-2xl border border-border/60 bg-muted/20 p-4 ring-1 ring-black/5">
-              <div className="space-y-2">
-                <Label htmlFor="conv-email-when" className="amanak-app-field-label">
-                  {t("convComposeWhenSent")}
-                </Label>
-                <Input
-                  id="conv-email-when"
+              <div className="[&_label]:amanak-app-field-label">
+                <DateField
+                  control={control}
+                  name="whenLocal"
+                  label={t("convComposeWhenSent")}
                   type="datetime-local"
-                  value={whenLocal}
-                  onChange={(e) => setWhenLocal(e.target.value)}
-                  className="rounded-xl font-medium"
+                  id="conv-email-when"
+                  className="space-y-2.5 [&_input]:min-h-11 [&_input]:rounded-xl [&_input]:font-medium"
                 />
               </div>
               {renderTemplateSelect("conv-email-template", emailTemplateId, applyEmailTemplate)}
               {renderAttachQuotationsField("conv-email-attach-search")}
-              <div className="space-y-2">
-                <Label htmlFor="conv-email-subj" className="amanak-app-field-label">
-                  {t("convComposeEmailSubject")}
-                </Label>
-                <Input
-                  id="conv-email-subj"
-                  value={emailSubject}
-                  onChange={(e) => setEmailSubject(e.target.value)}
-                  className="rounded-xl font-medium"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="conv-email-body" className="amanak-app-field-label">
-                  {t("convComposeEmailBody")}
-                </Label>
-                <textarea
-                  id="conv-email-body"
-                  value={emailBody}
-                  onChange={(e) => setEmailBody(e.target.value)}
-                  rows={6}
-                  placeholder={t("convComposeEmailBodyPlaceholder")}
-                  className="min-h-[140px] w-full resize-y rounded-xl border border-border bg-background p-3 text-sm font-medium outline-none transition-all focus-visible:ring-2 focus-visible:ring-primary/20"
-                />
-              </div>
+              <TextField
+                control={control}
+                name="emailSubject"
+                label={t("convComposeEmailSubject")}
+                id="conv-email-subj"
+                className="space-y-2.5 [&_label]:amanak-app-field-label [&_input]:min-h-11 [&_input]:rounded-xl [&_input]:font-medium"
+              />
+              <TextareaField
+                control={control}
+                name="emailBody"
+                label={t("convComposeEmailBody")}
+                rows={6}
+                placeholder={t("convComposeEmailBodyPlaceholder")}
+                id="conv-email-body"
+                className="space-y-2.5 [&_label]:amanak-app-field-label [&_textarea]:min-h-[140px] [&_textarea]:rounded-xl [&_textarea]:border-border [&_textarea]:bg-background [&_textarea]:p-3 [&_textarea]:text-sm [&_textarea]:font-medium [&_textarea]:focus-visible:ring-2 [&_textarea]:focus-visible:ring-primary/20"
+              />
               <p className="text-xs font-medium text-muted-foreground">
                 {t("convComposeEmailRouting", {
                   from: actorEmail,
@@ -683,33 +687,27 @@ export function LeadCommunicateDialog({
 
           {mode === "sms" && (
             <div className="space-y-4 rounded-2xl border border-border/60 bg-muted/20 p-4 ring-1 ring-black/5">
-              <div className="space-y-2">
-                <Label htmlFor="conv-sms-when" className="amanak-app-field-label">
-                  {t("convComposeWhenSent")}
-                </Label>
-                <Input
-                  id="conv-sms-when"
+              <div className="[&_label]:amanak-app-field-label">
+                <DateField
+                  control={control}
+                  name="whenLocal"
+                  label={t("convComposeWhenSent")}
                   type="datetime-local"
-                  value={whenLocal}
-                  onChange={(e) => setWhenLocal(e.target.value)}
-                  className="rounded-xl font-medium"
+                  id="conv-sms-when"
+                  className="space-y-2.5 [&_input]:min-h-11 [&_input]:rounded-xl [&_input]:font-medium"
                 />
               </div>
               {renderTemplateSelect("conv-sms-template", smsTemplateId, applySmsTemplate)}
               {renderAttachQuotationsField("conv-sms-attach-search")}
-              <div className="space-y-2">
-                <Label htmlFor="conv-sms-msg" className="amanak-app-field-label">
-                  {t("convComposeMessage")}
-                </Label>
-                <textarea
-                  id="conv-sms-msg"
-                  value={smsMessage}
-                  onChange={(e) => setSmsMessage(e.target.value)}
-                  rows={4}
-                  placeholder={t("convComposeSmsPlaceholder")}
-                  className="min-h-[100px] w-full resize-y rounded-xl border border-border bg-background p-3 text-sm font-medium outline-none transition-all focus-visible:ring-2 focus-visible:ring-primary/20"
-                />
-              </div>
+              <TextareaField
+                control={control}
+                name="smsMessage"
+                label={t("convComposeMessage")}
+                rows={4}
+                placeholder={t("convComposeSmsPlaceholder")}
+                id="conv-sms-msg"
+                className="space-y-2.5 [&_label]:amanak-app-field-label [&_textarea]:min-h-[100px] [&_textarea]:rounded-xl [&_textarea]:border-border [&_textarea]:bg-background [&_textarea]:p-3 [&_textarea]:text-sm [&_textarea]:font-medium [&_textarea]:focus-visible:ring-2 [&_textarea]:focus-visible:ring-primary/20"
+              />
               <p className="text-xs font-medium text-muted-foreground">
                 {t("convComposeSmsRouting", {
                   phone: lead.patientPhone?.trim() || t("fieldNotProvided"),
@@ -718,9 +716,9 @@ export function LeadCommunicateDialog({
             </div>
           )}
 
-          {error ? (
+          {commitError ? (
             <p className="text-xs font-semibold text-destructive" role="alert">
-              {error}
+              {commitError}
             </p>
           ) : null}
         </DialogBody>
@@ -739,13 +737,13 @@ export function LeadCommunicateDialog({
               type="button"
               className="rounded-xl text-sm font-semibold shadow-md"
               disabled={!isAuthenticated || saving}
-              onClick={() => void handleSubmit()}
+              onClick={() => void handleSubmit(commitConversation)()}
             >
               {saving ? t("convComposeSaving") : submitLabel}
             </Button>
           )}
         </DialogFooter>
       </DialogContent>
-    </Dialog>
+    </DialogShell>
   );
 }
