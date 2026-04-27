@@ -4,28 +4,16 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { useSearchParams } from "next/navigation";
 import { usePathname, useRouter } from "@/i18n/navigation";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { LeadCommunicateDialog } from "./lead-communicate-dialog";
-import { LeadAddTaskDialog } from "./lead-add-task-dialog";
-import { LeadTaskDetailDialog } from "./lead-task-detail-dialog";
-import {
-  LeadAppointmentsTab,
-  type LeadAppointmentsTabFilter,
-  type LeadAppointmentsTabRef,
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type {
+  LeadAppointmentsTabFilter,
+  LeadAppointmentsTabRef,
 } from "./lead-appointments-tab";
-import {
-  LeadDocumentsTab,
-  type LeadDocumentsTabFilter,
-  type LeadDocumentsTabRef,
-} from "./lead-documents-tab";
-import { LeadQuotationWizardDialog } from "./lead-quotation-wizard-dialog";
-import { LeadQuotationViewDialog } from "./lead-quotation-view-dialog";
+import type { LeadDocumentsTabFilter, LeadDocumentsTabRef } from "./lead-documents-tab";
 import { LeadHeader } from "./lead-header";
-import { LeadOverviewTab } from "./tabs/lead-overview-tab";
-import { LeadConversationsTab } from "./tabs/lead-conversations-tab";
-import { LeadQuotationsTab } from "./tabs/lead-quotations-tab";
-import { LeadTasksTab } from "./tabs/lead-tasks-tab";
 import { LeadTabToolbars } from "./lead-tab-toolbars";
+import { LeadDetailModals } from "./lead-detail-modals";
+import { LeadDetailTabPanels } from "./lead-detail-tab-panels";
 import { applyTransition, getAvailableTransitions } from "@/lib/services/state-machine.service";
 import { crm } from "@/lib/crm/client";
 import {
@@ -90,10 +78,6 @@ function LeadDetailContent({
   const [nowMs, setNowMs] = useState(() => Date.now());
   const documentsTabRef = useRef<LeadDocumentsTabRef>(null);
   const appointmentsTabRef = useRef<LeadAppointmentsTabRef>(null);
-
-  const taskDetailOpen = modals.state.open === "task-detail";
-  const taskDetailTaskId =
-    modals.state.open === "task-detail" ? modals.state.payload.taskId : null;
 
   useEffect(() => {
     const id = window.setInterval(() => setNowMs(Date.now()), 60_000);
@@ -279,174 +263,51 @@ function LeadDetailContent({
           />
         </div>
 
-        {session.isAuthenticated ? (
-          <>
-            <LeadCommunicateDialog
-              open={modals.state.open === "communicate"}
-              onOpenChange={(o) => {
-                if (!o) modals.close();
-              }}
-              lead={lead}
-              locale={locale}
-              actorEmail={session.user.email}
-              isAuthenticated={session.isAuthenticated}
-              quotations={lead.quotations}
-              onRequestViewQuotation={(q) => setViewQuotation(q)}
-              onAppended={(item) => {
-                setConversations((prev) =>
-                  [...prev, item].sort(
-                    (a, b) =>
-                      new Date(b.occurredAt).getTime() - new Date(a.occurredAt).getTime(),
-                  ),
-                );
-                setSuccessFlash(true);
-              }}
-            />
-            <LeadAddTaskDialog
-              leadId={lead.id}
-              locale={locale}
-              isAuthenticated={session.isAuthenticated}
-              userId={session.user.id}
-              onLeadUpdated={setLead}
-              open={modals.state.open === "task-add"}
-              onOpenChange={(o) => {
-                if (!o) modals.close();
-              }}
-              hideTrigger
-            />
-            <LeadQuotationWizardDialog
-              key={quotationWizardKey}
-              lead={lead}
-              open={modals.state.open === "quotation-wizard"}
-              onOpenChange={(o) => {
-                if (!o) modals.close();
-              }}
-              onSaved={(next) => {
-                setLead(next);
-                setSuccessFlash(true);
-              }}
-            />
-          </>
-        ) : null}
-
-        <LeadQuotationViewDialog
-          open={viewQuotation !== null}
-          onOpenChange={(o) => {
-            if (!o) setViewQuotation(null);
-          }}
-          quotation={viewQuotation}
-          locale={locale}
-        />
-
-        <LeadTaskDetailDialog
-          key={
-            taskDetailOpen && taskDetailTaskId
-              ? `${lead.id}-${taskDetailTaskId}-${
-                  lead.tasks.find((t) => t.id === taskDetailTaskId)?.updatedAt ?? ""
-                }`
-              : "lead-task-detail-closed"
-          }
+        <LeadDetailModals
+          modals={modals}
           lead={lead}
-          taskId={taskDetailTaskId}
-          open={taskDetailOpen}
-          onOpenChange={(o) => {
-            if (!o) modals.close();
-          }}
+          setLead={setLead}
           locale={locale}
-          isAuthenticated={session.isAuthenticated}
-          user={
-            session.isAuthenticated
-              ? session.user
-              : { id: "_", name: "", role: "admin", email: "" }
-          }
-          onLeadUpdated={setLead}
-          onSuccess={() => setSuccessFlash(true)}
-          onError={setTaskActionError}
+          session={session}
+          setConversations={setConversations}
+          viewQuotation={viewQuotation}
+          onViewQuotation={setViewQuotation}
+          quotationWizardKey={quotationWizardKey}
+          onSuccessFlash={() => setSuccessFlash(true)}
+          onTaskError={setTaskActionError}
         />
 
-        <div className="min-h-[20rem]">
-          <TabsContent
-            value="overview"
-            className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300"
-          >
-            <LeadOverviewTab
-              lead={lead}
-              otherLeads={otherLeads}
-              overviewActiveTasks={overviewActiveTasks}
-              successFlash={successFlash}
-              taskActionError={taskActionError}
-              pendingTransition={pendingTransition}
-              onPendingTransition={setPendingTransition}
-              note={note}
-              onNoteChange={setNote}
-              onConfirmTransition={handleConfirm}
-              isActivityExpanded={isActivityExpanded}
-              onToggleActivityExpanded={() => setIsActivityExpanded((e) => !e)}
-              onOpenTaskDetail={openTaskDetail}
-              nowMs={nowMs}
-            />
-          </TabsContent>
-
-          <TabsContent
-            value="conversations"
-            className="animate-in fade-in slide-in-from-bottom-2 duration-300"
-          >
-            <LeadConversationsTab
-              lead={lead}
-              items={filteredConversations}
-              conversationFilter={conversationFilter}
-              expandedConversationIds={expandedConversationIds}
-              onToggleExpanded={toggleConversationExpanded}
-              onViewQuotation={setViewQuotation}
-            />
-          </TabsContent>
-
-          <TabsContent value="quotes" className="animate-in fade-in slide-in-from-bottom-2 duration-300">
-            <LeadQuotationsTab
-              lead={lead}
-              sortedQuotations={sortedQuotations}
-              onViewQuotation={setViewQuotation}
-            />
-          </TabsContent>
-
-          <TabsContent value="files" className="animate-in fade-in slide-in-from-bottom-2 duration-300">
-            <LeadDocumentsTab
-              ref={documentsTabRef}
-              lead={lead}
-              onLeadUpdated={setLead}
-              filter={documentsTabFilter}
-              hideHeaderUpload
-            />
-          </TabsContent>
-
-          <TabsContent
-            value="appointments"
-            className="animate-in fade-in slide-in-from-bottom-2 duration-300"
-          >
-            <LeadAppointmentsTab
-              ref={appointmentsTabRef}
-              lead={lead}
-              consultationSlots={initialConsultationSlots}
-              onLeadUpdated={setLead}
-              onOpenTasksTab={() => setTab("tasks")}
-              filter={appointmentTabFilter}
-              hideHeaderAdd
-            />
-          </TabsContent>
-
-          <TabsContent
-            value="tasks"
-            className="animate-in fade-in slide-in-from-bottom-2 duration-300"
-          >
-            <LeadTasksTab
-              tasks={tasksForTasksTab}
-              tasksTabFilter={tasksTabFilter}
-              taskActionError={taskActionError}
-              onOpenTaskDetail={openTaskDetail}
-              nowMs={nowMs}
-            />
-          </TabsContent>
-        </div>
+        <LeadDetailTabPanels
+          documentsTabRef={documentsTabRef}
+          appointmentsTabRef={appointmentsTabRef}
+          initialConsultationSlots={initialConsultationSlots}
+          lead={lead}
+          setLead={setLead}
+          otherLeads={otherLeads}
+          overviewActiveTasks={overviewActiveTasks}
+          successFlash={successFlash}
+          taskActionError={taskActionError}
+          pendingTransition={pendingTransition}
+          onPendingTransition={setPendingTransition}
+          note={note}
+          onNoteChange={setNote}
+          isActivityExpanded={isActivityExpanded}
+          onToggleActivityExpanded={() => setIsActivityExpanded((e) => !e)}
+          onConfirmTransition={handleConfirm}
+          onOpenTaskDetail={openTaskDetail}
+          nowMs={nowMs}
+          setTab={setTab}
+          filteredConversations={filteredConversations}
+          conversationFilter={conversationFilter}
+          expandedConversationIds={expandedConversationIds}
+          onToggleConversationExpanded={toggleConversationExpanded}
+          onViewQuotation={setViewQuotation}
+          sortedQuotations={sortedQuotations}
+          documentsTabFilter={documentsTabFilter}
+          appointmentTabFilter={appointmentTabFilter}
+          tasksForTasksTab={tasksForTasksTab}
+          tasksTabFilter={tasksTabFilter}
+        />
       </Tabs>
     </div>
   );
