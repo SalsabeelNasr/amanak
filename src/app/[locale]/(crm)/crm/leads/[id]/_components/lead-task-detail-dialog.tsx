@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, type FieldPath } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
@@ -16,7 +16,8 @@ import {
 import { DialogShell } from "@/components/crm/dialog-shell";
 import { DateField } from "@/components/crm/forms/date-field";
 import { SelectField } from "@/components/crm/forms/select-field";
-import { Input } from "@/components/ui/input";
+import { TextField } from "@/components/crm/forms/text-field";
+import { TextareaField } from "@/components/crm/forms/textarea-field";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { crm } from "@/lib/crm/client";
@@ -28,10 +29,14 @@ import {
   CRM_TASK_ASSIGNEE_IDS,
   type AddLeadTaskAttachmentInput,
 } from "@/lib/crm/client.types";
+import { formatLeadTaskCreationFailure } from "@/lib/crm/lead-task-creation-messages";
 import { getLeadTaskCreationTypeDef } from "@/lib/config/lead-task-creation-types";
+import {
+  type LeadTaskCreationAttachmentInput,
+  validateLeadTaskCreationCompletion,
+} from "@/lib/lead-task-creation-schema";
 import { ALL_TRANSITIONS } from "@/lib/services/state-machine.service";
 import { getTransitionActionForSystemTaskCompletion } from "@/lib/services/lead-task-rules";
-import { cn } from "@/lib/utils";
 import type { Lead, LeadTask, MockUser } from "@/types";
 import { Upload } from "lucide-react";
 
@@ -59,6 +64,28 @@ function initialFieldValuesForTask(tsk: LeadTask | null): Record<string, string>
     fv[f.id] = tsk.creationFields?.[f.id] ?? "";
   }
   return fv;
+}
+
+function buildTaskDetailCompletionAttachmentInputs(
+  tsk: LeadTask,
+  slotFiles: Record<string, File[]>,
+  def: NonNullable<ReturnType<typeof getLeadTaskCreationTypeDef>>,
+): LeadTaskCreationAttachmentInput[] {
+  const out: LeadTaskCreationAttachmentInput[] = [];
+  for (const a of tsk.attachments ?? []) {
+    out.push({
+      slotId: a.slotId,
+      fileName: a.fileName,
+      sizeBytes: a.sizeBytes,
+      mockUrl: a.mockUrl,
+    });
+  }
+  for (const s of def.uploadSlots) {
+    for (const f of slotFiles[s.id] ?? []) {
+      out.push({ slotId: s.id, fileName: f.name, sizeBytes: f.size });
+    }
+  }
+  return out;
 }
 
 export function LeadTaskDetailDialog({
@@ -100,13 +127,22 @@ export function LeadTaskDetailDialog({
   });
   const { control, reset, handleSubmit } = form;
 
+  type FieldFormValues = Record<string, string>;
+  const fieldsForm = useForm<FieldFormValues>({
+    defaultValues: initialFieldValuesForTask(
+      resolveTask(lead, taskId),
+    ) as FieldFormValues,
+  });
+  const {
+    control: fieldsControl,
+    reset: resetFields,
+    getValues: getFieldValues,
+  } = fieldsForm;
+
   const lastDialogSyncRef = useRef<{ open: boolean; taskId: string | null }>({
     open: false,
     taskId: null,
   });
-  const [fieldValues, setFieldValues] = useState(() =>
-    initialFieldValuesForTask(resolveTask(lead, taskId)),
-  );
   const [slotFiles, setSlotFiles] = useState<Record<string, File[]>>({});
   const [pipelineNote, setPipelineNote] = useState("");
   const [saving, setSaving] = useState(false);
@@ -139,13 +175,13 @@ export function LeadTaskDetailDialog({
         dueAt: dueDateFromIso(task.dueAt),
         assigneeId: task.assigneeId ?? "",
       });
-      setFieldValues(initialFieldValuesForTask(task));
+      resetFields(initialFieldValuesForTask(task) as FieldFormValues);
       setSlotFiles({});
       setPipelineNote("");
       setFormError(null);
     }
     lastDialogSyncRef.current = { open, taskId };
-  }, [open, taskId, task, reset]);
+  }, [open, taskId, task, reset, resetFields]);
 
   const creationDef = task?.creationTypeId
     ? getLeadTaskCreationTypeDef(task.creationTypeId)
@@ -193,6 +229,26 @@ export function LeadTaskDetailDialog({
       if (!task || !isAuthenticated) return;
       setFormError(null);
       onError?.(null);
+      if (creationDef && task.creationTypeId) {
+        const attInputs = buildTaskDetailCompletionAttachmentInputs(
+          task,
+          slotFiles,
+          creationDef,
+        );
+        const v = validateLeadTaskCreationCompletion(
+          task.creationTypeId,
+          task.title,
+          getFieldValues(),
+          attInputs,
+        );
+        if (!v.success) {
+          const msg = formatLeadTaskCreationFailure(t, v.failure);
+          setFormError(msg);
+          onError?.(msg);
+          return;
+        }
+      }
+
       const urls: string[] = [];
       const newAttachments: AddLeadTaskAttachmentInput[] = [];
       if (creationDef) {
@@ -221,7 +277,9 @@ export function LeadTaskDetailDialog({
             assigneeId: values.assigneeId?.trim()
               ? values.assigneeId.trim()
               : "",
-            ...(creationDef ? { creationFields: fieldValues } : {}),
+            ...(creationDef
+              ? { creationFields: getFieldValues() }
+              : {}),
             ...(newAttachments.length ? { attachments: newAttachments } : {}),
           },
           {},
@@ -246,7 +304,7 @@ export function LeadTaskDetailDialog({
       isAuthenticated,
       creationDef,
       slotFiles,
-      fieldValues,
+      getFieldValues,
       lead.id,
       onLeadUpdated,
       onSuccess,
@@ -292,6 +350,26 @@ export function LeadTaskDetailDialog({
         return;
       }
 
+      if (creationDef && task.creationTypeId) {
+        const attInputs = buildTaskDetailCompletionAttachmentInputs(
+          task,
+          slotFiles,
+          creationDef,
+        );
+        const v = validateLeadTaskCreationCompletion(
+          task.creationTypeId,
+          task.title,
+          getFieldValues(),
+          attInputs,
+        );
+        if (!v.success) {
+          const msg = formatLeadTaskCreationFailure(t, v.failure);
+          setFormError(msg);
+          onError?.(msg);
+          return;
+        }
+      }
+
       const urls: string[] = [];
       const newAttachments: AddLeadTaskAttachmentInput[] = [];
       if (creationDef) {
@@ -321,7 +399,9 @@ export function LeadTaskDetailDialog({
             assigneeId: values.assigneeId?.trim()
               ? values.assigneeId.trim()
               : "",
-            ...(creationDef ? { creationFields: fieldValues } : {}),
+            ...(creationDef
+              ? { creationFields: getFieldValues() }
+              : {}),
             ...(newAttachments.length ? { attachments: newAttachments } : {}),
           },
           { actor: user ?? undefined, note: pipelineNote.trim() || undefined },
@@ -453,50 +533,53 @@ export function LeadTaskDetailDialog({
               </div>
 
               {creationDef && creationDef.fields.length > 0 ? (
-                <div className="space-y-4">
-                  {creationDef.fields.map((field) => (
-                    <div key={field.id} className="space-y-2">
-                      <Label
-                        htmlFor={`task-detail-field-${field.id}`}
-                        className="amanak-app-field-label"
-                      >
-                        {t(`taskCreation.fields.${field.labelKey}`)}
-                        {field.required ? " *" : ""}
-                      </Label>
-                      {field.kind === "textarea" ? (
-                        <textarea
-                          id={`task-detail-field-${field.id}`}
-                          value={fieldValues[field.id] ?? ""}
-                          onChange={(e) =>
-                            setFieldValues((prev) => ({
-                              ...prev,
-                              [field.id]: e.target.value,
-                            }))
-                          }
-                          disabled={!isAuthenticated || task.completed}
+                <div className="space-y-4 [&_label]:amanak-app-field-label">
+                  {creationDef.fields.map((field) => {
+                    const name = field.id as FieldPath<FieldFormValues>;
+                    const disabledF = !isAuthenticated || task.completed;
+                    const label = `${t(`taskCreation.fields.${field.labelKey}`)}${
+                      field.required ? " *" : ""
+                    }`;
+                    if (field.kind === "textarea") {
+                      return (
+                        <TextareaField
+                          key={field.id}
+                          control={fieldsControl}
+                          name={name}
+                          label={label}
                           rows={4}
-                          className={cn(
-                            "min-h-[100px] w-full resize-y rounded-xl border border-border bg-background px-3 py-2 text-sm font-medium outline-none transition-all",
-                            "focus-visible:border-primary/50 focus-visible:ring-2 focus-visible:ring-primary/20",
-                          )}
-                        />
-                      ) : (
-                        <Input
+                          disabled={disabledF}
                           id={`task-detail-field-${field.id}`}
-                          type={field.kind === "date" ? "date" : "text"}
-                          value={fieldValues[field.id] ?? ""}
-                          onChange={(e) =>
-                            setFieldValues((prev) => ({
-                              ...prev,
-                              [field.id]: e.target.value,
-                            }))
-                          }
-                          disabled={!isAuthenticated || task.completed}
-                          className="h-11 rounded-xl border-border bg-background font-medium focus-visible:ring-primary/20"
+                          className="space-y-2.5 [&_textarea]:min-h-[100px] [&_textarea]:rounded-xl [&_textarea]:border-border [&_textarea]:bg-background [&_textarea]:px-3 [&_textarea]:py-2 [&_textarea]:text-sm [&_textarea]:font-medium"
                         />
-                      )}
-                    </div>
-                  ))}
+                      );
+                    }
+                    if (field.kind === "date") {
+                      return (
+                        <DateField
+                          key={field.id}
+                          control={fieldsControl}
+                          name={name}
+                          label={label}
+                          type="date"
+                          disabled={disabledF}
+                          id={`task-detail-field-${field.id}`}
+                          className="space-y-2.5 [&_input]:h-11 [&_input]:rounded-xl [&_input]:border-border [&_input]:font-medium"
+                        />
+                      );
+                    }
+                    return (
+                      <TextField
+                        key={field.id}
+                        control={fieldsControl}
+                        name={name}
+                        label={label}
+                        disabled={disabledF}
+                        id={`task-detail-field-${field.id}`}
+                        className="space-y-2.5 [&_input]:h-11 [&_input]:rounded-xl [&_input]:border-border [&_input]:font-medium"
+                      />
+                    );
+                  })}
                 </div>
               ) : null}
 

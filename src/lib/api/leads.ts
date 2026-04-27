@@ -25,6 +25,7 @@ import { applyTransition } from "@/lib/services/state-machine.service";
 import { resolveConsultationSlotById } from "@/lib/api/consultation-booking";
 import { mergeCreationAttachmentsIntoLeadDocuments } from "@/lib/lead-task-creation-documents";
 import {
+  defaultLeadTaskCreationFailureMessage,
   parseLeadTaskCreationInput,
   validateLeadTaskCreationCompletion,
 } from "@/lib/lead-task-creation-schema";
@@ -1416,7 +1417,7 @@ export async function addLeadTask(
       attachments: attachmentInputs,
     });
     if (!parsed.success) {
-      throw new Error(parsed.error);
+      throw new Error(defaultLeadTaskCreationFailureMessage(parsed.failure));
     }
     title = parsed.data.title;
     creationTypeId = parsed.data.creationTypeId;
@@ -1532,7 +1533,7 @@ export async function updateLeadTask(
         attInputs,
       );
       if (!v.success) {
-        throw new Error(v.error);
+        throw new Error(defaultLeadTaskCreationFailureMessage(v.failure));
       }
     }
 

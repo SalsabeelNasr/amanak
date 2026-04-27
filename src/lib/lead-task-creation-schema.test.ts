@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { parseLeadTaskCreationInput } from "./lead-task-creation-schema";
+import {
+  defaultLeadTaskCreationFailureMessage,
+  parseLeadTaskCreationInput,
+} from "./lead-task-creation-schema";
 
 describe("parseLeadTaskCreationInput", () => {
   it("accepts custom type with title field", () => {
@@ -39,8 +42,9 @@ describe("parseLeadTaskCreationInput", () => {
       ],
     });
     expect(r.success).toBe(false);
-    if (!r.success) {
-      expect(r.error).toContain("xray");
+    if (!r.success && r.failure.code === "upload_min") {
+      expect(r.failure.slotId).toBe("xray");
+      expect(defaultLeadTaskCreationFailureMessage(r.failure)).toContain("xray");
     }
   });
 

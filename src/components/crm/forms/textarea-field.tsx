@@ -21,6 +21,7 @@ export type TextareaFieldProps<T extends FieldValues> = {
   rows?: number;
   className?: string;
   id?: string;
+  disabled?: boolean;
 };
 
 export function TextareaField<T extends FieldValues>({
@@ -32,6 +33,7 @@ export function TextareaField<T extends FieldValues>({
   rows = 4,
   className,
   id,
+  disabled,
 }: TextareaFieldProps<T>) {
   const { field, fieldState } = useController({ control, name });
   const inputId = id ?? String(name);
@@ -44,6 +46,7 @@ export function TextareaField<T extends FieldValues>({
       <textarea
         id={inputId}
         rows={rows}
+        disabled={disabled}
         placeholder={placeholder}
         className={cn(textareaClass, "aria-invalid:ring-destructive/20")}
         aria-invalid={fieldState.invalid}

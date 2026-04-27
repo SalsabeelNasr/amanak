@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useMemo, useRef, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, type FieldPath } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
@@ -16,8 +16,8 @@ import {
 import { DialogShell } from "@/components/crm/dialog-shell";
 import { DateField } from "@/components/crm/forms/date-field";
 import { SelectField } from "@/components/crm/forms/select-field";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { TextField } from "@/components/crm/forms/text-field";
+import { TextareaField } from "@/components/crm/forms/textarea-field";
 import { crm } from "@/lib/crm/client";
 import {
   createAddTaskDialogMetaSchema,
@@ -28,6 +28,7 @@ import {
   LEAD_TASK_CREATION_TYPES,
   getLeadTaskCreationTypeDef,
 } from "@/lib/config/lead-task-creation-types";
+import { formatLeadTaskCreationFailure } from "@/lib/crm/lead-task-creation-messages";
 import { parseLeadTaskCreationInput } from "@/lib/lead-task-creation-schema";
 import { cn } from "@/lib/utils";
 import type { Lead, LeadTaskCreationTypeId } from "@/types";
@@ -80,9 +81,18 @@ export function LeadAddTaskDialog({
   const open = isControlled ? controlledOpen : uncontrolledOpen;
   const [creationTypeId, setCreationTypeId] =
     useState<LeadTaskCreationTypeId>(DEFAULT_TYPE);
-  const [fieldValues, setFieldValues] = useState<Record<string, string>>(() =>
-    emptyFieldsForType(DEFAULT_TYPE),
-  );
+
+  type FieldFormValues = Record<string, string>;
+  const fieldsForm = useForm<FieldFormValues>({
+    defaultValues: emptyFieldsForType(DEFAULT_TYPE),
+  });
+  const {
+    control: fieldsControl,
+    reset: resetFields,
+    watch: watchFields,
+    getValues: getFieldValues,
+  } = fieldsForm;
+  const fieldValues = watchFields();
   const [slotFiles, setSlotFiles] = useState<Record<string, File[]>>({});
   const [saving, setSaving] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
@@ -101,11 +111,11 @@ export function LeadAddTaskDialog({
 
   const resetAll = useCallback(() => {
     setCreationTypeId(DEFAULT_TYPE);
-    setFieldValues(emptyFieldsForType(DEFAULT_TYPE));
+    resetFields(emptyFieldsForType(DEFAULT_TYPE));
     setSlotFiles({});
     resetMetaForm({ dueAt: "", assigneeId: "" });
     setFormError(null);
-  }, [resetMetaForm]);
+  }, [resetMetaForm, resetFields]);
 
   const handleOpenChange = useCallback(
     (next: boolean) => {
@@ -135,11 +145,14 @@ export function LeadAddTaskDialog({
     if (!def) return "";
     if (def.usesCustomTitleField) return fieldValues.title?.trim() ?? "";
     return t(`taskCreation.types.${def.id}.title`);
-  }, [def, fieldValues.title, t]);
+  }, [def, fieldValues, t]);
 
   const parseResult = useMemo(() => {
     if (!def) {
-      return { success: false as const, error: "Unknown task type" };
+      return {
+        success: false as const,
+        failure: { code: "unknown_creation_type" } as const,
+      };
     }
     return parseLeadTaskCreationInput({
       title: resolvedTitle,
@@ -189,11 +202,11 @@ export function LeadAddTaskDialog({
       const check = parseLeadTaskCreationInput({
         title: resolvedTitle,
         creationTypeId,
-        creationFields: fieldValues,
+        creationFields: getFieldValues(),
         attachments: attachmentsForValidation,
       });
       if (!check.success) {
-        setFormError(check.error);
+        setFormError(formatLeadTaskCreationFailure(t, check.failure));
         return;
       }
 
@@ -229,7 +242,7 @@ export function LeadAddTaskDialog({
           {
             title: resolvedTitle,
             creationTypeId,
-            creationFields: fieldValues,
+            creationFields: getFieldValues(),
             attachments,
             dueAt,
             assigneeId: values.assigneeId?.trim() || undefined,
@@ -254,7 +267,7 @@ export function LeadAddTaskDialog({
       def,
       resolvedTitle,
       creationTypeId,
-      fieldValues,
+      getFieldValues,
       attachmentsForValidation,
       slotFiles,
       leadId,
@@ -306,7 +319,7 @@ export function LeadAddTaskDialog({
                     type="button"
                     onClick={() => {
                       setCreationTypeId(typeDef.id);
-                      setFieldValues(emptyFieldsForType(typeDef.id));
+                      resetFields(emptyFieldsForType(typeDef.id));
                       setSlotFiles({});
                     }}
                     className={cn(
@@ -329,48 +342,49 @@ export function LeadAddTaskDialog({
           </div>
 
           {def && def.fields.length > 0 ? (
-            <div className="space-y-4">
-              {def.fields.map((field) => (
-                <div key={field.id} className="space-y-2">
-                  <Label
-                    htmlFor={`task-field-${field.id}`}
-                    className="amanak-app-field-label"
-                  >
-                    {t(`taskCreation.fields.${field.labelKey}`)}
-                    {field.required ? " *" : ""}
-                  </Label>
-                  {field.kind === "textarea" ? (
-                    <textarea
-                      id={`task-field-${field.id}`}
-                      value={fieldValues[field.id] ?? ""}
-                      onChange={(e) =>
-                        setFieldValues((prev) => ({
-                          ...prev,
-                          [field.id]: e.target.value,
-                        }))
-                      }
+            <div className="space-y-4 [&_label]:amanak-app-field-label">
+              {def.fields.map((field) => {
+                const name = field.id as FieldPath<FieldFormValues>;
+                const label = `${t(`taskCreation.fields.${field.labelKey}`)}${
+                  field.required ? " *" : ""
+                }`;
+                if (field.kind === "textarea") {
+                  return (
+                    <TextareaField
+                      key={field.id}
+                      control={fieldsControl}
+                      name={name}
+                      label={label}
                       rows={4}
-                      className={cn(
-                        "min-h-[100px] w-full resize-y rounded-xl border border-border bg-background px-3 py-2 text-sm font-medium outline-none transition-all",
-                        "focus-visible:border-primary/50 focus-visible:ring-2 focus-visible:ring-primary/20",
-                      )}
-                    />
-                  ) : (
-                    <Input
                       id={`task-field-${field.id}`}
-                      type={field.kind === "date" ? "date" : "text"}
-                      value={fieldValues[field.id] ?? ""}
-                      onChange={(e) =>
-                        setFieldValues((prev) => ({
-                          ...prev,
-                          [field.id]: e.target.value,
-                        }))
-                      }
-                      className="h-11 rounded-xl border-border bg-background font-medium focus-visible:ring-primary/20"
+                      className="space-y-2.5 [&_textarea]:min-h-[100px] [&_textarea]:rounded-xl [&_textarea]:border-border [&_textarea]:bg-background [&_textarea]:px-3 [&_textarea]:py-2 [&_textarea]:text-sm [&_textarea]:font-medium"
                     />
-                  )}
-                </div>
-              ))}
+                  );
+                }
+                if (field.kind === "date") {
+                  return (
+                    <DateField
+                      key={field.id}
+                      control={fieldsControl}
+                      name={name}
+                      label={label}
+                      type="date"
+                      id={`task-field-${field.id}`}
+                      className="space-y-2.5 [&_input]:h-11 [&_input]:rounded-xl [&_input]:border-border [&_input]:font-medium"
+                    />
+                  );
+                }
+                return (
+                  <TextField
+                    key={field.id}
+                    control={fieldsControl}
+                    name={name}
+                    label={label}
+                    id={`task-field-${field.id}`}
+                    className="space-y-2.5 [&_input]:h-11 [&_input]:rounded-xl [&_input]:border-border [&_input]:font-medium"
+                  />
+                );
+              })}
             </div>
           ) : null}
 
@@ -495,8 +509,8 @@ export function LeadAddTaskDialog({
           </div>
 
           {!parseResult.success ? (
-            <p className="text-xs font-medium text-muted-foreground">
-              {parseResult.error}
+            <p className="text-xs font-medium text-destructive" role="alert">
+              {formatLeadTaskCreationFailure(t, parseResult.failure)}
             </p>
           ) : null}
 

@@ -20,6 +20,7 @@ export type TextFieldProps<T extends FieldValues> = {
   className?: string;
   id?: string;
   autoComplete?: string;
+  disabled?: boolean;
 };
 
 export function TextField<T extends FieldValues>({
@@ -32,6 +33,7 @@ export function TextField<T extends FieldValues>({
   className,
   id,
   autoComplete,
+  disabled,
 }: TextFieldProps<T>) {
   const { field, fieldState } = useController({ control, name });
   const inputId = id ?? String(name);
@@ -44,6 +46,7 @@ export function TextField<T extends FieldValues>({
       <Input
         id={inputId}
         type={type}
+        disabled={disabled}
         placeholder={placeholder}
         autoComplete={autoComplete}
         aria-invalid={fieldState.invalid}
