@@ -30,7 +30,14 @@ const MOCK_CS: MockUser = {
   email: "cs@amanak.com",
 };
 
-const ALL_LEAD_STATUSES: LeadStatus[] = [...ORDERED_STATES, "rejected"];
+const MOCK_PATIENT: MockUser = {
+  id: "patient_1",
+  name: "Patient",
+  role: "patient",
+  email: "p@example.com",
+};
+
+const ALL_LEAD_STATUSES: LeadStatus[] = [...ORDERED_STATES];
 
 describe("listLeads mock seed", () => {
   it("includes at least one lead per LeadStatus", async () => {
@@ -140,7 +147,7 @@ describe("updateLeadTask system-driven status", () => {
     expect(qTask).toBeDefined();
 
     await expect(
-      updateLeadTask("lead_2", qTask!.id, { completed: true }, { actor: MOCK_CS }),
+      updateLeadTask("lead_2", qTask!.id, { completed: true }, { actor: MOCK_PATIENT }),
     ).rejects.toThrow();
   });
 
@@ -153,26 +160,25 @@ describe("updateLeadTask system-driven status", () => {
     const out = await updateLeadTask("lead_2", qTask!.id, { completed: true }, {
       actor: MOCK_ADMIN,
     });
-    expect(out.status).toBe("assigned");
+    expect(out.status).toBe("interested");
     const row = out.tasks.find((t) => t.id === qTask!.id);
     expect(row?.completed).toBe(true);
     expect(row?.completedReason).toBe("task_drove_transition");
     expect(out.statusHistory.length).toBeGreaterThan(0);
-    expect(out.statusHistory[out.statusHistory.length - 1].action).toBe("ASSIGN_CS");
+    expect(out.statusHistory[out.statusHistory.length - 1].action).toBe("BEGIN_INTAKE");
   });
 
-  it("completing prepare_quotation at quotation_generated does not change status (no mapped action)", async () => {
-    const lead = await getLeadById("lead_11");
-    expect(lead?.status).toBe("quotation_generated");
+  it("completing prepare_quotation on estimate_reviewed advances with actor", async () => {
+    const lead = await getLeadById("lead_5");
+    expect(lead?.status).toBe("estimate_reviewed");
     const prep = lead?.tasks.find(
       (x) => x.templateKey === "prepare_quotation" && !x.completed,
     );
     expect(prep).toBeDefined();
-    const statusBefore = lead!.status;
-    const out = await updateLeadTask("lead_11", prep!.id, { completed: true });
-    expect(out.status).toBe(statusBefore);
-    expect(out.tasks.find((t) => t.id === prep!.id)?.completed).toBe(true);
-    expect(out.tasks.find((t) => t.id === prep!.id)?.completedReason).toBe("user");
+    const out = await updateLeadTask("lead_5", prep!.id, { completed: true }, {
+      actor: MOCK_CS,
+    });
+    expect(out.status).toBe("quotation_sent");
   });
 });
 
@@ -267,13 +273,13 @@ function sampleLead(
 
 describe("addLeadAppointment", () => {
   it("adds a treatment appointment without creating a task", async () => {
-    const before = await getLeadById("lead_2");
+    const before = await getLeadById("lead_11");
     expect(before).toBeDefined();
     const countBefore = before!.appointments.length;
     const taskCountBefore = before!.tasks.length;
 
     const iso = new Date(Date.now() + 5 * 86_400_000).toISOString();
-    const after = await addLeadAppointment("lead_2", {
+    const after = await addLeadAppointment("lead_11", {
       kind: "treatment",
       startsAt: iso,
       locationLabel: "Alexandria — Outpatient",
@@ -298,11 +304,11 @@ describe("addLeadAppointment", () => {
     const slot = slots[0];
     expect(slot, "need at least one mock slot").toBeDefined();
 
-    const before = await getLeadById("lead_2");
+    const before = await getLeadById("lead_11");
     const taskCountBefore = before!.tasks.length;
     const apptCountBefore = before!.appointments.length;
 
-    const after = await addLeadAppointment("lead_2", {
+    const after = await addLeadAppointment("lead_11", {
       kind: "team_consultation",
       slotId: slot!.id,
       taskTitle: "Team consultation — patient briefing",
@@ -328,20 +334,18 @@ describe("addLeadAppointment", () => {
 
 describe("uploadLeadDocument", () => {
   it("updates an existing row for the same type to uploaded", async () => {
-    const before = await getLeadById("lead_3");
-    expect(before?.documents.find((d) => d.type === "lab_result")?.status).toBe(
-      "pending",
-    );
+    const before = await getLeadById("lead_1");
+    expect(before?.documents.find((d) => d.type === "visa")?.status).toBe("pending");
 
-    const after = await uploadLeadDocument("lead_3", {
-      type: "lab_result",
-      fileName: "labs.pdf",
+    const after = await uploadLeadDocument("lead_1", {
+      type: "visa",
+      fileName: "visa-proof.pdf",
       uploadedByUserId: "cs_layla",
     });
 
-    const lab = after.documents.find((d) => d.type === "lab_result");
+    const lab = after.documents.find((d) => d.type === "visa");
     expect(lab?.status).toBe("uploaded");
-    expect(lab?.name).toBe("labs.pdf");
+    expect(lab?.name).toBe("visa-proof.pdf");
     expect(lab?.uploadedBy).toBe("cs_layla");
   });
 
@@ -419,7 +423,7 @@ describe("processLeadTasks (hybrid auto tasks)", () => {
   it("auto-completes lead_qualification when status moves past new", () => {
     const newLead = sampleLead({ id: "syn_q", status: "new" });
     const withQ = processLeadTasks(newLead, newLead, at);
-    const assigned = { ...withQ, status: "assigned" as const };
+    const assigned = { ...withQ, status: "interested" as const };
     const out = processLeadTasks(withQ, assigned, at);
     const t = out.tasks.find((x) => x.templateKey === "lead_qualification");
     expect(t?.completed).toBe(true);
@@ -430,7 +434,7 @@ describe("processLeadTasks (hybrid auto tasks)", () => {
   it("auto-completes prepare_quotation when a quotation is sent to patient", () => {
     const lead = sampleLead({
       id: "syn_quote",
-      status: "approved",
+      status: "estimate_reviewed",
       ownerId: "cs_sara",
     });
     const withPrep = processLeadTasks(lead, lead, at);
@@ -451,6 +455,7 @@ describe("processLeadTasks (hybrid auto tasks)", () => {
     };
     const sent = {
       ...withPrep,
+      status: "quotation_sent" as const,
       quotations: [quote],
     };
     const out = processLeadTasks(withPrep, sent, at);

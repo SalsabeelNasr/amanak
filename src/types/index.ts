@@ -93,24 +93,25 @@ export type BookConsultationPayload = {
 
 // ─── Auth & portals ──────────────────────────────────────────────
 
+/** Patient journey pipeline (PM spec). `changes_requested` loops back to `quotation_sent`. */
 export type LeadStatus =
   | "new"
-  | "assigned"
-  | "docs_missing"
-  | "docs_partial"
-  | "docs_complete"
-  | "consultant_review_ready"
-  | "approved"
-  | "rejected"
-  | "quotation_generated"
-  | "contract_sent"
-  | "customer_accepted"
-  | "awaiting_payment"
-  | "payment_verified"
-  | "order_created"
-  | "specialized_doctor_assigned"
+  | "interested"
+  | "estimate_requested"
+  | "estimate_reviewed"
+  | "quotation_sent"
+  | "changes_requested"
+  | "quotation_accepted"
+  | "booking"
+  | "arrived"
   | "in_treatment"
-  | "post_treatment";
+  | "completed"
+  | "lost";
+
+/** Single-table storage: marketing contact vs active lead (plan: convert on treatment selection). */
+export type LeadRecordType = "contact" | "lead";
+
+export type LeadPriority = "low" | "normal" | "hot";
 
 export type ActorRole =
   | "admin"
@@ -158,9 +159,34 @@ export type LeadDocument = {
 
 export type PackageTier = "normal" | "silver" | "gold" | "vip";
 
+/** Optional fields captured in the self-serve estimate wizard (provisional request). */
+export type ProvisionalRequest = {
+  accommodationTier?: PackageTier;
+  travelDateStart?: string;
+  travelDateEnd?: string;
+  flightIntent?: "yes" | "no" | "unsure";
+  originRegion?: string;
+  transportPreference?: string;
+  partySize?: 1 | 2;
+  freeTextNote?: string;
+  /** Line item ids toggled off at review (mock). */
+  excludedLineKeys?: string[];
+};
+
+export type ContactNudgeRule = {
+  id: string;
+  order: number;
+  delayDays: number;
+  channel: "email" | "sms" | "whatsapp";
+  templateKey: string;
+  enabled: boolean;
+};
+
 export type QuotationItem = {
   label: { ar: string; en: string };
   amountUSD: number;
+  minUSD?: number;
+  maxUSD?: number;
 };
 
 /** Stable id for idempotent system task creation (usually equals `kind` for system tasks). */
@@ -346,7 +372,8 @@ export type Quotation = {
     | "pending_admin"
     | "sent_to_patient"
     | "accepted"
-    | "rejected";
+    | "rejected"
+    | "expired";
   downpaymentRequired: boolean;
   downpaymentUSD?: number;
   termsAndConditions: string;
@@ -364,6 +391,12 @@ export type Lead = {
   patientCountry: string;
   treatmentSlug: string;
   clientType: "b2c" | "b2b" | "g2b";
+  /** Default `lead` for CRM list; `contact` for nurture-only rows. */
+  recordType?: LeadRecordType;
+  leadPriority?: LeadPriority;
+  provisionalRequest?: ProvisionalRequest;
+  /** Marketing opt-outs for automated nudges (email | sms | whatsapp). */
+  optedOutChannels?: ("email" | "sms" | "whatsapp")[];
   status: LeadStatus;
   statusHistory: StatusHistoryEntry[];
   /** CRM lead owner (e.g. primary CS). Task rows use {@link LeadTask.assigneeId} separately. */

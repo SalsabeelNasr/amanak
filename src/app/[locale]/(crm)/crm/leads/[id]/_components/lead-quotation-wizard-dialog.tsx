@@ -53,16 +53,13 @@ const PACKAGE_TIERS: PackageTier[] = ["normal", "silver", "gold", "vip"];
 
 const BLOCKED_STATUSES: LeadStatus[] = [
   "new",
-  "assigned",
-  "docs_missing",
-  "docs_partial",
-  "docs_complete",
-  "consultant_review_ready",
-  "rejected",
+  "interested",
+  "estimate_requested",
+  "lost",
+  "completed",
 ];
 
 export function leadCanCreateQuotation(lead: Lead): boolean {
-  // Allow creation if medically approved or already in quotation stages
   return !BLOCKED_STATUSES.includes(lead.status);
 }
 

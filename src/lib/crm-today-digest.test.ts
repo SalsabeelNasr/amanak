@@ -31,7 +31,7 @@ describe("buildCrmTodayDigest", () => {
       patientCountry: "US",
       treatmentSlug: "joint-replacement",
       clientType: "b2c",
-      status: "assigned",
+      status: "interested",
       ownerId: "cs_alpha",
       documents: [],
       quotations: [],

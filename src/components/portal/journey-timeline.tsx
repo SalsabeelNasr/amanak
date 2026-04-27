@@ -19,9 +19,9 @@ function formatDate(iso: string, locale: string): string {
 export function JourneyTimeline({ lead }: { lead: Lead }) {
   const locale = useLocale();
   const langKey = locale === "ar" ? "ar" : "en";
-  const isRejected = lead.status === "rejected";
-  const currentIndex = isRejected
-    ? getStateIndex("consultant_review_ready")
+  const isLost = lead.status === "lost";
+  const currentIndex = isLost
+    ? getStateIndex("quotation_sent")
     : getStateIndex(lead.status);
 
   function timestampForState(state: string): string | undefined {
@@ -34,7 +34,7 @@ export function JourneyTimeline({ lead }: { lead: Lead }) {
       <ol className="flex min-w-max items-start gap-4">
         {ORDERED_STATES.map((state, idx) => {
           const completed = idx < currentIndex;
-          const current = idx === currentIndex && !isRejected;
+          const current = idx === currentIndex && !isLost;
           const ts = timestampForState(state);
           return (
             <li
@@ -69,14 +69,12 @@ export function JourneyTimeline({ lead }: { lead: Lead }) {
           );
         })}
       </ol>
-      {isRejected && (
+      {isLost && (
         <p className="mt-3 rounded-md border border-destructive/30 bg-destructive/10 p-3 text-xs text-destructive">
-          {getStatusLabel("rejected")[langKey]}
+          {getStatusLabel("lost")[langKey]}
           {(() => {
-            const rejectionEntry = lead.statusHistory.find(
-              (h) => h.to === "rejected",
-            );
-            return rejectionEntry?.note ? ` — ${rejectionEntry.note}` : "";
+            const lostEntry = lead.statusHistory.find((h) => h.to === "lost");
+            return lostEntry?.note ? ` — ${lostEntry.note}` : "";
           })()}
         </p>
       )}

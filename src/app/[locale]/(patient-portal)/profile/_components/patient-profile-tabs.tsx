@@ -28,18 +28,19 @@ function formatDateTime(iso: string, locale: string): string {
 
 function statusOverviewClass(status: Lead["status"]): string {
   switch (status) {
-    case "rejected":
+    case "lost":
       return "bg-destructive/10 text-destructive border-transparent";
     case "in_treatment":
-    case "post_treatment":
-    case "specialized_doctor_assigned":
-    case "order_created":
+    case "completed":
       return "bg-primary text-primary-foreground border-transparent";
-    case "approved":
-    case "quotation_generated":
-    case "contract_sent":
-    case "customer_accepted":
-    case "payment_verified":
+    case "arrived":
+    case "booking":
+    case "quotation_accepted":
+      return "bg-emerald-500/10 text-emerald-700 border-transparent dark:text-emerald-400";
+    case "quotation_sent":
+    case "changes_requested":
+    case "estimate_reviewed":
+    case "estimate_requested":
       return "bg-primary/10 text-primary border-transparent";
     default:
       return "bg-muted text-muted-foreground border-transparent";

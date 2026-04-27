@@ -1,6 +1,6 @@
 /**
- * Pure state-machine service for the Amanak lead workflow.
- * No React, no next/* imports — safe to use anywhere.
+ * Lead pipeline (PM spec — 12 statuses, loop changes_requested → quotation_sent).
+ * Pure: no React, no next/* imports.
  */
 import type {
   ActorRole,
@@ -13,178 +13,136 @@ import type {
 
 export const ORDERED_STATES: LeadStatus[] = [
   "new",
-  "assigned",
-  "docs_missing",
-  "docs_partial",
-  "docs_complete",
-  "consultant_review_ready",
-  "approved",
-  "quotation_generated",
-  "contract_sent",
-  "customer_accepted",
-  "awaiting_payment",
-  "payment_verified",
-  "order_created",
-  "specialized_doctor_assigned",
+  "interested",
+  "estimate_requested",
+  "estimate_reviewed",
+  "quotation_sent",
+  "changes_requested",
+  "quotation_accepted",
+  "booking",
+  "arrived",
   "in_treatment",
-  "post_treatment",
+  "completed",
+  "lost",
 ];
 
 const STATUS_LABELS: Record<LeadStatus, { ar: string; en: string }> = {
   new: { ar: "جديد", en: "New" },
-  assigned: { ar: "تم التعيين", en: "Assigned" },
-  docs_missing: { ar: "مستندات مفقودة", en: "Documents Missing" },
-  docs_partial: { ar: "مستندات ناقصة", en: "Documents Partial" },
-  docs_complete: { ar: "مستندات مكتملة", en: "Documents Complete" },
-  consultant_review_ready: {
-    ar: "جاهز لمراجعة الاستشاري",
-    en: "Ready for Consultant Review",
-  },
-  approved: { ar: "موافق طبياً", en: "Medically Approved" },
-  rejected: { ar: "مرفوض", en: "Rejected" },
-  quotation_generated: { ar: "تم إصدار العرض", en: "Quotation Generated" },
-  contract_sent: { ar: "تم إرسال العقد", en: "Contract Sent" },
-  customer_accepted: { ar: "قبول العميل", en: "Customer Accepted" },
-  awaiting_payment: { ar: "بانتظار الدفع", en: "Awaiting Payment" },
-  payment_verified: { ar: "تم التحقق من الدفع", en: "Payment Verified" },
-  order_created: { ar: "تم إنشاء الطلب", en: "Order Created" },
-  specialized_doctor_assigned: {
-    ar: "تعيين الطبيب المختص",
-    en: "Specialized Doctor Assigned",
-  },
-  in_treatment: { ar: "تحت العلاج", en: "In Treatment" },
-  post_treatment: { ar: "بعد العلاج", en: "Post-Treatment Follow-up" },
+  interested: { ar: "مهتم", en: "Interested" },
+  estimate_requested: { ar: "طلب تقدير", en: "Estimate requested" },
+  estimate_reviewed: { ar: "تمت مراجعة التقدير", en: "Estimate reviewed" },
+  quotation_sent: { ar: "تم إرسال عرض السعر", en: "Quotation sent" },
+  changes_requested: { ar: "طلب تعديلات", en: "Changes requested" },
+  quotation_accepted: { ar: "تم قبول العرض", en: "Quotation accepted" },
+  booking: { ar: "قيد التنسيق", en: "Booking" },
+  arrived: { ar: "وصل", en: "Arrived" },
+  in_treatment: { ar: "تحت العلاج", en: "In treatment" },
+  completed: { ar: "مكتمل", en: "Completed" },
+  lost: { ar: "مفقود", en: "Lost" },
 };
 
 export const ALL_TRANSITIONS: StateTransition[] = [
   {
-    action: "ASSIGN_CS",
+    action: "BEGIN_INTAKE",
     from: "new",
-    to: "assigned",
-    allowedRoles: ["admin"],
-    label: { ar: "تعيين موظف خدمة", en: "Assign CS Agent" },
-  },
-  {
-    action: "REQUEST_DOCS",
-    from: "assigned",
-    to: "docs_missing",
+    to: "interested",
     allowedRoles: ["admin", "cs"],
-    label: { ar: "طلب المستندات", en: "Request Documents" },
+    label: { ar: "بدء الملف", en: "Begin intake" },
   },
   {
-    action: "MARK_DOCS_PARTIAL",
-    from: "assigned",
-    to: "docs_partial",
+    action: "SUBMIT_ESTIMATE",
+    from: "interested",
+    to: "estimate_requested",
+    allowedRoles: ["admin", "cs", "patient"],
+    label: { ar: "طلب تقدير ذاتي", en: "Submit estimate request" },
+  },
+  {
+    action: "REVIEW_ESTIMATE",
+    from: "estimate_requested",
+    to: "estimate_reviewed",
     allowedRoles: ["admin", "cs"],
-    label: { ar: "تحديد المستندات كناقصة", en: "Mark Docs Partial" },
+    label: { ar: "مراجعة التقدير", en: "Review estimate" },
   },
   {
-    action: "MARK_DOCS_PARTIAL",
-    from: "docs_missing",
-    to: "docs_partial",
+    action: "DELIVER_QUOTATION",
+    from: "estimate_reviewed",
+    to: "quotation_sent",
     allowedRoles: ["admin", "cs"],
-    label: { ar: "تحديد المستندات كناقصة", en: "Mark Docs Partial" },
+    label: { ar: "إرسال عرض سعر", en: "Send formal quotation" },
   },
   {
-    action: "MARK_DOCS_COMPLETE",
-    from: "docs_partial",
-    to: "docs_complete",
+    action: "PATIENT_REQUESTS_CHANGES",
+    from: "quotation_sent",
+    to: "changes_requested",
+    allowedRoles: ["admin", "cs", "patient"],
+    label: { ar: "طلب تعديل", en: "Request changes" },
+  },
+  {
+    action: "DELIVER_QUOTATION_REVISION",
+    from: "changes_requested",
+    to: "quotation_sent",
     allowedRoles: ["admin", "cs"],
-    label: { ar: "تحديد المستندات كمكتملة", en: "Mark Docs Complete" },
+    label: { ar: "إرسال عرض منقح", en: "Send revised quotation" },
   },
   {
-    action: "SEND_TO_CONSULTANT",
-    from: "docs_complete",
-    to: "consultant_review_ready",
+    action: "PATIENT_ACCEPTS_QUOTATION",
+    from: "quotation_sent",
+    to: "quotation_accepted",
+    allowedRoles: ["admin", "cs", "patient"],
+    label: { ar: "قبول العرض", en: "Accept quotation" },
+  },
+  {
+    action: "START_BOOKING",
+    from: "quotation_accepted",
+    to: "booking",
     allowedRoles: ["admin", "cs"],
-    label: { ar: "إرسال للاستشاري", en: "Send to Consultant" },
+    label: { ar: "بدء حجز السفر", en: "Start booking" },
   },
   {
-    action: "APPROVE_MEDICAL",
-    from: "consultant_review_ready",
-    to: "approved",
-    allowedRoles: ["admin", "consultant_doctor"],
-    label: { ar: "موافقة طبية", en: "Approve Medically" },
-  },
-  {
-    action: "REJECT_MEDICAL",
-    from: "consultant_review_ready",
-    to: "rejected",
-    allowedRoles: ["admin", "consultant_doctor"],
-    requiresNote: true,
-    label: { ar: "رفض طبياً", en: "Reject Medically" },
-  },
-  {
-    action: "GENERATE_QUOTATION",
-    from: "approved",
-    to: "quotation_generated",
+    action: "MARK_ARRIVED",
+    from: "booking",
+    to: "arrived",
     allowedRoles: ["admin", "cs"],
-    label: { ar: "إصدار عرض السعر", en: "Generate Quotation" },
-  },
-  {
-    action: "SEND_CONTRACT",
-    from: "quotation_generated",
-    to: "contract_sent",
-    allowedRoles: ["admin"],
-    label: { ar: "إرسال العقد", en: "Send Contract" },
-  },
-  {
-    action: "ACCEPT_CONTRACT",
-    from: "contract_sent",
-    to: "customer_accepted",
-    allowedRoles: ["admin", "patient"],
-    label: { ar: "قبول العقد", en: "Accept Contract" },
-  },
-  {
-    action: "REJECT_CONTRACT",
-    from: "contract_sent",
-    to: "rejected",
-    allowedRoles: ["admin", "patient"],
-    requiresNote: true,
-    label: { ar: "رفض العقد", en: "Reject Contract" },
-  },
-  {
-    action: "REQUEST_PAYMENT",
-    from: "customer_accepted",
-    to: "awaiting_payment",
-    allowedRoles: ["admin"],
-    label: { ar: "طلب الدفع", en: "Request Payment" },
-  },
-  {
-    action: "VERIFY_PAYMENT",
-    from: "awaiting_payment",
-    to: "payment_verified",
-    allowedRoles: ["admin", "cs"],
-    label: { ar: "تأكيد الدفع", en: "Verify Payment" },
-  },
-  {
-    action: "CREATE_ORDER",
-    from: "payment_verified",
-    to: "order_created",
-    allowedRoles: ["admin"],
-    label: { ar: "إنشاء الطلب", en: "Create Order" },
-  },
-  {
-    action: "ASSIGN_DOCTOR",
-    from: "order_created",
-    to: "specialized_doctor_assigned",
-    allowedRoles: ["admin"],
-    label: { ar: "تعيين الطبيب المختص", en: "Assign Specialized Doctor" },
+    label: { ar: "تسجيل الوصول", en: "Mark arrived" },
   },
   {
     action: "START_TREATMENT",
-    from: "specialized_doctor_assigned",
+    from: "arrived",
     to: "in_treatment",
-    allowedRoles: ["admin", "specialized_doctor"],
-    label: { ar: "بدء العلاج", en: "Start Treatment" },
+    allowedRoles: ["admin", "cs", "specialized_doctor", "consultant_doctor"],
+    label: { ar: "بدء العلاج", en: "Start treatment" },
   },
   {
     action: "COMPLETE_TREATMENT",
     from: "in_treatment",
-    to: "post_treatment",
+    to: "completed",
     allowedRoles: ["admin", "specialized_doctor"],
-    label: { ar: "إكمال العلاج", en: "Complete Treatment" },
+    label: { ar: "إكمال العلاج", en: "Complete treatment" },
   },
+  ...(
+    [
+      "new",
+      "interested",
+      "estimate_requested",
+      "estimate_reviewed",
+      "quotation_sent",
+      "changes_requested",
+      "quotation_accepted",
+      "booking",
+      "arrived",
+      "in_treatment",
+    ] as const
+  ).map(
+    (from) =>
+      ({
+        action: "MARK_LOST",
+        from,
+        to: "lost",
+        allowedRoles: ["admin", "cs"],
+        requiresNote: false,
+        label: { ar: "تسجيل كمفقود", en: "Mark lost" },
+      }) satisfies StateTransition,
+  ),
 ];
 
 export function getStatusLabel(status: LeadStatus): { ar: string; en: string } {
@@ -192,7 +150,7 @@ export function getStatusLabel(status: LeadStatus): { ar: string; en: string } {
 }
 
 export function isTerminalState(status: LeadStatus): boolean {
-  return status === "rejected" || status === "post_treatment";
+  return status === "completed" || status === "lost";
 }
 
 export function getStateIndex(status: LeadStatus): number {

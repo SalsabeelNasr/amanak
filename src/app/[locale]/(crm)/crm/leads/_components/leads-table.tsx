@@ -26,7 +26,7 @@ import {
   X,
 } from "lucide-react";
 
-const ALL_STATUSES: (LeadStatus | "all")[] = ["all", ...ORDERED_STATES, "rejected"];
+const ALL_STATUSES: (LeadStatus | "all")[] = ["all", ...ORDERED_STATES];
 
 export function LeadsTable({ leads }: { leads: Lead[] }) {
   const t = useTranslations("crm");

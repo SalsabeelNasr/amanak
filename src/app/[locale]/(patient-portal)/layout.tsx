@@ -20,6 +20,7 @@ export default function PatientPortalLayout({
   const { session, logout } = useSession();
   const router = useRouter();
   const t = useTranslations("auth");
+  const tPortal = useTranslations("portal");
 
   useEffect(() => {
     if (session.isAuthenticated && session.user.role === "patient") return;
@@ -64,6 +65,13 @@ export default function PatientPortalLayout({
             Amanak
           </Link>
           <div className="ms-auto flex items-center gap-3">
+            <Link
+              href={ROUTES.patientOnboarding}
+              className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+              prefetch={false}
+            >
+              {tPortal("onboardingTitle")}
+            </Link>
             <LocaleSwitcher />
             <Button
               type="button"

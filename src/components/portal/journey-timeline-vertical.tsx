@@ -28,9 +28,9 @@ export function JourneyTimelineVertical({
 }) {
   const locale = useLocale();
   const langKey = locale === "ar" ? "ar" : "en";
-  const isRejected = lead.status === "rejected";
-  const currentIndex = isRejected
-    ? getStateIndex("consultant_review_ready")
+  const isLost = lead.status === "lost";
+  const currentIndex = isLost
+    ? getStateIndex("quotation_sent")
     : getStateIndex(lead.status);
 
   const visibleStates = isExpanded 
@@ -47,7 +47,7 @@ export function JourneyTimelineVertical({
       <ol className="space-y-0">
         {visibleStates.map((state, idx) => {
           const completed = idx < currentIndex;
-          const current = idx === currentIndex && !isRejected;
+          const current = idx === currentIndex && !isLost;
           const ts = timestampForState(state);
           const isLast = idx === visibleStates.length - 1;
 
@@ -95,14 +95,12 @@ export function JourneyTimelineVertical({
         })}
       </ol>
 
-      {isRejected ? (
+      {isLost ? (
         <p className="mt-6 rounded-xl border border-destructive/30 bg-destructive/10 p-4 text-sm text-destructive">
-          {getStatusLabel("rejected")[langKey]}
+          {getStatusLabel("lost")[langKey]}
           {(() => {
-            const rejectionEntry = lead.statusHistory.find(
-              (h) => h.to === "rejected",
-            );
-            return rejectionEntry?.note ? ` — ${rejectionEntry.note}` : "";
+            const lostEntry = lead.statusHistory.find((h) => h.to === "lost");
+            return lostEntry?.note ? ` — ${lostEntry.note}` : "";
           })()}
         </p>
       ) : null}

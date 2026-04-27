@@ -40,7 +40,7 @@ function sysTask(key: NonNullable<LeadTask["templateKey"]>): LeadTask {
 
 describe("getTransitionActionForSystemTaskCompletion", () => {
   it("returns null for manual tasks", () => {
-    const lead = baseLead({ id: "l", status: "approved" });
+    const lead = baseLead({ id: "l", status: "estimate_reviewed" });
     const manual: LeadTask = {
       id: "m",
       title: "Manual",
@@ -55,83 +55,60 @@ describe("getTransitionActionForSystemTaskCompletion", () => {
     expect(getTransitionActionForSystemTaskCompletion(lead, manual)).toBeNull();
   });
 
-  it("maps prepare_quotation from approved only", () => {
-    const task = sysTask("prepare_quotation");
-    expect(
-      getTransitionActionForSystemTaskCompletion(
-        baseLead({ id: "l", status: "approved" }),
-        task,
-      ),
-    ).toBe("GENERATE_QUOTATION");
-    expect(
-      getTransitionActionForSystemTaskCompletion(
-        baseLead({ id: "l", status: "quotation_generated" }),
-        task,
-      ),
-    ).toBeNull();
-  });
-
-  it("maps collect_documents by document status", () => {
-    const task = sysTask("collect_documents");
-    expect(
-      getTransitionActionForSystemTaskCompletion(
-        baseLead({ id: "l", status: "docs_missing" }),
-        task,
-      ),
-    ).toBe("MARK_DOCS_PARTIAL");
-    expect(
-      getTransitionActionForSystemTaskCompletion(
-        baseLead({ id: "l", status: "docs_partial" }),
-        task,
-      ),
-    ).toBe("MARK_DOCS_COMPLETE");
-  });
-
-  it("maps lead_qualification at new to ASSIGN_CS", () => {
+  it("maps lead_qualification at new to BEGIN_INTAKE", () => {
     expect(
       getTransitionActionForSystemTaskCompletion(
         baseLead({ id: "l", status: "new" }),
         sysTask("lead_qualification"),
       ),
-    ).toBe("ASSIGN_CS");
+    ).toBe("BEGIN_INTAKE");
   });
 
-  it("maps remaining templates", () => {
+  it("maps prepare_quotation from estimate and review stages", () => {
     expect(
       getTransitionActionForSystemTaskCompletion(
-        baseLead({ id: "l", status: "consultant_review_ready" }),
-        sysTask("consultant_review"),
+        baseLead({ id: "l", status: "estimate_requested" }),
+        sysTask("prepare_quotation"),
       ),
-    ).toBe("APPROVE_MEDICAL");
+    ).toBe("REVIEW_ESTIMATE");
     expect(
       getTransitionActionForSystemTaskCompletion(
-        baseLead({ id: "l", status: "quotation_generated" }),
-        sysTask("send_contract"),
+        baseLead({ id: "l", status: "estimate_reviewed" }),
+        sysTask("prepare_quotation"),
       ),
-    ).toBe("SEND_CONTRACT");
+    ).toBe("DELIVER_QUOTATION");
     expect(
       getTransitionActionForSystemTaskCompletion(
-        baseLead({ id: "l", status: "awaiting_payment" }),
-        sysTask("confirm_payment"),
+        baseLead({ id: "l", status: "changes_requested" }),
+        sysTask("prepare_quotation"),
       ),
-    ).toBe("VERIFY_PAYMENT");
-    expect(
-      getTransitionActionForSystemTaskCompletion(
-        baseLead({ id: "l", status: "payment_verified" }),
-        sysTask("create_order"),
-      ),
-    ).toBe("CREATE_ORDER");
-    expect(
-      getTransitionActionForSystemTaskCompletion(
-        baseLead({ id: "l", status: "order_created" }),
-        sysTask("assign_specialist"),
-      ),
-    ).toBe("ASSIGN_DOCTOR");
+    ).toBe("DELIVER_QUOTATION_REVISION");
+  });
+
+  it("maps follow-up and logistics templates", () => {
     expect(
       getTransitionActionForSystemTaskCompletion(
         baseLead({ id: "l", status: "in_treatment" }),
         sysTask("treatment_followup"),
       ),
     ).toBe("COMPLETE_TREATMENT");
+    expect(
+      getTransitionActionForSystemTaskCompletion(
+        baseLead({ id: "l", status: "quotation_accepted" }),
+        sysTask("create_order"),
+      ),
+    ).toBe("START_BOOKING");
+    expect(
+      getTransitionActionForSystemTaskCompletion(
+        baseLead({ id: "l", status: "booking" }),
+        sysTask("assign_specialist"),
+      ),
+    ).toBe("MARK_ARRIVED");
+    expect(
+      getTransitionActionForSystemTaskCompletion(
+        baseLead({ id: "l", status: "arrived" }),
+        sysTask("send_contract"),
+      ),
+    ).toBe("START_TREATMENT");
   });
 });

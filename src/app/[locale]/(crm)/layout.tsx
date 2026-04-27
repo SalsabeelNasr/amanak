@@ -2,7 +2,7 @@
 
 import { useEffect, type ReactNode } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { BarChart3, LayoutDashboard, Users, LogOut, Menu } from "lucide-react";
+import { BarChart3, FileText, LayoutDashboard, Users, LogOut, Menu } from "lucide-react";
 import { Link, usePathname, useRouter } from "@/i18n/navigation";
 import { Button, buttonVariants } from "@/components/ui/button";
 import {
@@ -67,6 +67,7 @@ function NavItems({
   const items = [
     { href: ROUTES.crmDashboard, label: t("dashboard"), Icon: LayoutDashboard },
     { href: ROUTES.crmLeads, label: t("leads"), Icon: Users },
+    { href: ROUTES.crmQuotationCreation, label: t("quotationCreation"), Icon: FileText },
     { href: ROUTES.crmInsights, label: t("insights"), Icon: BarChart3 },
   ];
 
