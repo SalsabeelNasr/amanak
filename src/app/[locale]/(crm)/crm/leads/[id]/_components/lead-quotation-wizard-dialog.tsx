@@ -1,11 +1,10 @@
 "use client";
 
 import Image from "next/image";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import {
-  Dialog,
   DialogBody,
   DialogContent,
   DialogDescription,
@@ -13,6 +12,14 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { DialogShell } from "@/components/crm/dialog-shell";
+import {
+  createQuotationWizardHospitalStepSchema,
+  createQuotationWizardSaveSchema,
+  quotationWizardDoctorStepSchema,
+  quotationWizardPackageStepSchema,
+  type QuotationWizardStep,
+} from "@/lib/crm/schemas/quotation";
 import { getDoctorsByIds } from "@/lib/api/doctors";
 import {
   getQuotationTransportProfile,
@@ -59,11 +66,9 @@ export function leadCanCreateQuotation(lead: Lead): boolean {
   return !BLOCKED_STATUSES.includes(lead.status);
 }
 
-type WizardStep = "package" | "doctor" | "hospital" | "hotel" | "transport" | "review";
-
-function useWizardSteps(skipHotel: boolean): WizardStep[] {
+function useWizardSteps(skipHotel: boolean): QuotationWizardStep[] {
   return useMemo(() => {
-    const s: WizardStep[] = ["package", "doctor", "hospital"];
+    const s: QuotationWizardStep[] = ["package", "doctor", "hospital"];
     if (!skipHotel) s.push("hotel");
     s.push("transport", "review");
     return s;
@@ -101,6 +106,25 @@ export function LeadQuotationWizardDialog({
   const [validationError, setValidationError] = useState<string | null>(null);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+  const prevOpenRef = useRef(false);
+
+  const resetWizard = useCallback(() => {
+    setStepIndex(0);
+    setPackageTier(null);
+    setDoctorId(null);
+    setHospitalId(null);
+    setHotelName(null);
+    setDoctorOptions([]);
+    setValidationError(null);
+    setSaveError(null);
+  }, []);
+
+  useEffect(() => {
+    if (open && !prevOpenRef.current) {
+      resetWizard();
+    }
+    prevOpenRef.current = open;
+  }, [open, resetWizard]);
 
   const transport = useMemo(
     () => getQuotationTransportProfile(lead.treatmentSlug),
@@ -142,21 +166,31 @@ export function LeadQuotationWizardDialog({
   const goNext = useCallback(() => {
     setValidationError(null);
     if (currentStep === "package") {
-      if (!packageTier) {
+      if (
+        !quotationWizardPackageStepSchema.safeParse({ packageTier })
+          .success
+      ) {
         setValidationError(t("validationPackage"));
         return;
       }
     }
     if (currentStep === "doctor") {
-      if (!doctorId) {
+      if (!quotationWizardDoctorStepSchema.safeParse({ doctorId }).success) {
         setValidationError(t("validationDoctor"));
         return;
       }
     }
     if (currentStep === "hospital") {
       const corporate = lead.clientType === "b2b" || lead.clientType === "g2b";
-      if (corporate && !hospitalId) {
-        setValidationError(t("validationHospitalCorporate"));
+      const hSchema = createQuotationWizardHospitalStepSchema(
+        corporate,
+        t("validationHospitalCorporate"),
+      );
+      const hr = hSchema.safeParse({ hospitalId });
+      if (!hr.success) {
+        setValidationError(
+          hr.error.issues[0]?.message ?? t("validationHospitalCorporate"),
+        );
         return;
       }
     }
@@ -190,21 +224,40 @@ export function LeadQuotationWizardDialog({
   }, [steps.length]);
 
   const handleSave = useCallback(async () => {
-    if (!packageTier || !doctorId || !pricing) return;
+    if (!pricing) return;
     const corporate = lead.clientType === "b2b" || lead.clientType === "g2b";
-    if (corporate && !hospitalId) {
-      setValidationError(t("validationHospitalCorporate"));
+    const saveSchema = createQuotationWizardSaveSchema(
+      corporate,
+      t("validationHospitalCorporate"),
+    );
+    const parsed = saveSchema.safeParse({
+      packageTier,
+      doctorId,
+      hospitalId,
+    });
+    if (!parsed.success) {
+      const p0 = String(parsed.error.issues[0]?.path[0] ?? "");
+      if (p0 === "packageTier")
+        setValidationError(t("validationPackage"));
+      else if (p0 === "doctorId")
+        setValidationError(t("validationDoctor"));
+      else
+        setValidationError(
+          parsed.error.issues[0]?.message ?? t("validationHospitalCorporate"),
+        );
       return;
     }
+    const { packageTier: tier, doctorId: docId, hospitalId: hospId } =
+      parsed.data;
     setSaveError(null);
     setSaving(true);
     try {
       const updated = await crm.leads.createDraftQuotation(
         lead.id,
         {
-          packageTier,
-          doctorId,
-          hospitalId: hospitalId ?? undefined,
+          packageTier: tier,
+          doctorId: docId,
+          hospitalId: hospId ?? undefined,
           hotelName: hotelName ?? undefined,
           transportMode: transport.modeLabel,
           transportRouteCount: transport.routeCount,
@@ -237,7 +290,7 @@ export function LeadQuotationWizardDialog({
     t,
   ]);
 
-  const stepLabel = (step: WizardStep): string => {
+  const stepLabel = (step: QuotationWizardStep): string => {
     switch (step) {
       case "package":
         return t("stepPackage");
@@ -257,7 +310,7 @@ export function LeadQuotationWizardDialog({
   const dir = locale === "ar" ? "rtl" : "ltr";
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <DialogShell open={open} onOpenChange={onOpenChange}>
       <DialogContent
         dir={dir}
         size="xl"
@@ -617,6 +670,6 @@ export function LeadQuotationWizardDialog({
           </div>
         </DialogFooter>
       </DialogContent>
-    </Dialog>
+    </DialogShell>
   );
 }
