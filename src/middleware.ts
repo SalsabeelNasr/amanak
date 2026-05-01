@@ -58,6 +58,15 @@ export default function middleware(request: NextRequest) {
     return NextResponse.redirect(url, 308);
   }
 
+  const crmLeads = /^\/(ar|en)\/crm\/leads(\/.*)?$/.exec(request.nextUrl.pathname);
+  if (crmLeads) {
+    const locale = crmLeads[1];
+    const suffix = crmLeads[2] ?? "";
+    const url = request.nextUrl.clone();
+    url.pathname = `/${locale}/crm/requests${suffix}`;
+    return NextResponse.redirect(url, 308);
+  }
+
   return intlMiddleware(request);
 }
 

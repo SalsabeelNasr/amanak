@@ -1,30 +1,50 @@
 /**
- * Input/output DTOs for the CrmClient interface. Re-exported from the existing
- * mock layer so the typed seam is single-sourced — replacing the mock with an
- * HTTP implementation only requires changing `client.mock.ts`, never these
- * type names.
+ * Input/output DTOs for the CrmClient interface. Re-exported from the mock API
+ * layer so the typed seam is single-sourced.
  */
 export type {
-  AddLeadAppointmentConsultationInput,
-  AddLeadAppointmentInput,
-  AddLeadAppointmentOnlineInput,
-  AddLeadAppointmentTreatmentInput,
-  AddLeadTaskAttachmentInput,
-  AddLeadTaskInput,
+  AddRequestAppointmentConsultationInput,
+  AddRequestAppointmentInput,
+  AddRequestAppointmentOnlineInput,
+  AddRequestAppointmentTreatmentInput,
+  AddRequestTaskAttachmentInput,
+  AddRequestTaskInput,
   CreateDraftQuotationInput,
-  LeadFilters,
-  UpdateLeadTaskOptions,
-  UpdateLeadTaskPatch,
-  UploadLeadDocumentInput,
-} from "@/lib/api/leads";
+  RequestFilters,
+  UpdateRequestTaskOptions,
+  UpdateRequestTaskPatch,
+  UploadRequestDocumentInput,
+} from "@/lib/api/requests";
 
 export type {
-  AppendLeadConversationOptions,
-  GetLeadConversationsOptions,
-} from "@/lib/api/lead-conversations";
+  AppendRequestConversationOptions,
+  GetRequestConversationsOptions,
+} from "@/lib/api/request-conversations";
 
 export {
   CRM_TASK_ASSIGNEE_IDS,
-  LEAD_DOCUMENT_TYPE_ORDER,
-  sortLeadTasksForDisplay,
-} from "@/lib/api/leads";
+  REQUEST_DOCUMENT_TYPE_ORDER,
+  sortRequestTasksForDisplay,
+} from "@/lib/api/requests";
+
+export {
+  REQUEST_DOCUMENT_TYPE_ORDER as LEAD_DOCUMENT_TYPE_ORDER,
+  sortRequestTasksForDisplay as sortLeadTasksForDisplay,
+} from "@/lib/api/requests";
+
+/** @deprecated Use AddRequestTaskInput */
+export type { AddRequestTaskInput as AddLeadTaskInput } from "@/lib/api/requests";
+/** @deprecated Use AddRequestTaskAttachmentInput */
+export type { AddRequestTaskAttachmentInput as AddLeadTaskAttachmentInput } from "@/lib/api/requests";
+/** @deprecated Use UpdateRequestTaskPatch */
+export type { UpdateRequestTaskPatch as UpdateLeadTaskPatch } from "@/lib/api/requests";
+/** @deprecated Use UpdateRequestTaskOptions */
+export type { UpdateRequestTaskOptions as UpdateLeadTaskOptions } from "@/lib/api/requests";
+/** @deprecated Use AddRequestAppointmentInput */
+export type { AddRequestAppointmentInput as AddLeadAppointmentInput } from "@/lib/api/requests";
+/** @deprecated Use UploadRequestDocumentInput */
+export type { UploadRequestDocumentInput as UploadLeadDocumentInput } from "@/lib/api/requests";
+/** @deprecated Use RequestFilters */
+export type { RequestFilters as LeadFilters } from "@/lib/api/requests";
+
+export type { CreatePatientInput, PatientFilters } from "@/lib/api/patients";

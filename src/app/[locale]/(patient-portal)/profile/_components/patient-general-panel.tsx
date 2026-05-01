@@ -9,7 +9,7 @@ import {
   getPatientProfile,
   PATIENT_PROFILE_EVENT,
 } from "@/lib/patient-profile-local";
-import type { Lead } from "@/types";
+import type { Lead, Patient } from "@/types";
 import { Link } from "@/i18n/navigation";
 import { ROUTES } from "@/lib/routes";
 import { buttonVariants } from "@/components/ui/button";
@@ -31,20 +31,26 @@ function getServerSnapshot() {
   return null;
 }
 
-export function PatientGeneralPanel({ lead }: { lead: Lead }) {
+export function PatientGeneralPanel({
+  lead,
+  patient,
+}: {
+  lead: Lead;
+  patient: Patient | null;
+}) {
   const t = useTranslations("portal");
   const tTreatments = useTranslations("treatments");
   const profile = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
   const careRequests = usePatientCareRequestsFromStorage();
 
-  const displayName = profile?.fullName?.trim() || lead.patientName;
-  const displayPhone = profile?.phone?.trim() || lead.patientPhone;
-  const displayEmail = profile?.email?.trim() || lead.patientEmail;
-  const displayCountry = profile?.country?.trim() || lead.patientCountry;
+  const displayName = profile?.fullName?.trim() || patient?.name || "—";
+  const displayPhone = profile?.phone?.trim() || patient?.phone || "—";
+  const displayEmail = profile?.email?.trim() || patient?.email;
+  const displayCountry = profile?.country?.trim() || patient?.country || "—";
 
   const initials = displayName
     .split(/\s+/)
-    .map((n) => n[0])
+    .map((n: string) => n[0])
     .join("")
     .toUpperCase()
     .slice(0, 2);
@@ -68,7 +74,7 @@ export function PatientGeneralPanel({ lead }: { lead: Lead }) {
               <span className="hidden text-muted-foreground/30 sm:inline">•</span>
               <div className="flex items-center gap-1.5">
                 <Shield className="size-3.5" />
-                {lead.clientType}
+                {patient?.clientType ?? "—"}
               </div>
             </div>
           </div>
@@ -154,7 +160,9 @@ export function PatientGeneralPanel({ lead }: { lead: Lead }) {
             <div className="space-y-3">
               <div className="flex items-center justify-between text-sm">
                 <span className="text-muted-foreground">{t("clientType")}</span>
-                <span className="font-bold text-foreground">{lead.clientType}</span>
+                <span className="font-bold text-foreground">
+                  {patient?.clientType ?? "—"}
+                </span>
               </div>
               <div className="flex items-center justify-between text-sm">
                 <span className="text-muted-foreground">{t("memberSince")}</span>

@@ -20,7 +20,7 @@ import {
   type DeepPartial,
 } from "@/lib/api/crm-settings";
 import type { EstimateAreaZone } from "@/lib/api/patient-estimate-catalog";
-import { listLeadTaskTemplateKeys } from "@/lib/services/lead-task-rules";
+import { listRequestTaskTemplateKeys } from "@/lib/services/lead-task-rules";
 import {
   ArrowUpDown,
   Bell,
@@ -44,7 +44,7 @@ import { useLangKey } from "@/components/crm/use-lang-key";
 
 type Props = { initial: CrmSettings };
 
-const TASK_TEMPLATE_KEYS = listLeadTaskTemplateKeys();
+const TASK_TEMPLATE_KEYS = listRequestTaskTemplateKeys();
 
 const TASK_TEMPLATE_LABEL_KEYS = {
   lead_qualification: "taskTemplateLabels.lead_qualification",
@@ -141,12 +141,12 @@ export function CrmSettingsForm({ initial }: Props) {
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <Tabs defaultValue="leads" className="w-full">
+        <Tabs defaultValue="requests" className="w-full">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <TabsList variant="underline" className="w-full flex-wrap sm:w-auto">
-              <TabsTrigger value="leads" className="gap-2">
+              <TabsTrigger value="requests" className="gap-2">
                 <Users className="size-4" />
-                {t("settingsTabLeads")}
+                {t("settingsTabRequests")}
               </TabsTrigger>
               <TabsTrigger value="tasks" className="gap-2">
                 <ListTodo className="size-4" />
@@ -191,7 +191,7 @@ export function CrmSettingsForm({ initial }: Props) {
           </div>
 
           <div className="mt-6">
-            <TabsContent value="leads" className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
+            <TabsContent value="requests" className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
               <p className="text-sm text-muted-foreground">{t("settingsLeadsTabIntro")}</p>
 
               <aside
@@ -432,8 +432,8 @@ export function CrmSettingsForm({ initial }: Props) {
                       id="pr1"
                       type="checkbox"
                       className="size-4 shrink-0 rounded border border-input accent-primary"
-                      checked={model.leadPriority.emailAndTreatmentIsLow}
-                      onChange={(e) => patch({ leadPriority: { emailAndTreatmentIsLow: e.target.checked } })}
+                      checked={model.requestPriority.emailAndTreatmentIsLow}
+                      onChange={(e) => patch({ requestPriority: { emailAndTreatmentIsLow: e.target.checked } })}
                     />
                   </div>
                   <div className="flex items-center justify-between rounded-lg p-3 ring-1 ring-foreground/10 transition-colors hover:bg-muted/50">
@@ -444,8 +444,8 @@ export function CrmSettingsForm({ initial }: Props) {
                       id="pr2"
                       type="checkbox"
                       className="size-4 shrink-0 rounded border border-input accent-primary"
-                      checked={model.leadPriority.withPhoneBumpsToNormal}
-                      onChange={(e) => patch({ leadPriority: { withPhoneBumpsToNormal: e.target.checked } })}
+                      checked={model.requestPriority.withPhoneBumpsToNormal}
+                      onChange={(e) => patch({ requestPriority: { withPhoneBumpsToNormal: e.target.checked } })}
                     />
                   </div>
                   <div className="flex items-center justify-between rounded-lg p-3 ring-1 ring-foreground/10 transition-colors hover:bg-muted/50">
@@ -456,8 +456,8 @@ export function CrmSettingsForm({ initial }: Props) {
                       id="pr3"
                       type="checkbox"
                       className="size-4 shrink-0 rounded border border-input accent-primary"
-                      checked={model.leadPriority.withTravelFieldsBumpsToHot}
-                      onChange={(e) => patch({ leadPriority: { withTravelFieldsBumpsToHot: e.target.checked } })}
+                      checked={model.requestPriority.withTravelFieldsBumpsToHot}
+                      onChange={(e) => patch({ requestPriority: { withTravelFieldsBumpsToHot: e.target.checked } })}
                     />
                   </div>
                 </CardContent>

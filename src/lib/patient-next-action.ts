@@ -1,4 +1,4 @@
-import type { Lead, LeadStatus, Quotation } from "@/types";
+import type { Lead, Patient, Quotation, RequestStatus } from "@/types";
 
 type LocalizedText = { ar: string; en: string };
 
@@ -22,7 +22,7 @@ export type PatientNextActionTask = {
   cta: PatientNextActionCta;
 };
 
-const PAYMENT_PROOF_UPLOAD_STATUSES: LeadStatus[] = ["quotation_accepted", "booking"];
+const PAYMENT_PROOF_UPLOAD_STATUSES: RequestStatus[] = ["quotation_accepted", "booking"];
 
 function hasSatisfactoryPaymentProof(
   documents: Lead["documents"],
@@ -50,8 +50,11 @@ function pickQuotationForNextActionPayment(lead: Lead): Quotation | undefined {
  * B2C leads at quotation_accepted / booking: prompt for payment proof uploads before
  * arrival/transport next steps. B2B seed leads keep transport-first behavior.
  */
-function resolvePaymentProofUploadTask(lead: Lead): PatientNextActionTask | null {
-  if (lead.clientType !== "b2c") return null;
+function resolvePaymentProofUploadTask(
+  lead: Lead,
+  clientType: Patient["clientType"],
+): PatientNextActionTask | null {
+  if (clientType !== "b2c") return null;
   if (!PAYMENT_PROOF_UPLOAD_STATUSES.includes(lead.status)) return null;
 
   const quote = pickQuotationForNextActionPayment(lead);
@@ -112,7 +115,7 @@ const CRM_MANAGED_TASK: PatientNextActionTask = {
   cta: { kind: "modal", modalId: "request_callback" },
 };
 
-const TASK_BY_STATUS: Record<LeadStatus, PatientNextActionTask> = {
+const TASK_BY_STATUS: Record<RequestStatus, PatientNextActionTask> = {
   new: {
     title: { ar: "أكمل طلب العلاج", en: "Complete your treatment request" },
     ctaLabel: { ar: "متابعة الطلب", en: "Continue request" },
@@ -217,7 +220,10 @@ const EVENT_BY_LEAD_ID: Record<string, PatientUpcomingEvent> = {
   },
 };
 
-export function getPatientNextActionPlan(lead: Lead): PatientNextActionPlan {
+export function getPatientNextActionPlan(
+  lead: Lead,
+  patientClientType: Patient["clientType"] = "b2c",
+): PatientNextActionPlan {
   const acceptedByCrm = lead.statusHistory.some(
     (entry) =>
       entry.action === "PATIENT_ACCEPTS_QUOTATION" &&
@@ -227,7 +233,7 @@ export function getPatientNextActionPlan(lead: Lead): PatientNextActionPlan {
     acceptedByCrm &&
     (lead.status === "quotation_accepted" || lead.status === "booking");
 
-  const paymentProofTask = resolvePaymentProofUploadTask(lead);
+  const paymentProofTask = resolvePaymentProofUploadTask(lead, patientClientType);
 
   const hasPendingMandatoryDocs = lead.documents.some(
     (doc) => doc.mandatory && doc.status !== "uploaded" && doc.status !== "verified",

@@ -1,19 +1,19 @@
 /**
  * Lead pipeline (PM spec — 12 statuses, loop changes_requested → quotation_sent).
  * These statuses drive transitions, tasks, and CRM actions. For a coarse patient-facing
- * funnel without decision logic, see `src/lib/lead-journey-stage.ts` ({@link LeadJourneyStage}).
+ * funnel without decision logic, see `src/lib/request-journey-stage.ts` ({@link RequestJourneyStage}).
  * Pure: no React, no next/* imports.
  */
 import type {
   ActorRole,
-  Lead,
-  LeadStatus,
   MockUser,
+  Request,
+  RequestStatus,
   StateTransition,
   StatusHistoryEntry,
 } from "@/types";
 
-export const ORDERED_STATES: LeadStatus[] = [
+export const ORDERED_STATES: RequestStatus[] = [
   "new",
   "interested",
   "estimate_requested",
@@ -28,7 +28,7 @@ export const ORDERED_STATES: LeadStatus[] = [
   "lost",
 ];
 
-const STATUS_LABELS: Record<LeadStatus, { ar: string; en: string }> = {
+const STATUS_LABELS: Record<RequestStatus, { ar: string; en: string }> = {
   new: { ar: "جديد", en: "New" },
   interested: { ar: "مهتم", en: "Interested" },
   estimate_requested: { ar: "طلب تقدير", en: "Estimate requested" },
@@ -147,20 +147,20 @@ export const ALL_TRANSITIONS: StateTransition[] = [
   ),
 ];
 
-export function getStatusLabel(status: LeadStatus): { ar: string; en: string } {
+export function getStatusLabel(status: RequestStatus): { ar: string; en: string } {
   return STATUS_LABELS[status];
 }
 
-export function isTerminalState(status: LeadStatus): boolean {
+export function isTerminalState(status: RequestStatus): boolean {
   return status === "completed" || status === "lost";
 }
 
-export function getStateIndex(status: LeadStatus): number {
+export function getStateIndex(status: RequestStatus): number {
   return ORDERED_STATES.indexOf(status);
 }
 
 export function getAvailableTransitions(
-  state: LeadStatus,
+  state: RequestStatus,
   role: ActorRole,
 ): StateTransition[] {
   return ALL_TRANSITIONS.filter(
@@ -169,7 +169,7 @@ export function getAvailableTransitions(
 }
 
 export function canTransition(
-  state: LeadStatus,
+  state: RequestStatus,
   action: string,
   role: ActorRole,
 ): boolean {
@@ -187,9 +187,9 @@ export function canTransition(
  * Returns `[]` for terminal statuses (`completed`, `lost`).
  */
 export function getReachableStatusesForSkip(
-  currentStatus: LeadStatus,
+  currentStatus: RequestStatus,
   role: ActorRole,
-): LeadStatus[] {
+): RequestStatus[] {
   if (!isAllowedSkipRole(role)) return [];
   if (isTerminalState(currentStatus)) return [];
   const adjacent = new Set(
@@ -210,22 +210,22 @@ function isAllowedSkipRole(role: ActorRole): boolean {
  * reconciliation is handled separately by `reconcileSystemTasksAfterStatusJump`.
  */
 export function applySetStatus(
-  lead: Lead,
-  toStatus: LeadStatus,
+  request: Request,
+  toStatus: RequestStatus,
   actor: MockUser,
   note: string,
-): Lead {
+): Request {
   if (!isAllowedSkipRole(actor.role)) {
     throw new Error(
-      `applySetStatus: role ${actor.role} cannot override lead status`,
+      `applySetStatus: role ${actor.role} cannot override request status`,
     );
   }
-  if (isTerminalState(lead.status)) {
+  if (isTerminalState(request.status)) {
     throw new Error(
-      `applySetStatus: cannot override status from terminal state ${lead.status}`,
+      `applySetStatus: cannot override status from terminal state ${request.status}`,
     );
   }
-  if (toStatus === lead.status) {
+  if (toStatus === request.status) {
     throw new Error(`applySetStatus: target status must differ from current`);
   }
   if (!ORDERED_STATES.includes(toStatus)) {
@@ -236,7 +236,7 @@ export function applySetStatus(
   }
 
   const entry: StatusHistoryEntry = {
-    from: lead.status,
+    from: request.status,
     to: toStatus,
     action: "SET_STATUS",
     actorRole: actor.role,
@@ -246,28 +246,28 @@ export function applySetStatus(
   };
 
   return {
-    ...lead,
+    ...request,
     status: toStatus,
-    statusHistory: [...lead.statusHistory, entry],
+    statusHistory: [...request.statusHistory, entry],
     updatedAt: entry.timestamp,
   };
 }
 
 export function applyTransition(
-  lead: Lead,
+  request: Request,
   action: string,
   actor: MockUser,
   note?: string,
-): Lead {
+): Request {
   const transition = ALL_TRANSITIONS.find(
     (t) =>
-      t.from === lead.status &&
+      t.from === request.status &&
       t.action === action &&
       t.allowedRoles.includes(actor.role),
   );
   if (!transition) {
     throw new Error(
-      `Invalid transition: ${action} from ${lead.status} for role ${actor.role}`,
+      `Invalid transition: ${action} from ${request.status} for role ${actor.role}`,
     );
   }
   if (transition.requiresNote && !note?.trim()) {
@@ -304,18 +304,18 @@ export function applyTransition(
         timestamp: new Date().toISOString(),
       };
       return {
-        ...lead,
+        ...request,
         status: bookingTransition.to,
-        statusHistory: [...lead.statusHistory, entry, bookingEntry],
+        statusHistory: [...request.statusHistory, entry, bookingEntry],
         updatedAt: bookingEntry.timestamp,
       };
     }
   }
 
   return {
-    ...lead,
+    ...request,
     status: transition.to,
-    statusHistory: [...lead.statusHistory, entry],
+    statusHistory: [...request.statusHistory, entry],
     updatedAt: entry.timestamp,
   };
 }

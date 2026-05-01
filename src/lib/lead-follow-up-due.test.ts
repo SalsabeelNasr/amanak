@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
-  computeLeadFollowUpDueAt,
+  computeRequestFollowUpDueAt,
   followUpDueInstantChanged,
 } from "@/lib/lead-follow-up-due";
 import type { Lead } from "@/types";
@@ -9,11 +9,8 @@ function minimalLead(partial: Partial<Lead>): Lead {
   return {
     id: "t",
     patientId: "p",
-    patientName: "P",
-    patientPhone: "+1",
-    patientCountry: "EG",
     treatmentSlug: "x",
-    clientType: "b2c",
+    recordType: "request",
     status: "new",
     statusHistory: [],
     documents: [],
@@ -26,7 +23,7 @@ function minimalLead(partial: Partial<Lead>): Lead {
   };
 }
 
-describe("computeLeadFollowUpDueAt", () => {
+describe("computeRequestFollowUpDueAt", () => {
   it("returns the earliest incomplete task due among candidates", () => {
     const lead = minimalLead({
       tasks: [
@@ -50,7 +47,7 @@ describe("computeLeadFollowUpDueAt", () => {
         },
       ],
     });
-    expect(computeLeadFollowUpDueAt(lead)).toBe("2030-06-01T12:00:00.000Z");
+    expect(computeRequestFollowUpDueAt(lead)).toBe("2030-06-01T12:00:00.000Z");
   });
 
   it("includes appointments and manual reminder in the minimum", () => {
@@ -59,7 +56,7 @@ describe("computeLeadFollowUpDueAt", () => {
       appointments: [
         {
           id: "ap1",
-          leadId: "t",
+          requestId: "t",
           kind: "treatment",
           startsAt: "2030-03-01T08:00:00.000Z",
           locationLabel: "Hospital",
@@ -68,7 +65,7 @@ describe("computeLeadFollowUpDueAt", () => {
       ],
       followUpDueManualAt: "2030-02-01T10:00:00.000Z",
     });
-    expect(computeLeadFollowUpDueAt(lead)).toBe("2030-02-01T10:00:00.000Z");
+    expect(computeRequestFollowUpDueAt(lead)).toBe("2030-02-01T10:00:00.000Z");
   });
 
   it("ignores completed tasks", () => {
@@ -85,7 +82,7 @@ describe("computeLeadFollowUpDueAt", () => {
         },
       ],
     });
-    expect(computeLeadFollowUpDueAt(lead)).toBeUndefined();
+    expect(computeRequestFollowUpDueAt(lead)).toBeUndefined();
   });
 });
 

@@ -1,16 +1,13 @@
 import { describe, expect, it } from "vitest";
-import { computeLeadQualificationDueAt } from "@/lib/services/lead-task-rules";
+import { computeRequestQualificationDueAt } from "@/lib/services/lead-task-rules";
 import type { Lead } from "@/types";
 
 function minimalLead(partial: Partial<Lead>): Lead {
   return {
     id: "t",
     patientId: "p",
-    patientName: "P",
-    patientPhone: "+1",
-    patientCountry: "EG",
     treatmentSlug: "x",
-    clientType: "b2c",
+    recordType: "request",
     status: "new",
     statusHistory: [],
     documents: [],
@@ -23,13 +20,13 @@ function minimalLead(partial: Partial<Lead>): Lead {
   };
 }
 
-describe("computeLeadQualificationDueAt", () => {
+describe("computeRequestQualificationDueAt", () => {
   it("uses earliest appointment start when appointments exist", () => {
     const lead = minimalLead({
       appointments: [
         {
           id: "a1",
-          leadId: "t",
+          requestId: "t",
           kind: "treatment",
           startsAt: "2031-06-15T14:00:00.000Z",
           locationLabel: "Clinic",
@@ -37,7 +34,7 @@ describe("computeLeadQualificationDueAt", () => {
         },
         {
           id: "a2",
-          leadId: "t",
+          requestId: "t",
           kind: "online_meeting",
           startsAt: "2031-06-10T09:00:00.000Z",
           meetingUrl: "https://x.test/meet",
@@ -46,7 +43,7 @@ describe("computeLeadQualificationDueAt", () => {
       ],
     });
     expect(
-      computeLeadQualificationDueAt(
+      computeRequestQualificationDueAt(
         lead,
         "2031-01-01T12:00:00.000Z",
         24,
@@ -57,7 +54,7 @@ describe("computeLeadQualificationDueAt", () => {
   it("uses SLA hours from qualification creation when no appointments", () => {
     const lead = minimalLead({});
     expect(
-      computeLeadQualificationDueAt(
+      computeRequestQualificationDueAt(
         lead,
         "2031-03-01T10:00:00.000Z",
         24,
@@ -68,7 +65,7 @@ describe("computeLeadQualificationDueAt", () => {
   it("respects custom SLA hours", () => {
     const lead = minimalLead({});
     expect(
-      computeLeadQualificationDueAt(
+      computeRequestQualificationDueAt(
         lead,
         "2031-03-01T10:00:00.000Z",
         48,

@@ -1,102 +1,123 @@
 import { getCrmSettings, updateCrmSettings } from "@/lib/api/crm-settings";
 import {
-  addLeadAppointment,
-  addLeadTask,
-  createDraftQuotation,
-  deleteLeadTask,
-  getLeadById,
-  listLeads,
-  sendDraftQuotationToPatient,
-  setLeadStatus,
-  updateLead,
-  updateLeadTask,
-  uploadLeadDocument,
-} from "@/lib/api/leads";
+  createPatient,
+  getPatientById,
+  listPatients,
+  updatePatient,
+} from "@/lib/api/patients";
 import {
-  appendLeadConversation,
-  getLeadConversations,
-} from "@/lib/api/lead-conversations";
+  addRequestAppointment,
+  addRequestTask,
+  createDraftQuotation as apiCreateDraftQuotation,
+  createRequestForPatient,
+  deleteRequestTask,
+  getRequestById,
+  listRequests,
+  sendDraftQuotationToPatient as apiSendDraftQuotationToPatient,
+  setRequestStatus,
+  updateRequest,
+  updateRequestTask,
+  uploadRequestDocument,
+} from "@/lib/api/requests";
+import {
+  appendRequestConversation,
+  getRequestConversations,
+} from "@/lib/api/request-conversations";
 import type { CrmClient } from "./client";
 
 /**
- * Mock implementation of CrmClient. Every method delegates to the existing
- * mock data layer (`src/lib/api/leads.ts`, `lead-conversations.ts`) — no
- * behavior change, just a redirect through the typed seam. The `ctx` argument
- * is currently consumed only when a method needs the actor (e.g. completing a
- * system task that triggers a pipeline transition); HTTP plumbing (`signal`)
- * is forwarded but unused until a real client lands.
+ * Mock implementation of CrmClient. Methods delegate to the in-memory mock stores.
  */
 export function createMockCrmClient(): CrmClient {
   return {
-    leads: {
+    requests: {
       list(filters, ctx) {
-        return listLeads(filters, { simulateDelay: ctx.simulateDelay });
+        return listRequests(filters, { simulateDelay: ctx.simulateDelay });
       },
       get(id, ctx) {
-        return getLeadById(id, { simulateDelay: ctx.simulateDelay });
+        return getRequestById(id, { simulateDelay: ctx.simulateDelay });
       },
       update(id, updates, ctx) {
-        return updateLead(id, updates, {
+        return updateRequest(id, updates, {
           simulateDelay: ctx.simulateDelay,
           actor: ctx.actor,
         });
       },
-      setStatus(leadId, toStatus, ctx) {
+      setStatus(requestId, toStatus, ctx) {
         if (!ctx.actor) {
           throw new Error("setStatus requires ctx.actor");
         }
         if (!ctx.note?.trim()) {
           throw new Error("setStatus requires ctx.note (override reason)");
         }
-        return setLeadStatus(leadId, toStatus, {
+        return setRequestStatus(requestId, toStatus, {
           actor: ctx.actor,
           note: ctx.note,
           simulateDelay: ctx.simulateDelay,
         });
       },
-      addTask(leadId, input, ctx) {
-        return addLeadTask(leadId, input, { simulateDelay: ctx.simulateDelay });
+      addTask(requestId, input, ctx) {
+        return addRequestTask(requestId, input, { simulateDelay: ctx.simulateDelay });
       },
-      updateTask(leadId, taskId, patch, ctx) {
-        return updateLeadTask(leadId, taskId, patch, {
+      updateTask(requestId, taskId, patch, ctx) {
+        return updateRequestTask(requestId, taskId, patch, {
           simulateDelay: ctx.simulateDelay,
           actor: ctx.actor,
           note: ctx.note,
         });
       },
-      deleteTask(leadId, taskId, ctx) {
-        return deleteLeadTask(leadId, taskId, { simulateDelay: ctx.simulateDelay });
+      deleteTask(requestId, taskId, ctx) {
+        return deleteRequestTask(requestId, taskId, { simulateDelay: ctx.simulateDelay });
       },
-      addAppointment(leadId, input, ctx) {
-        return addLeadAppointment(leadId, input, {
+      addAppointment(requestId, input, ctx) {
+        return addRequestAppointment(requestId, input, {
           simulateDelay: ctx.simulateDelay,
         });
       },
-      uploadDocument(leadId, input, ctx) {
-        return uploadLeadDocument(leadId, input, {
+      uploadDocument(requestId, input, ctx) {
+        return uploadRequestDocument(requestId, input, {
           simulateDelay: ctx.simulateDelay,
         });
       },
-      createDraftQuotation(leadId, input, ctx) {
-        return createDraftQuotation(leadId, input, {
+      createDraftQuotation(requestId, input, ctx) {
+        return apiCreateDraftQuotation(requestId, input, {
           simulateDelay: ctx.simulateDelay,
         });
       },
-      sendDraftQuotationToPatient(leadId, quotationId, ctx) {
-        return sendDraftQuotationToPatient(leadId, quotationId, {
+      sendDraftQuotationToPatient(requestId, quotationId, ctx) {
+        return apiSendDraftQuotationToPatient(requestId, quotationId, {
+          simulateDelay: ctx.simulateDelay,
+        });
+      },
+      createForPatient(patientId, input, ctx) {
+        return createRequestForPatient(patientId, input, {
           simulateDelay: ctx.simulateDelay,
         });
       },
     },
+    patients: {
+      list(filters, ctx) {
+        return listPatients(filters, { simulateDelay: ctx.simulateDelay });
+      },
+      get(id, ctx) {
+        return getPatientById(id, { simulateDelay: ctx.simulateDelay });
+      },
+      create(input, ctx) {
+        return createPatient(input, { simulateDelay: ctx.simulateDelay });
+      },
+      update(id, updates, ctx) {
+        return updatePatient(id, updates, { simulateDelay: ctx.simulateDelay });
+      },
+    },
     conversations: {
-      list(leadId, filters, ctx) {
-        return getLeadConversations(leadId, {
+      list(requestId, filters, ctx) {
+        return getRequestConversations(requestId, {
           simulateDelay: ctx.simulateDelay,
           channel: filters?.channel,
         });
       },
-      append(leadId, item, ctx) {
-        return appendLeadConversation(leadId, item, {
+      append(requestId, item, ctx) {
+        return appendRequestConversation(requestId, item, {
           simulateDelay: ctx.simulateDelay,
         });
       },

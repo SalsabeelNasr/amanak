@@ -1,4 +1,4 @@
-import type { LeadDocument, LeadTaskCreationTypeId } from "@/types";
+import type { RequestDocument, RequestTaskCreationTypeId } from "@/types";
 
 export type LeadTaskCreationFieldKind = "text" | "textarea" | "date" | "select";
 
@@ -20,11 +20,11 @@ export type LeadTaskCreationUploadSlotDef = {
   maxFiles: number | null;
   /** next-intl key under `crm.taskCreation.slots` */
   labelKey: string;
-  mapsToLeadDocumentType?: LeadDocument["type"];
+  mapsToLeadDocumentType?: RequestDocument["type"];
 };
 
 export type LeadTaskCreationTypeDef = {
-  id: LeadTaskCreationTypeId;
+  id: RequestTaskCreationTypeId;
   /** next-intl key under `crm.taskCreation.types` */
   titleMessageKey: string;
   /** next-intl key under `crm.taskCreation.types` (description in picker) */
@@ -151,11 +151,11 @@ const byId = new Map(
 );
 
 export function getLeadTaskCreationTypeDef(
-  id: LeadTaskCreationTypeId,
+  id: RequestTaskCreationTypeId,
 ): LeadTaskCreationTypeDef | undefined {
   return byId.get(id);
 }
 
-export function listLeadTaskCreationTypeIds(): LeadTaskCreationTypeId[] {
+export function listRequestTaskCreationTypeIds(): RequestTaskCreationTypeId[] {
   return LEAD_TASK_CREATION_TYPES.map((d) => d.id);
 }

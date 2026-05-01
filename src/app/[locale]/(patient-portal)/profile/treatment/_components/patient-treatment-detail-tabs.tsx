@@ -27,6 +27,7 @@ import type {
   ConsultantProfile,
   ConsultationSlot,
   Lead,
+  Patient,
   PatientPendingFollowUp,
   Quotation,
 } from "@/types";
@@ -72,6 +73,7 @@ function formatDateTime(iso: string, locale: string): string {
 
 export function PatientTreatmentDetailTabs({
   lead,
+  patient,
   nextActionPlan,
   initialTab = "overview",
   initialPaymentUpload,
@@ -79,6 +81,7 @@ export function PatientTreatmentDetailTabs({
   consultationConsultant,
 }: {
   lead: Lead;
+  patient: Patient | null;
   nextActionPlan: PatientNextActionPlan;
   initialTab?: TabId;
   initialPaymentUpload?: "downpayment" | "remaining" | null;
@@ -99,17 +102,17 @@ export function PatientTreatmentDetailTabs({
     getPendingServerSnapshot,
   );
 
-  const openPendingForLead = useMemo(
-    () => pendingFollowUps.filter((row) => row.leadId === lead.id && row.status === "open"),
+  const openPendingForRequest = useMemo(
+    () => pendingFollowUps.filter((row) => row.requestId === lead.id && row.status === "open"),
     [pendingFollowUps, lead.id],
   );
   const pendingCallbacks = useMemo(
-    () => openPendingForLead.filter((row) => row.kind === "callback"),
-    [openPendingForLead],
+    () => openPendingForRequest.filter((row) => row.kind === "callback"),
+    [openPendingForRequest],
   );
   const pendingConsultations = useMemo(
-    () => openPendingForLead.filter((row) => row.kind === "consultation"),
-    [openPendingForLead],
+    () => openPendingForRequest.filter((row) => row.kind === "consultation"),
+    [openPendingForRequest],
   );
 
   /** Accepted quote preferred; otherwise the active / latest sent quote so payment uploads show on Files. */
@@ -368,7 +371,7 @@ export function PatientTreatmentDetailTabs({
               quotations={lead.quotations}
               activeQuotationId={lead.activeQuotationId}
               treatmentSlug={lead.treatmentSlug}
-              clientType={lead.clientType}
+              clientType={patient?.clientType ?? "b2c"}
               leadId={lead.id}
               onPaymentProofUploaded={() => {
                 router.refresh();

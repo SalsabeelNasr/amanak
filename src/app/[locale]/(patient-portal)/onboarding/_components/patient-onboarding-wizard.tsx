@@ -35,7 +35,7 @@ import {
 import { inferCountryBandFromCountry } from "@/lib/infer-country-band";
 import { useSession } from "@/lib/mock-session";
 import { addPatientCareRequest, buildRequestPayloadFromOnboarding } from "@/lib/patient-care-requests";
-import { getDefaultLeadIdForPatient } from "@/lib/patient-demo";
+import { getDefaultRequestIdForPatient } from "@/lib/patient-demo";
 import { addPatientPendingFollowUp } from "@/lib/patient-pending-follow-ups";
 import { getPatientProfile, setPatientProfile } from "@/lib/patient-profile-local";
 import { buildPatientEstimateRange } from "@/lib/quotation-price-engine";
@@ -297,14 +297,14 @@ export function PatientOnboardingWizard({
       );
     }
 
-    const leadId =
+    const requestId =
       session.isAuthenticated && session.user.role === "patient"
-        ? getDefaultLeadIdForPatient(session.user.id)
+        ? getDefaultRequestIdForPatient(session.user.id)
         : undefined;
-    if (leadId) {
+    if (requestId) {
       if (path === "talk") {
         addPatientPendingFollowUp({
-          leadId,
+          requestId,
           kind: "callback",
           treatmentSlug,
           phone: phone.trim() || undefined,
@@ -313,7 +313,7 @@ export function PatientOnboardingWizard({
       }
       if (path === "book" && bookingId) {
         addPatientPendingFollowUp({
-          leadId,
+          requestId,
           kind: "consultation",
           treatmentSlug,
           bookingId,

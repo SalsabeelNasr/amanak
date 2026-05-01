@@ -95,9 +95,9 @@ export type BookConsultationPayload = {
 
 /**
  * High-level journey overview for patients and CRM (timeline, badges).
- * Not used for workflow rules — use {@link LeadStatus} and the state machine for transitions.
+ * Not used for workflow rules — use {@link RequestStatus} and the state machine for transitions.
  */
-export type LeadJourneyStage =
+export type RequestJourneyStage =
   | "request_sent"
   | "quotation_in_negotiation"
   | "booked"
@@ -106,7 +106,7 @@ export type LeadJourneyStage =
   | "completed";
 
 /** Patient journey pipeline (PM spec). `changes_requested` loops back to `quotation_sent`. */
-export type LeadStatus =
+export type RequestStatus =
   | "new"
   | "interested"
   | "estimate_requested"
@@ -120,10 +120,10 @@ export type LeadStatus =
   | "completed"
   | "lost";
 
-/** Single-table storage: marketing contact vs active lead (plan: convert on treatment selection). */
-export type LeadRecordType = "contact" | "lead";
+/** Marketing contact vs active treatment request (plan: convert on treatment selection). */
+export type RequestRecordType = "contact" | "request";
 
-export type LeadPriority = "low" | "normal" | "hot";
+export type RequestPriority = "low" | "normal" | "hot";
 
 export type ActorRole =
   | "admin"
@@ -134,16 +134,16 @@ export type ActorRole =
 
 export type StateTransition = {
   action: string;
-  from: LeadStatus;
-  to: LeadStatus;
+  from: RequestStatus;
+  to: RequestStatus;
   allowedRoles: ActorRole[];
   requiresNote?: boolean;
   label: { ar: string; en: string };
 };
 
 export type StatusHistoryEntry = {
-  from: LeadStatus;
-  to: LeadStatus;
+  from: RequestStatus;
+  to: RequestStatus;
   action: string;
   actorRole: ActorRole;
   actorId: string;
@@ -160,7 +160,7 @@ export type FollowUpDueHistoryEntry = {
   actorId: string;
 };
 
-export type LeadDocument = {
+export type RequestDocument = {
   id: string;
   type:
     | "medical_report"
@@ -183,8 +183,8 @@ export type LeadDocument = {
 export type PackageTier = "normal" | "silver" | "gold" | "vip";
 
 /**
- * Intake / provisional request payload on a lead (wizard + portal; mirrors future REST).
- * Populated from patient onboarding or manual CRM entry; UI reads `Lead.provisionalRequest`.
+ * Intake / provisional request payload (wizard + portal; mirrors future REST).
+ * Populated from patient onboarding or manual CRM entry; UI reads `Request.provisionalRequest`.
  */
 export type ProvisionalRequest = {
   accommodationTier?: PackageTier;
@@ -233,7 +233,7 @@ export type QuotationItem = {
 };
 
 /** Stable id for idempotent system task creation (usually equals `kind` for system tasks). */
-export type LeadTaskTemplateKey =
+export type RequestTaskTemplateKey =
   | "lead_qualification"
   | "await_patient_estimate"
   | "collect_documents"
@@ -247,36 +247,36 @@ export type LeadTaskTemplateKey =
   | "assign_specialist"
   | "treatment_followup";
 
-export type LeadTaskKind = LeadTaskTemplateKey | "manual";
+export type RequestTaskKind = RequestTaskTemplateKey | "manual";
 
-export type LeadTaskSource = "user" | "system";
+export type RequestTaskSource = "user" | "system";
 
-export type LeadTaskCompletedReason =
+export type RequestTaskCompletedReason =
   | "user"
   | "status_transition"
   | "quotation_sent"
-  | "lead_rejected"
+  | "request_rejected"
   /** User marked a system task complete; it triggered applyTransition. */
   | "task_drove_transition"
   /** CRM-on-behalf or patient-portal completion of an "Awaiting patient" task. */
   | "patient_action"
-  /** System task cancelled because the lead status jumped over its home status. */
+  /** System task cancelled because the request status jumped over its home status. */
   | "status_skipped";
 
-export type LeadTaskResolution =
+export type RequestTaskResolution =
   | "open"
   | "completed_manual"
   | "completed_rule"
   | "cancelled";
 
-/** User-facing task creation categories (not pipeline `LeadTaskTemplateKey`). */
-export type LeadTaskCreationTypeId =
+/** User-facing task creation categories (not pipeline `RequestTaskTemplateKey`). */
+export type RequestTaskCreationTypeId =
   | "collect_medical_files"
   | "payment_proof"
   | "internal_follow_up"
   | "custom";
 
-export type LeadTaskAttachment = {
+export type RequestTaskAttachment = {
   id: string;
   slotId: string;
   fileName: string;
@@ -285,7 +285,7 @@ export type LeadTaskAttachment = {
   mockUrl?: string;
 };
 
-export type LeadTask = {
+export type RequestTask = {
   id: string;
   title: string;
   completed: boolean;
@@ -295,50 +295,50 @@ export type LeadTask = {
   updatedAt: string;
   createdByUserId?: string;
   /** System vs checklist; default treated as `manual` / `user` when absent (legacy mocks). */
-  kind?: LeadTaskKind;
-  source?: LeadTaskSource;
+  kind?: RequestTaskKind;
+  source?: RequestTaskSource;
   /** Same as `kind` for system-generated tasks; used to avoid duplicate open tasks. */
-  templateKey?: LeadTaskTemplateKey;
-  completedReason?: LeadTaskCompletedReason;
-  resolution?: LeadTaskResolution;
+  templateKey?: RequestTaskTemplateKey;
+  completedReason?: RequestTaskCompletedReason;
+  resolution?: RequestTaskResolution;
   /** Reserved for future transition gating; mock does not enforce. */
   blocking?: boolean;
   /** CRM manual task creation flow only. */
-  creationTypeId?: LeadTaskCreationTypeId;
+  creationTypeId?: RequestTaskCreationTypeId;
   creationFields?: Record<string, string>;
-  attachments?: LeadTaskAttachment[];
+  attachments?: RequestTaskAttachment[];
   /**
    * Multi-outcome resolution for tasks like `await_patient_quote_response`.
    * Drives which transition the task triggers on completion.
    */
   completionOutcome?: "accepted" | "changes_requested";
-  /** When known (e.g. CRM completion with actor), shown on the lead timeline. */
+  /** When known (e.g. CRM completion with actor), shown on the request timeline. */
   completedByUserId?: string;
   completedByRole?: ActorRole;
 };
 
-export type LeadConversationChannel = "whatsapp" | "email" | "call" | "sms";
+export type RequestConversationChannel = "whatsapp" | "email" | "call" | "sms";
 
-export type LeadConversationDirection = "inbound" | "outbound" | "internal";
+export type RequestConversationDirection = "inbound" | "outbound" | "internal";
 
-type LeadConversationBase = {
+type RequestConversationBase = {
   id: string;
-  leadId: string;
+  requestId: string;
   occurredAt: string;
-  direction: LeadConversationDirection;
+  direction: RequestConversationDirection;
   preview?: string;
 };
 
-export type LeadConversationWhatsApp = LeadConversationBase & {
+export type RequestConversationWhatsApp = RequestConversationBase & {
   channel: "whatsapp";
   body: string;
   messageId?: string;
   attachmentHint?: string;
-  /** References {@link Quotation.id} on the same lead (outbound compose). */
+  /** References {@link Quotation.id} on the same request (outbound compose). */
   attachedQuotationIds?: string[];
 };
 
-export type LeadConversationEmail = LeadConversationBase & {
+export type RequestConversationEmail = RequestConversationBase & {
   channel: "email";
   subject: string;
   snippet?: string;
@@ -350,7 +350,7 @@ export type LeadConversationEmail = LeadConversationBase & {
   attachedQuotationIds?: string[];
 };
 
-export type LeadConversationSms = LeadConversationBase & {
+export type RequestConversationSms = RequestConversationBase & {
   channel: "sms";
   body: string;
   /** Patient phone the SMS was sent to (mock). */
@@ -359,63 +359,63 @@ export type LeadConversationSms = LeadConversationBase & {
   attachedQuotationIds?: string[];
 };
 
-export type LeadConversationCallKind = "manual_log" | "app_placed";
+export type RequestConversationCallKind = "manual_log" | "app_placed";
 
-export type LeadConversationCall = LeadConversationBase & {
+export type RequestConversationCall = RequestConversationBase & {
   channel: "call";
   /** How the call row was created: written after the fact vs placed via the app. */
-  callKind?: LeadConversationCallKind;
+  callKind?: RequestConversationCallKind;
   transcript: string;
   durationSec?: number;
   recordingUrl?: string;
   provider?: string;
 };
 
-export type LeadConversationItem =
-  | LeadConversationWhatsApp
-  | LeadConversationEmail
-  | LeadConversationSms
-  | LeadConversationCall;
+export type RequestConversationItem =
+  | RequestConversationWhatsApp
+  | RequestConversationEmail
+  | RequestConversationSms
+  | RequestConversationCall;
 
-export type LeadAppointmentKind =
+export type RequestAppointmentKind =
   | "treatment"
   | "online_meeting"
   | "team_consultation";
 
-type LeadAppointmentBase = {
+type RequestAppointmentBase = {
   id: string;
-  leadId: string;
+  requestId: string;
   startsAt: string;
   createdAt: string;
   createdByUserId?: string;
   notes?: string;
 };
 
-export type LeadTreatmentAppointment = LeadAppointmentBase & {
+export type RequestTreatmentAppointment = RequestAppointmentBase & {
   kind: "treatment";
   locationLabel: string;
 };
 
-export type LeadOnlineMeetingAppointment = LeadAppointmentBase & {
+export type RequestOnlineMeetingAppointment = RequestAppointmentBase & {
   kind: "online_meeting";
   meetingUrl: string;
   title?: string;
 };
 
-export type LeadTeamConsultationAppointment = LeadAppointmentBase & {
+export type RequestTeamConsultationAppointment = RequestAppointmentBase & {
   kind: "team_consultation";
   slotId?: string;
   linkedTaskId: string;
 };
 
-export type LeadAppointment =
-  | LeadTreatmentAppointment
-  | LeadOnlineMeetingAppointment
-  | LeadTeamConsultationAppointment;
+export type RequestAppointment =
+  | RequestTreatmentAppointment
+  | RequestOnlineMeetingAppointment
+  | RequestTeamConsultationAppointment;
 
 export type Quotation = {
   id: string;
-  leadId: string;
+  requestId: string;
   packageTier: PackageTier;
   doctorId?: string;
   hospitalId?: string;
@@ -449,33 +449,46 @@ export type Quotation = {
   version: number;
 };
 
-export type Lead = {
+/**
+ * Canonical patient identity for CRM + portal mock layer (shared store).
+ * Not every patient has portal login; CRM may create rows before registration.
+ */
+export type Patient = {
+  id: string;
+  name: string;
+  phone: string;
+  email?: string;
+  country: string;
+  age?: number;
+  clientType: "b2c" | "b2b" | "g2b";
+  hasPortalAccess: boolean;
+  createdBy: "crm" | "portal";
+  optedOutChannels?: ("email" | "sms" | "whatsapp")[];
+  notes?: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+/** One treatment request (pipeline row); identity lives on {@link Patient}. */
+export type Request = {
   id: string;
   patientId: string;
-  patientName: string;
-  patientPhone: string;
-  /** Optional; used when email channel events exist */
-  patientEmail?: string;
-  patientCountry: string;
   treatmentSlug: string;
-  clientType: "b2c" | "b2b" | "g2b";
-  /** Default `lead` for CRM list; `contact` for nurture-only rows. */
-  recordType?: LeadRecordType;
-  leadPriority?: LeadPriority;
+  /** Default `request` for CRM list; `contact` for nurture-only rows. */
+  recordType?: RequestRecordType;
+  requestPriority?: RequestPriority;
   provisionalRequest?: ProvisionalRequest;
-  /** Marketing opt-outs for automated nudges (email | sms | whatsapp). */
-  optedOutChannels?: ("email" | "sms" | "whatsapp")[];
-  status: LeadStatus;
+  status: RequestStatus;
   statusHistory: StatusHistoryEntry[];
-  /** CRM lead owner (e.g. primary CS). Task rows use {@link LeadTask.assigneeId} separately. */
+  /** CRM owner (e.g. primary CS). Task rows use {@link RequestTask.assigneeId} separately. */
   ownerId?: string;
   assignedConsultantId?: string;
-  documents: LeadDocument[];
+  documents: RequestDocument[];
   quotations: Quotation[];
   activeQuotationId?: string;
   notes?: string;
-  tasks: LeadTask[];
-  appointments: LeadAppointment[];
+  tasks: RequestTask[];
+  appointments: RequestAppointment[];
   /**
    * Soonest touchpoint among incomplete tasks with `dueAt`, all appointments’ `startsAt`,
    * and optional {@link followUpDueManualAt}.
@@ -542,7 +555,7 @@ export type PatientPendingFollowUpStatus = "open" | "contacted";
 
 export type PatientPendingFollowUp = {
   id: string;
-  leadId: string;
+  requestId: string;
   kind: PatientPendingFollowUpKind;
   status: PatientPendingFollowUpStatus;
   treatmentSlug?: string;
@@ -562,3 +575,66 @@ export type MockUser = {
 export type MockSession =
   | { isAuthenticated: true; user: MockUser }
   | { isAuthenticated: false; user: null };
+
+// ─── Legacy aliases (same shapes as Request*) — safe for gradual import migration ───
+
+/** @deprecated Use {@link Request} */
+export type Lead = Request;
+/** @deprecated Use {@link RequestStatus} */
+export type LeadStatus = RequestStatus;
+/** @deprecated Use {@link RequestJourneyStage} */
+export type LeadJourneyStage = RequestJourneyStage;
+/** @deprecated Use {@link RequestRecordType} */
+export type LeadRecordType = RequestRecordType;
+/** @deprecated Use {@link RequestPriority} */
+export type LeadPriority = RequestPriority;
+/** @deprecated Use {@link RequestDocument} */
+export type LeadDocument = RequestDocument;
+/** @deprecated Use {@link RequestTaskTemplateKey} */
+export type LeadTaskTemplateKey = RequestTaskTemplateKey;
+/** @deprecated Use {@link RequestTaskKind} */
+export type LeadTaskKind = RequestTaskKind;
+/** @deprecated Use {@link RequestTaskSource} */
+export type LeadTaskSource = RequestTaskSource;
+/** @deprecated Use {@link RequestTaskCompletedReason} */
+export type LeadTaskCompletedReason = RequestTaskCompletedReason;
+/** @deprecated Use {@link RequestTaskResolution} */
+export type LeadTaskResolution = RequestTaskResolution;
+/** @deprecated Use {@link RequestTaskCreationTypeId} */
+export type LeadTaskCreationTypeId = RequestTaskCreationTypeId;
+/** @deprecated Use {@link RequestTaskAttachment} */
+export type LeadTaskAttachment = RequestTaskAttachment;
+/** @deprecated Use {@link RequestTask} */
+export type LeadTask = RequestTask;
+/** @deprecated Use {@link RequestConversationChannel} */
+export type LeadConversationChannel = RequestConversationChannel;
+/** @deprecated Use {@link RequestConversationDirection} */
+export type LeadConversationDirection = RequestConversationDirection;
+/** @deprecated Use {@link RequestConversationWhatsApp} */
+export type LeadConversationWhatsApp = RequestConversationWhatsApp;
+/** @deprecated Use {@link RequestConversationEmail} */
+export type LeadConversationEmail = RequestConversationEmail;
+/** @deprecated Use {@link RequestConversationSms} */
+export type LeadConversationSms = RequestConversationSms;
+/** @deprecated Use {@link RequestConversationCallKind} */
+export type LeadConversationCallKind = RequestConversationCallKind;
+/** @deprecated Use {@link RequestConversationCall} */
+export type LeadConversationCall = RequestConversationCall;
+/** @deprecated Use {@link RequestConversationItem} */
+export type LeadConversationItem = RequestConversationItem;
+/** @deprecated Use {@link RequestAppointmentKind} */
+export type LeadAppointmentKind = RequestAppointmentKind;
+/** @deprecated Use {@link RequestTreatmentAppointment} */
+export type LeadTreatmentAppointment = RequestTreatmentAppointment;
+/** @deprecated Use {@link RequestOnlineMeetingAppointment} */
+export type LeadOnlineMeetingAppointment = RequestOnlineMeetingAppointment;
+/** @deprecated Use {@link RequestTeamConsultationAppointment} */
+export type LeadTeamConsultationAppointment = RequestTeamConsultationAppointment;
+/** @deprecated Use {@link RequestAppointment} */
+export type LeadAppointment = RequestAppointment;
+/** @deprecated Mirror of {@link RequestFilters} in `@/lib/api/requests` */
+export type LeadFilters = {
+  status?: RequestStatus;
+  country?: string;
+  patientId?: string;
+};

@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getStatusLabel } from "@/lib/services/state-machine.service";
 import { patientTreatmentTitle } from "@/lib/patient-treatment-label";
-import type { Lead, Quotation } from "@/types";
+import type { Lead, Patient, Quotation } from "@/types";
 import { cn } from "@/lib/utils";
 import { DocumentsSection } from "./documents-section";
 import { PatientCareRequestsPanel } from "./patient-care-requests-panel";
@@ -49,7 +49,13 @@ function statusOverviewClass(status: Lead["status"]): string {
   }
 }
 
-export function PatientProfileTabs({ lead }: { lead: Lead }) {
+export function PatientProfileTabs({
+  lead,
+  patient,
+}: {
+  lead: Lead;
+  patient: Patient | null;
+}) {
   const t = useTranslations("portal");
   const tTreatments = useTranslations("treatments");
   const locale = useLocale();
@@ -140,7 +146,9 @@ export function PatientProfileTabs({ lead }: { lead: Lead }) {
                     <dt className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
                       {t("fullName")}
                     </dt>
-                    <dd className="mt-0.5 font-semibold text-foreground">{lead.patientName}</dd>
+                    <dd className="mt-0.5 font-semibold text-foreground">
+                      {patient?.name ?? "—"}
+                    </dd>
                   </div>
                 </div>
                 <div className="flex gap-3">
@@ -149,7 +157,9 @@ export function PatientProfileTabs({ lead }: { lead: Lead }) {
                     <dt className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
                       {t("phone")}
                     </dt>
-                    <dd className="mt-0.5 font-semibold text-foreground">{lead.patientPhone}</dd>
+                    <dd className="mt-0.5 font-semibold text-foreground">
+                      {patient?.phone ?? "—"}
+                    </dd>
                   </div>
                 </div>
                 <div className="flex gap-3">
@@ -158,7 +168,9 @@ export function PatientProfileTabs({ lead }: { lead: Lead }) {
                     <dt className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
                       {t("country")}
                     </dt>
-                    <dd className="mt-0.5 font-semibold text-foreground">{lead.patientCountry}</dd>
+                    <dd className="mt-0.5 font-semibold text-foreground">
+                      {patient?.country ?? "—"}
+                    </dd>
                   </div>
                 </div>
                 <div className="flex gap-3">
@@ -182,7 +194,7 @@ export function PatientProfileTabs({ lead }: { lead: Lead }) {
                     </dt>
                     <dd className="mt-1">
                       <Badge variant="secondary" className="text-[10px] font-bold uppercase tracking-tight">
-                        {lead.clientType}
+                        {patient?.clientType ?? "—"}
                       </Badge>
                     </dd>
                   </div>
@@ -201,7 +213,7 @@ export function PatientProfileTabs({ lead }: { lead: Lead }) {
               quotations={lead.quotations}
               activeQuotationId={lead.activeQuotationId}
               treatmentSlug={lead.treatmentSlug}
-              clientType={lead.clientType}
+              clientType={patient?.clientType ?? "b2c"}
               leadId={lead.id}
             />
           </TabsContent>

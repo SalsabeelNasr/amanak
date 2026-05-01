@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { PIPELINE_MOCK_SEED } from "@/lib/api/leads-pipeline-seed";
+import { PIPELINE_MOCK_SEED } from "@/lib/api/requests-pipeline-seed";
 import {
   ORDERED_JOURNEY_STAGES,
   firstEnteredJourneyStageTimestamps,

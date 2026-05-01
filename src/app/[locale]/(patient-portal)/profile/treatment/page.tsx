@@ -6,7 +6,7 @@ import { buttonVariants } from "@/components/ui/button";
 import { crm } from "@/lib/crm/client";
 import { getServerCrmCtx } from "@/lib/crm/ctx";
 import {
-  getDefaultLeadIdForPatient,
+  getDefaultRequestIdForPatient,
   getPatientIdFromParam,
 } from "@/lib/patient-demo";
 import {
@@ -81,15 +81,19 @@ export default async function PatientTreatmentDetailsPage({
         ? rawTab
         : "overview";
   const patientId = getPatientIdFromParam(params?.patient);
-  const defaultLeadId = getDefaultLeadIdForPatient(patientId) ?? "lead_1";
+  const defaultRequestId = getDefaultRequestIdForPatient(patientId) ?? "lead_1";
 
-  let lead = await crm.leads.get(defaultLeadId, getServerCrmCtx());
+  let lead = await crm.requests.get(defaultRequestId, getServerCrmCtx());
   if (!lead && patientId) {
-    const patientLeads = await crm.leads.list({ patientId }, getServerCrmCtx());
-    lead = patientLeads[0];
+    const patientRequests = await crm.requests.list({ patientId }, getServerCrmCtx());
+    lead = patientRequests[0];
   }
   if (!lead) notFound();
-  const nextActionPlan = getPatientNextActionPlan(lead);
+
+  const patient =
+    (await crm.patients.get(lead.patientId, getServerCrmCtx())) ?? null;
+  const patientClientType = patient?.clientType ?? "b2c";
+  const nextActionPlan = getPatientNextActionPlan(lead, patientClientType);
 
   const journeyDisplay = journeyDisplayFromStatus(lead.status);
   const journeyBadgeLabel =
@@ -155,6 +159,7 @@ export default async function PatientTreatmentDetailsPage({
 
       <PatientTreatmentDetailTabs
         lead={lead}
+        patient={patient}
         nextActionPlan={nextActionPlan}
         initialTab={initialTab}
         initialPaymentUpload={initialPaymentUpload}

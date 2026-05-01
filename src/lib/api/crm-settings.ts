@@ -3,9 +3,9 @@
  */
 import type {
   ContactNudgeRule,
-  Lead,
-  LeadStatus,
-  LeadTaskTemplateKey,
+  Request,
+  RequestStatus,
+  RequestTaskTemplateKey,
   PackageTier,
 } from "@/types";
 import { applyMockDelay } from "./mock-delay";
@@ -20,7 +20,7 @@ export type QuotationTaskGates = {
   requireDocuments: boolean;
   requireInitialConsultation: boolean;
   /** System may spawn `prepare_quotation` only in these lead statuses (after other gates). */
-  allowedPrepareQuotationStatuses: LeadStatus[];
+  allowedPrepareQuotationStatuses: RequestStatus[];
 };
 
 export type CostBandRange = { min: number; mid: number; max: number };
@@ -39,7 +39,7 @@ export type QuotationTtlConfig = {
   channels: ("email" | "in_app" | "whatsapp")[];
 };
 
-export type LeadPriorityRulesConfig = {
+export type RequestPriorityRulesConfig = {
   emailAndTreatmentIsLow: boolean;
   withPhoneBumpsToNormal: boolean;
   withTravelFieldsBumpsToHot: boolean;
@@ -71,7 +71,7 @@ export type SortingRule = {
   enabled: boolean;
   label: { ar: string; en: string };
   /** For `open_matching_tasks`: which system task types must still be open (incomplete). */
-  taskTemplateKeys?: LeadTaskTemplateKey[];
+  taskTemplateKeys?: RequestTaskTemplateKey[];
   /** `any` = at least one listed type has an open task; `all` = every listed type has at least one open task. */
   taskOpenMatch?: "any" | "all";
 };
@@ -113,7 +113,7 @@ export type CrmSettings = {
   quotationRules: QuotationRulesConfig;
   costBands: CostBandsConfig;
   quotationTtl: QuotationTtlConfig;
-  leadPriority: LeadPriorityRulesConfig;
+  requestPriority: RequestPriorityRulesConfig;
   contactNurture: { rules: ContactNudgeRule[] };
   taskRules: TaskRulesLightV1;
   sortingRules: SortingRule[];
@@ -176,7 +176,7 @@ const DEFAULTS: CrmSettings = {
     warningOffsets: [7, 3, 1],
     channels: ["email", "in_app"],
   },
-  leadPriority: {
+  requestPriority: {
     emailAndTreatmentIsLow: true,
     withPhoneBumpsToNormal: true,
     withTravelFieldsBumpsToHot: true,
@@ -446,29 +446,29 @@ function deepMerge<T extends object>(base: T, patch: DeepPartial<T>): T {
 }
 
 export function isSystemTaskTemplateCompleted(
-  lead: Lead,
-  templateKey: LeadTaskTemplateKey,
+  request: Request,
+  templateKey: RequestTaskTemplateKey,
 ): boolean {
-  return lead.tasks.some((t) => t.templateKey === templateKey && t.completed);
+  return request.tasks.some((t) => t.templateKey === templateKey && t.completed);
 }
 
 /**
  * All mandatory document rows on the lead must be uploaded or verified; at least one mandatory row must exist.
  */
-export function areMandatoryDocumentsSatisfied(lead: Lead): boolean {
-  const mandatory = lead.documents.filter((d) => d.mandatory);
+export function areMandatoryDocumentsSatisfied(request: Request): boolean {
+  const mandatory = request.documents.filter((d) => d.mandatory);
   if (mandatory.length === 0) return false;
   return mandatory.every((d) => d.status === "uploaded" || d.status === "verified");
 }
 
-export function canSpawnPrepareQuotation(lead: Lead, settings: CrmSettings = getCrmSettingsSync()): boolean {
+export function canSpawnPrepareQuotation(request: Request, settings: CrmSettings = getCrmSettingsSync()): boolean {
   const g = settings.quotationTaskGates;
-  if (!g.allowedPrepareQuotationStatuses.includes(lead.status)) return false;
-  if (g.requireQualification && !isSystemTaskTemplateCompleted(lead, "lead_qualification")) {
+  if (!g.allowedPrepareQuotationStatuses.includes(request.status)) return false;
+  if (g.requireQualification && !isSystemTaskTemplateCompleted(request, "lead_qualification")) {
     return false;
   }
-  if (g.requireDocuments && !areMandatoryDocumentsSatisfied(lead)) return false;
-  if (g.requireInitialConsultation && !isSystemTaskTemplateCompleted(lead, "initial_consultation")) {
+  if (g.requireDocuments && !areMandatoryDocumentsSatisfied(request)) return false;
+  if (g.requireInitialConsultation && !isSystemTaskTemplateCompleted(request, "initial_consultation")) {
     return false;
   }
   return true;

@@ -560,3 +560,8 @@ export async function getTreatmentBySlug(
 export function getTreatmentBySlugSync(slug: string): Treatment | undefined {
   return TREATMENTS.find((t) => t.slug === slug);
 }
+
+/** Sync list for CRM / client pickers (no mock delay). */
+export function listTreatmentsSync(): Treatment[] {
+  return [...TREATMENTS].sort((a, b) => a.sortOrder - b.sortOrder);
+}

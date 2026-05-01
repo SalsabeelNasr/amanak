@@ -5,6 +5,7 @@ import { getMessages, getTranslations, setRequestLocale } from "next-intl/server
 import type { ReactNode } from "react";
 import { routing } from "@/i18n/routing";
 import { SessionProvider } from "@/lib/mock-session";
+import { AppToaster } from "@/components/app-toaster";
 
 type Props = {
   children: ReactNode;
@@ -53,7 +54,10 @@ export default async function LocaleLayout({ children, params }: Props) {
 
   return (
     <NextIntlClientProvider locale={locale} messages={messages}>
-      <SessionProvider>{children}</SessionProvider>
+      <SessionProvider>
+        {children}
+        <AppToaster />
+      </SessionProvider>
     </NextIntlClientProvider>
   );
 }

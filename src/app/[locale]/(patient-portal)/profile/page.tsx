@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import { crm } from "@/lib/crm/client";
 import { getServerCrmCtx } from "@/lib/crm/ctx";
 import {
-  getDefaultLeadIdForPatient,
+  getDefaultRequestIdForPatient,
   getPatientIdFromParam,
 } from "@/lib/patient-demo";
 import { PatientProfileTabs } from "./_components/patient-profile-tabs";
@@ -14,19 +14,22 @@ export default async function PatientProfilePage({
 }) {
   const params = searchParams ? await searchParams : undefined;
   const patientId = getPatientIdFromParam(params?.patient);
-  const defaultLeadId = getDefaultLeadIdForPatient(patientId) ?? "lead_1";
+  const defaultRequestId = getDefaultRequestIdForPatient(patientId) ?? "lead_1";
 
-  let lead = await crm.leads.get(defaultLeadId, getServerCrmCtx());
+  let lead = await crm.requests.get(defaultRequestId, getServerCrmCtx());
   if (!lead && patientId) {
-    const patientLeads = await crm.leads.list({ patientId }, getServerCrmCtx());
-    lead = patientLeads[0];
+    const patientRequests = await crm.requests.list({ patientId }, getServerCrmCtx());
+    lead = patientRequests[0];
   }
   if (!lead) notFound();
+
+  const patient =
+    (await crm.patients.get(lead.patientId, getServerCrmCtx())) ?? null;
 
   return (
     <div className="mx-auto max-w-6xl space-y-12 p-4 pb-20 sm:p-8">
       <div className="space-y-16">
-        <PatientProfileTabs lead={lead} />
+        <PatientProfileTabs lead={lead} patient={patient} />
       </div>
     </div>
   );

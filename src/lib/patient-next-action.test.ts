@@ -1,7 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { PIPELINE_MOCK_SEED } from "@/lib/api/leads-pipeline-seed";
+import { getPatientByIdSync } from "@/lib/api/patients";
+import { PIPELINE_MOCK_SEED } from "@/lib/api/requests-pipeline-seed";
 import { getPatientNextActionPlan } from "@/lib/patient-next-action";
-import type { Lead } from "@/types";
+import type { Lead, Patient } from "@/types";
 
 function leadById(id: string) {
   const lead = PIPELINE_MOCK_SEED.find((l) => l.id === id);
@@ -9,14 +10,19 @@ function leadById(id: string) {
   return lead;
 }
 
+function planFor(lead: Lead, clientTypeOverride?: Patient["clientType"]) {
+  const fromStore = getPatientByIdSync(lead.patientId)?.clientType;
+  return getPatientNextActionPlan(lead, clientTypeOverride ?? fromStore ?? "b2c");
+}
+
 describe("getPatientNextActionPlan", () => {
   it("uses link to onboarding for new leads", () => {
-    const plan = getPatientNextActionPlan(leadById("lead_2"));
+    const plan = planFor(leadById("lead_2"));
     expect(plan.task.cta).toEqual({ kind: "link", href: "/onboarding" });
   });
 
   it("uses book_call modal for interested leads", () => {
-    const plan = getPatientNextActionPlan(leadById("lead_3"));
+    const plan = planFor(leadById("lead_3"));
     expect(plan.task.cta).toEqual({ kind: "modal", modalId: "book_call" });
   });
 
@@ -35,7 +41,7 @@ describe("getPatientNextActionPlan", () => {
         },
       ],
     };
-    const plan = getPatientNextActionPlan(lead);
+    const plan = planFor(lead);
     expect(plan.task.cta).toEqual({ kind: "link", href: "/profile/treatment?tab=files" });
   });
 
@@ -46,22 +52,22 @@ describe("getPatientNextActionPlan", () => {
         d.mandatory ? { ...d, status: "uploaded" as const } : d,
       ),
     };
-    const plan = getPatientNextActionPlan(lead);
+    const plan = planFor(lead);
     expect(plan.task.cta).toEqual({ kind: "modal", modalId: "request_callback" });
   });
 
   it("uses quotes tab when a non-draft quotation exists", () => {
-    const plan = getPatientNextActionPlan(leadById("lead_1"));
+    const plan = planFor(leadById("lead_1"));
     expect(plan.task.cta).toEqual({ kind: "link", href: "/profile/treatment?tab=quotes" });
   });
 
   it("uses order_car modal at booking stage", () => {
-    const plan = getPatientNextActionPlan(leadById("lead_8"));
+    const plan = planFor(leadById("lead_8"));
     expect(plan.task.cta).toEqual({ kind: "modal", modalId: "order_car" });
   });
 
   it("uses upload_payment_downpayment at quotation_accepted for b2c when proof is missing", () => {
-    const plan = getPatientNextActionPlan(leadById("lead_7"));
+    const plan = planFor(leadById("lead_7"));
     expect(plan.task.cta).toEqual({ kind: "modal", modalId: "upload_payment_downpayment" });
   });
 
@@ -81,7 +87,7 @@ describe("getPatientNextActionPlan", () => {
         },
       ],
     };
-    const plan = getPatientNextActionPlan(lead);
+    const plan = planFor(lead);
     expect(plan.task.cta).toEqual({ kind: "modal", modalId: "upload_payment_remaining" });
   });
 
@@ -109,13 +115,13 @@ describe("getPatientNextActionPlan", () => {
         },
       ],
     };
-    const plan = getPatientNextActionPlan(lead);
+    const plan = planFor(lead);
     expect(plan.task.cta).toEqual({ kind: "modal", modalId: "report_arrival_travel" });
   });
 
   it("prioritizes down payment proof at booking for b2c over transport", () => {
-    const lead: Lead = { ...leadById("lead_8"), clientType: "b2c" };
-    const plan = getPatientNextActionPlan(lead);
+    const lead = leadById("lead_8");
+    const plan = planFor(lead, "b2c");
     expect(plan.task.cta).toEqual({ kind: "modal", modalId: "upload_payment_downpayment" });
   });
 
@@ -153,12 +159,12 @@ describe("getPatientNextActionPlan", () => {
         },
       ],
     };
-    const plan = getPatientNextActionPlan(lead);
+    const plan = planFor(lead);
     expect(plan.task.cta).toEqual({ kind: "modal", modalId: "request_callback" });
   });
 
   it("uses report_arrival_stay modal at arrived", () => {
-    const plan = getPatientNextActionPlan(leadById("lead_9"));
+    const plan = planFor(leadById("lead_9"));
     expect(plan.task.cta).toEqual({ kind: "modal", modalId: "report_arrival_stay" });
   });
 });

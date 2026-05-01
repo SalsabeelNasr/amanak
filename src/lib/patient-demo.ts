@@ -21,9 +21,14 @@ export function getPatientIdFromParam(input: string | undefined): string | undef
   return trimmed.length > 0 ? trimmed : undefined;
 }
 
-export function getDefaultLeadIdForPatient(patientId: string | undefined): string | undefined {
+export function getDefaultRequestIdForPatient(patientId: string | undefined): string | undefined {
   if (!patientId) return undefined;
   return DEFAULT_LEAD_BY_PATIENT_ID[patientId];
+}
+
+/** @deprecated Use {@link getDefaultRequestIdForPatient} */
+export function getDefaultLeadIdForPatient(patientId: string | undefined): string | undefined {
+  return getDefaultRequestIdForPatient(patientId);
 }
 
 export function listDemoPatientOptions(): DemoPatientOption[] {

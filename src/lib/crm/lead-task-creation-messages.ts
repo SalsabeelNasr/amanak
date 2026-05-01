@@ -1,4 +1,4 @@
-import type { LeadTaskCreationFailure } from "@/lib/lead-task-creation-schema";
+import type { RequestTaskCreationFailure } from "@/lib/lead-task-creation-schema";
 
 /**
  * Maps structured creation validation to `crm` namespace copy.
@@ -6,7 +6,7 @@ import type { LeadTaskCreationFailure } from "@/lib/lead-task-creation-schema";
  */
 export function formatLeadTaskCreationFailure(
   t: (key: string, values?: Record<string, string | number>) => string,
-  f: LeadTaskCreationFailure,
+  f: RequestTaskCreationFailure,
 ): string {
   switch (f.code) {
     case "invalid_base":

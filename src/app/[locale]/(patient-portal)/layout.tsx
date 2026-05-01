@@ -1,14 +1,25 @@
 "use client";
 
-import { useEffect, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { useSearchParams } from "next/navigation";
 import { Link, useRouter } from "@/i18n/navigation";
 import { listDemoPatientOptions } from "@/lib/patient-demo";
+import { listPatients } from "@/lib/api/patients";
 import { ROUTES } from "@/lib/routes";
 import { useSession } from "@/lib/mock-session";
 import { wordmarkFont } from "@/lib/wordmark-font";
 import { cn } from "@/lib/utils";
+import type { MockUser, Patient } from "@/types";
 import { PatientUserMenu } from "./_components/patient-user-menu";
+
+function patientToMockUser(p: Patient): MockUser {
+  return {
+    id: p.id,
+    name: p.name,
+    role: "patient",
+    email: p.email ?? `${p.id}@patient.demo`,
+  };
+}
 
 const LOGOUT_TO_HOME_KEY = "amanak_logout_to_home";
 
@@ -20,7 +31,21 @@ export default function PatientPortalLayout({
   const { session, login, logout } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const demoPatients = listDemoPatientOptions();
+  const [portalPatientUsers, setPortalPatientUsers] = useState<MockUser[]>(() =>
+    listDemoPatientOptions().map((o) => o.user),
+  );
+
+  useEffect(() => {
+    let cancelled = false;
+    void listPatients({ hasPortalAccess: true }, {}).then((rows) => {
+      if (cancelled || rows.length === 0) return;
+      setPortalPatientUsers(rows.map(patientToMockUser));
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   const activePatientId =
     searchParams.get("patient") ??
     (session.isAuthenticated && session.user.role === "patient" ? session.user.id : "patient_1");
@@ -49,9 +74,9 @@ export default function PatientPortalLayout({
   }
 
   function handleSwitchPatient(nextPatientId: string) {
-    const target = demoPatients.find((entry) => entry.patientId === nextPatientId);
+    const target = portalPatientUsers.find((u) => u.id === nextPatientId);
     if (!target) return;
-    router.push(`${ROUTES.patientProfile}?patient=${encodeURIComponent(target.patientId)}`);
+    router.push(`${ROUTES.patientProfile}?patient=${encodeURIComponent(target.id)}`);
   }
 
   if (!session.isAuthenticated || session.user.role !== "patient") {
@@ -77,7 +102,7 @@ export default function PatientPortalLayout({
             <PatientUserMenu
               user={session.user}
               activePatientId={activePatientId}
-              patientOptions={demoPatients.map((entry) => entry.user)}
+              patientOptions={portalPatientUsers}
               onSwitchPatient={(nextUser) => {
                 login(nextUser);
                 handleSwitchPatient(nextUser.id);

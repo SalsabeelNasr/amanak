@@ -4,7 +4,7 @@ import type { Quotation } from "@/types";
 
 const q1: Quotation = {
   id: "quote_a",
-  leadId: "lead_1",
+  requestId: "lead_1",
   packageTier: "gold",
   items: [{ label: { ar: "جراحة", en: "Surgery" }, amountUSD: 1000 }],
   totalUSD: 5000,
@@ -17,7 +17,7 @@ const q1: Quotation = {
 
 const q2: Quotation = {
   id: "quote_b",
-  leadId: "lead_1",
+  requestId: "lead_1",
   packageTier: "silver",
   items: [{ label: { ar: "فندق", en: "Hotel" }, amountUSD: 200 }],
   totalUSD: 3200,

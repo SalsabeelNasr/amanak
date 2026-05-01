@@ -1,4 +1,4 @@
-import type { Lead, PackageTier, QuotationItem } from "@/types";
+import type { Lead, PackageTier, Patient, QuotationItem } from "@/types";
 import { getTreatmentBySlugSync } from "@/lib/api/treatments";
 import type { QuotationTransportProfile } from "@/lib/api/quotation-catalog";
 import {
@@ -66,7 +66,7 @@ export type BuildQuotationPriceInput = {
   transportAirportRoundTrip?: boolean;
   /** Service area (`metro`/`coastal`/`resort`) for default accommodation nights from CRM rules. Default metro. */
   quoteAreaZone?: EstimateAreaZone;
-  clientType: Lead["clientType"];
+  clientType: Patient["clientType"];
   /** Use `routeCount` as billed vehicle legs (already adjusted for one‑way airport if applicable). */
   transport: QuotationTransportProfile;
 };

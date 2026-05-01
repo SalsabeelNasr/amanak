@@ -2,7 +2,7 @@
 
 import { useEffect, type ReactNode } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { BarChart3, LayoutDashboard, Settings, Users, Menu } from "lucide-react";
+import { BarChart3, ClipboardList, LayoutDashboard, Settings, Users, Menu } from "lucide-react";
 import { Link, usePathname, useRouter } from "@/i18n/navigation";
 import { buttonVariants } from "@/components/ui/button";
 import {
@@ -58,7 +58,8 @@ function NavItems({ closeSheet = false }: { closeSheet?: boolean }) {
   const pathname = usePathname();
 
   const items = [
-    { href: ROUTES.crmLeads, label: t("leads"), Icon: Users },
+    { href: ROUTES.crmRequests, label: t("requests"), Icon: ClipboardList },
+    { href: ROUTES.crmPatients, label: t("patients"), Icon: Users },
     { href: ROUTES.crmInsights, label: t("insights"), Icon: BarChart3 },
     { href: ROUTES.crmSettings, label: t("settingsNav"), Icon: Settings },
   ];

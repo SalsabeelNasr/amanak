@@ -11,8 +11,8 @@ alwaysApply: false
 
 ## Data access
 
-- Call sites use `crm` from `@/lib/crm/client` only — not `@/lib/api/leads` or lead-conversations directly in UI.
-- Do not change `leads.ts`, `lead-conversations.ts`, `state-machine.service.ts`, `lead-task-rules.ts`, or `src/types/index.ts` for seam refactors without an explicit request.
+- Call sites use `crm` from `@/lib/crm/client` only — not `@/lib/api/requests` or `request-conversations` directly in UI.
+- Do not change `requests.ts`, `request-conversations.ts`, `state-machine.service.ts`, `lead-task-rules.ts`, or `src/types/index.ts` for seam refactors without an explicit request.
 
 ## Shared UI
 
@@ -21,7 +21,7 @@ alwaysApply: false
 - **Status:** `StatusBadge` / `statusTableBadgeClass` / `statusOverviewBadgeClass` from `@/components/crm/status-badge`.
 - **Empty states:** `EmptyState` from `@/components/crm/empty-state`.
 - **Money (USD):** `formatUSD` / `Money` from `@/components/crm/money`.
-- **Modals:** prefer `useLeadModals` + `LeadModalsProvider` from `@/lib/crm/hooks/use-lead-modals` instead of many `useState` open flags; use `DialogShell` when focus restore on close matters.
+- **Modals:** prefer `useRequestModals` + `RequestModalsProvider` from `@/lib/crm/hooks/use-request-modals` instead of many `useState` open flags; use `DialogShell` when focus restore on close matters.
 
 ## Forms
 

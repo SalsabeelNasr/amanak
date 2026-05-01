@@ -14,6 +14,9 @@ export const ROUTES = {
   patientOnboarding: "/onboarding",
   crmSettings: "/crm/settings",
   crmInsights: "/crm/insights",
-  crmLeads: "/crm/leads",
-  crmDashboard: "/crm/leads",
+  crmRequests: "/crm/requests",
+  crmPatients: "/crm/patients",
+  /** @deprecated Use crmRequests */
+  crmLeads: "/crm/requests",
+  crmDashboard: "/crm/requests",
 } as const;

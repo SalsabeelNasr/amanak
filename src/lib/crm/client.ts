@@ -1,18 +1,21 @@
 import type { CrmSettings, DeepPartial } from "@/lib/api/crm-settings";
 import type {
-  Lead,
-  LeadConversationChannel,
-  LeadConversationItem,
-  LeadStatus,
+  Patient,
+  Request,
+  RequestConversationChannel,
+  RequestConversationItem,
+  RequestStatus,
 } from "@/types";
 import type { CrmCtx } from "./ctx";
 import type {
-  AddLeadAppointmentInput,
-  AddLeadTaskInput,
+  AddRequestAppointmentInput,
+  AddRequestTaskInput,
   CreateDraftQuotationInput,
-  LeadFilters,
-  UpdateLeadTaskPatch,
-  UploadLeadDocumentInput,
+  CreatePatientInput,
+  PatientFilters,
+  RequestFilters,
+  UpdateRequestTaskPatch,
+  UploadRequestDocumentInput,
 } from "./client.types";
 import { createMockCrmClient } from "./client.mock";
 
@@ -20,63 +23,84 @@ import { createMockCrmClient } from "./client.mock";
  * Typed surface every CRM consumer should use. The day a real backend arrives,
  * swap `createMockCrmClient()` below with `createHttpCrmClient(env.API_BASE)`
  * and every component keeps working — call sites import `crm` from this file,
- * never from `@/lib/api/leads` directly.
+ * never from `@/lib/api/requests` directly.
  */
 export interface CrmClient {
-  leads: {
-    list(filters: LeadFilters | undefined, ctx: CrmCtx): Promise<Lead[]>;
-    get(id: string, ctx: CrmCtx): Promise<Lead | undefined>;
-    update(id: string, updates: Partial<Lead>, ctx: CrmCtx): Promise<Lead>;
-    /**
-     * Direct status override (admin/cs only). Requires `ctx.actor` and `ctx.note`.
-     * Cancels open system tasks tied to the previous status and spawns the new
-     * status's tasks via `reconcileSystemTasksAfterStatusJump`.
-     */
+  requests: {
+    list(filters: RequestFilters | undefined, ctx: CrmCtx): Promise<Request[]>;
+    get(id: string, ctx: CrmCtx): Promise<Request | undefined>;
+    update(id: string, updates: Partial<Request>, ctx: CrmCtx): Promise<Request>;
     setStatus(
-      leadId: string,
-      toStatus: LeadStatus,
+      requestId: string,
+      toStatus: RequestStatus,
       ctx: CrmCtx,
-    ): Promise<Lead>;
-    addTask(leadId: string, input: AddLeadTaskInput, ctx: CrmCtx): Promise<Lead>;
+    ): Promise<Request>;
+    addTask(requestId: string, input: AddRequestTaskInput, ctx: CrmCtx): Promise<Request>;
     updateTask(
-      leadId: string,
+      requestId: string,
       taskId: string,
-      patch: UpdateLeadTaskPatch,
+      patch: UpdateRequestTaskPatch,
       ctx: CrmCtx,
-    ): Promise<Lead>;
-    deleteTask(leadId: string, taskId: string, ctx: CrmCtx): Promise<Lead>;
+    ): Promise<Request>;
+    deleteTask(requestId: string, taskId: string, ctx: CrmCtx): Promise<Request>;
     addAppointment(
-      leadId: string,
-      input: AddLeadAppointmentInput,
+      requestId: string,
+      input: AddRequestAppointmentInput,
       ctx: CrmCtx,
-    ): Promise<Lead>;
+    ): Promise<Request>;
     uploadDocument(
-      leadId: string,
-      input: UploadLeadDocumentInput,
+      requestId: string,
+      input: UploadRequestDocumentInput,
       ctx: CrmCtx,
-    ): Promise<Lead>;
+    ): Promise<Request>;
     createDraftQuotation(
-      leadId: string,
+      requestId: string,
       input: CreateDraftQuotationInput,
       ctx: CrmCtx,
-    ): Promise<Lead>;
+    ): Promise<Request>;
     sendDraftQuotationToPatient(
-      leadId: string,
+      requestId: string,
       quotationId: string,
       ctx: CrmCtx,
-    ): Promise<Lead>;
+    ): Promise<Request>;
+    /** Create a new treatment request for an existing patient (mock). */
+    createForPatient(
+      patientId: string,
+      input: { treatmentSlug: string } & Partial<
+        Omit<
+          Request,
+          | "id"
+          | "patientId"
+          | "treatmentSlug"
+          | "createdAt"
+          | "updatedAt"
+          | "statusHistory"
+          | "documents"
+          | "quotations"
+          | "tasks"
+          | "appointments"
+        >
+      >,
+      ctx: CrmCtx,
+    ): Promise<Request>;
+  };
+  patients: {
+    list(filters: PatientFilters | undefined, ctx: CrmCtx): Promise<Patient[]>;
+    get(id: string, ctx: CrmCtx): Promise<Patient | undefined>;
+    create(input: CreatePatientInput, ctx: CrmCtx): Promise<Patient>;
+    update(id: string, updates: Partial<Patient>, ctx: CrmCtx): Promise<Patient>;
   };
   conversations: {
     list(
-      leadId: string,
-      filters: { channel?: LeadConversationChannel } | undefined,
+      requestId: string,
+      filters: { channel?: RequestConversationChannel } | undefined,
       ctx: CrmCtx,
-    ): Promise<LeadConversationItem[]>;
+    ): Promise<RequestConversationItem[]>;
     append(
-      leadId: string,
-      item: LeadConversationItem,
+      requestId: string,
+      item: RequestConversationItem,
       ctx: CrmCtx,
-    ): Promise<LeadConversationItem>;
+    ): Promise<RequestConversationItem>;
   };
   settings: {
     get(ctx: CrmCtx): Promise<CrmSettings>;

@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { DocumentUploadDialog } from "@/components/leads/document-upload-dialog";
 import { useSession } from "@/lib/mock-session";
-import type { Lead, Quotation } from "@/types";
+import type { Lead, Patient, Quotation } from "@/types";
 import { cn } from "@/lib/utils";
 import { PatientQuotationDetails } from "./patient-quotation-details";
 
@@ -23,7 +23,7 @@ export function QuotationSection({
   quotations: Quotation[];
   activeQuotationId?: string;
   treatmentSlug: string;
-  clientType: Lead["clientType"];
+  clientType: Patient["clientType"];
   leadId: string;
   /** Optional: parent can refresh data after a successful upload. */
   onPaymentProofUploaded?: (lead: Lead) => void;

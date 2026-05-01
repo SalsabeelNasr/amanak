@@ -1,5 +1,5 @@
 import { z } from "zod";
-import type { LeadTaskCreationTypeId } from "@/types";
+import type { RequestTaskCreationTypeId } from "@/types";
 import {
   getLeadTaskCreationTypeDef,
   type LeadTaskCreationTypeDef,
@@ -12,14 +12,17 @@ const attachmentInputSchema = z.object({
   mockUrl: z.string().optional(),
 });
 
-export type LeadTaskCreationAttachmentInput = z.infer<
+export type RequestTaskCreationAttachmentInput = z.infer<
   typeof attachmentInputSchema
 >;
 
+/** @deprecated Use {@link RequestTaskCreationAttachmentInput} */
+export type LeadTaskCreationAttachmentInput = RequestTaskCreationAttachmentInput;
+
 const baseInputSchema = z.object({
   title: z.string(),
-  creationTypeId: z.custom<LeadTaskCreationTypeId>(
-    (v): v is LeadTaskCreationTypeId =>
+  creationTypeId: z.custom<RequestTaskCreationTypeId>(
+    (v): v is RequestTaskCreationTypeId =>
       typeof v === "string" &&
       [
         "collect_medical_files",
@@ -36,7 +39,7 @@ const baseInputSchema = z.object({
 });
 
 function countBySlot(
-  attachments: LeadTaskCreationAttachmentInput[],
+  attachments: RequestTaskCreationAttachmentInput[],
 ): Map<string, number> {
   const m = new Map<string, number>();
   for (const a of attachments) {
@@ -45,7 +48,7 @@ function countBySlot(
   return m;
 }
 
-export type LeadTaskCreationFailure =
+export type RequestTaskCreationFailure =
   | { code: "invalid_base"; zodMessage: string }
   | { code: "unknown_creation_type" }
   | { code: "title_required" }
@@ -71,8 +74,8 @@ export type LeadTaskCreationFailure =
 function validateAgainstDef(
   def: LeadTaskCreationTypeDef,
   creationFields: Record<string, string> | undefined,
-  attachments: LeadTaskCreationAttachmentInput[],
-): { ok: true } | { ok: false; failure: LeadTaskCreationFailure } {
+  attachments: RequestTaskCreationAttachmentInput[],
+): { ok: true } | { ok: false; failure: RequestTaskCreationFailure } {
   const fields = creationFields ?? {};
 
   for (const f of def.fields) {
@@ -129,11 +132,11 @@ function validateAgainstDef(
   return { ok: true };
 }
 
-export type LeadTaskCreationValidatedInput = z.infer<typeof baseInputSchema>;
+export type RequestTaskCreationValidatedInput = z.infer<typeof baseInputSchema>;
 
 /** English fallback for API errors and non-UI callers. */
 export function defaultLeadTaskCreationFailureMessage(
-  f: LeadTaskCreationFailure,
+  f: RequestTaskCreationFailure,
 ): string {
   switch (f.code) {
     case "invalid_base":
@@ -160,8 +163,8 @@ export function defaultLeadTaskCreationFailureMessage(
 export function parseLeadTaskCreationInput(
   raw: unknown,
 ):
-  | { success: true; data: LeadTaskCreationValidatedInput }
-  | { success: false; failure: LeadTaskCreationFailure } {
+  | { success: true; data: RequestTaskCreationValidatedInput }
+  | { success: false; failure: RequestTaskCreationFailure } {
   const base = baseInputSchema.safeParse(raw);
   if (!base.success) {
     return {
@@ -199,13 +202,13 @@ export function parseLeadTaskCreationInput(
  * `attachments` must include both persisted task attachments and any new uploads (as inputs).
  */
 export function validateLeadTaskCreationCompletion(
-  creationTypeId: LeadTaskCreationTypeId,
+  creationTypeId: RequestTaskCreationTypeId,
   title: string,
   creationFields: Record<string, string> | undefined,
-  attachments: LeadTaskCreationAttachmentInput[],
+  attachments: RequestTaskCreationAttachmentInput[],
 ):
   | { success: true }
-  | { success: false; failure: LeadTaskCreationFailure } {
+  | { success: false; failure: RequestTaskCreationFailure } {
   const trimmed = title.trim();
   if (!trimmed) {
     return { success: false, failure: { code: "title_required" } };

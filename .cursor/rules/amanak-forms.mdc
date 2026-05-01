@@ -1,0 +1,23 @@
+---
+description: Form save feedback — use toast for explicit saves; avoid inline success banners.
+globs:
+  - "src/**/*.tsx"
+alwaysApply: false
+---
+
+# Amanak forms — save feedback
+
+## Explicit save (Save / Submit)
+
+- On **successful** save, confirm with a **toast** (project uses **`sonner`**: `toast.success(...)` from `"sonner"`). Use `next-intl` for copy.
+- **Do not** use inline “Saved” / green success text in the form header or toolbar as the **primary** success pattern for explicit saves.
+- On **failure**, use **`toast.error`** (or `toast.warning` when appropriate) with a clear message; avoid only `console.error` for user-visible failures.
+
+## Auto-save
+
+- Auto-save may use a **non-toast** indicator (e.g. a short-lived **green check** icon or subtle status next to the section title) so users are not spammed.
+- If auto-save fails, either a **single** non-blocking toast or a small inline error near the section is acceptable; avoid duplicate toasts on every debounced retry.
+
+## Infrastructure
+
+- Mount **`<AppToaster />`** once under the locale layout (`src/app/[locale]/layout.tsx`) so toasts work app-wide.

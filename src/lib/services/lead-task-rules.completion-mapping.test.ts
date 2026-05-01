@@ -8,11 +8,8 @@ import type { Lead, LeadTask } from "@/types";
 function baseLead(overrides: Partial<Lead> & Pick<Lead, "id" | "status">): Lead {
   return {
     patientId: "p",
-    patientName: "P",
-    patientPhone: "+1",
-    patientCountry: "X",
     treatmentSlug: "t",
-    clientType: "b2c",
+    recordType: "request",
     statusHistory: [],
     documents: [],
     quotations: [],

@@ -41,8 +41,15 @@ export function listPatientPendingFollowUps(): PatientPendingFollowUp[] {
   }
 }
 
+export function listOpenPendingFollowUpsForRequest(requestId: string): PatientPendingFollowUp[] {
+  return listPatientPendingFollowUps().filter(
+    (row) => row.requestId === requestId && row.status === "open",
+  );
+}
+
+/** @deprecated Use {@link listOpenPendingFollowUpsForRequest} */
 export function listOpenPendingFollowUpsForLead(leadId: string): PatientPendingFollowUp[] {
-  return listPatientPendingFollowUps().filter((row) => row.leadId === leadId && row.status === "open");
+  return listOpenPendingFollowUpsForRequest(leadId);
 }
 
 export function notifyPatientPendingFollowUpsChanged(): void {

@@ -47,3 +47,7 @@ alwaysApply: false
 
 - Smoke e2e covers: Arabic landing → mobile drawer → inquiry mock submit; English desktop → locale switch to Arabic (`playwright` + `e2e/smoke.spec.ts`).
 - Unit/integration tests target schemas, pure helpers, and small components (`vitest`).
+
+## Forms (save feedback)
+
+- Follow **`.cursor/rules/amanak-forms.mdc`**: explicit saves confirm with **`sonner`** toasts; avoid inline “Saved” banners as the primary pattern. **`AppToaster`** is mounted in `src/app/[locale]/layout.tsx`.

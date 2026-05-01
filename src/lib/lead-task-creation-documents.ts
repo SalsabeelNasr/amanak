@@ -1,7 +1,7 @@
-import type { LeadDocument, LeadTaskAttachment, LeadTaskCreationTypeId } from "@/types";
+import type { RequestDocument, RequestTaskAttachment, RequestTaskCreationTypeId } from "@/types";
 import { getLeadTaskCreationTypeDef } from "@/lib/config/lead-task-creation-types";
 
-const FALLBACK_DOC_NAMES: Record<LeadDocument["type"], string> = {
+const FALLBACK_DOC_NAMES: Record<RequestDocument["type"], string> = {
   medical_report: "Medical report",
   xray: "Imaging",
   lab_result: "Lab results",
@@ -18,17 +18,17 @@ function newDocId(): string {
 }
 
 /**
- * Applies mapped task attachments to `lead.documents`: updates first doc of each
+ * Applies mapped task attachments to request documents: updates first doc of each
  * `mapsToLeadDocumentType` or appends a new row. Unmapped attachments are ignored.
  * When several attachments map to the same type, the last one wins for `mockUrl`.
  */
 export function mergeCreationAttachmentsIntoLeadDocuments(
-  documents: LeadDocument[],
-  creationTypeId: LeadTaskCreationTypeId,
-  attachments: LeadTaskAttachment[],
+  documents: RequestDocument[],
+  creationTypeId: RequestTaskCreationTypeId,
+  attachments: RequestTaskAttachment[],
   uploadedBy: string | undefined,
   at: string,
-): LeadDocument[] {
+): RequestDocument[] {
   const def = getLeadTaskCreationTypeDef(creationTypeId);
   if (!def) return documents;
 
@@ -40,7 +40,7 @@ export function mergeCreationAttachmentsIntoLeadDocuments(
     if (!docType) continue;
 
     const idx = next.findIndex((d) => d.type === docType);
-    const patch: Partial<LeadDocument> = {
+    const patch: Partial<RequestDocument> = {
       status: "uploaded",
       uploadedAt: at,
       uploadedBy: uploadedBy ?? "crm_user",

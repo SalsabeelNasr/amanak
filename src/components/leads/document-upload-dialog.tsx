@@ -77,7 +77,7 @@ export function DocumentUploadDialog({
     }
     setSaving(true);
     try {
-      const updated = await crm.leads.uploadDocument(
+      const updated = await crm.requests.uploadDocument(
         leadId,
         {
           type: docType,

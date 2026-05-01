@@ -12,7 +12,7 @@ import {
   getQuotationHospitalById,
   getQuotationTransportProfile,
 } from "@/lib/api/quotation-catalog";
-import type { Lead, Quotation } from "@/types";
+import type { Patient, Quotation } from "@/types";
 import { bucketPackageItemAmounts } from "@/lib/patient-quotation-package-parts";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -106,7 +106,7 @@ export function PatientQuotationDetails({
   quote: Quotation;
   quoteStatus: Quotation["status"];
   treatmentSlug: string;
-  clientType: Lead["clientType"];
+  clientType: Patient["clientType"];
   langKey: LangKey;
   locale: string;
   /** Opens the upload dialog (e.g. down payment proof); no navigation. */

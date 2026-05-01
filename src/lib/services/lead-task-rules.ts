@@ -8,12 +8,12 @@ import {
   isSystemTaskTemplateCompleted,
 } from "@/lib/api/crm-settings";
 import type {
-  Lead,
-  LeadStatus,
-  LeadTask,
-  LeadTaskCompletedReason,
-  LeadTaskResolution,
-  LeadTaskTemplateKey,
+  Request,
+  RequestStatus,
+  RequestTask,
+  RequestTaskCompletedReason,
+  RequestTaskResolution,
+  RequestTaskTemplateKey,
 } from "@/types";
 import { getStateIndex } from "@/lib/services/state-machine.service";
 
@@ -21,14 +21,17 @@ import { getStateIndex } from "@/lib/services/state-machine.service";
  * Pseudo-assignee id used by "Awaiting patient" system tasks. Not a CRM teammate
  * (`CRM_TASK_ASSIGNEE_IDS`); the UI renders a "Patient" badge for it instead.
  */
-export const LEAD_PATIENT_ASSIGNEE_ID = "patient" as const;
+export const REQUEST_PATIENT_ASSIGNEE_ID = "patient" as const;
+
+/** @deprecated Use {@link REQUEST_PATIENT_ASSIGNEE_ID} */
+export const LEAD_PATIENT_ASSIGNEE_ID = REQUEST_PATIENT_ASSIGNEE_ID;
 
 /**
  * Legacy static titles kept for seed/test modules that need deterministic labels
  * outside of React i18n context.
  */
-export const LEAD_TASK_TEMPLATE_TITLES: Record<LeadTaskTemplateKey, string> = {
-  lead_qualification: "Lead qualification — validate request and contact",
+export const REQUEST_TASK_TEMPLATE_TITLES: Record<RequestTaskTemplateKey, string> = {
+  lead_qualification: "Request qualification — validate request and contact",
   await_patient_estimate: "Awaiting patient — estimate request submission",
   collect_documents: "Collect and verify required documents",
   initial_consultation: "Initial consultation with patient / coordinator",
@@ -46,21 +49,21 @@ function newTaskId(): string {
   return `task_${globalThis.crypto.randomUUID()}`;
 }
 
-export function isSystemTask(task: LeadTask): boolean {
+export function isSystemTask(task: RequestTask): boolean {
   if (task.source === "system") return true;
   return task.templateKey !== undefined && task.kind !== "manual";
 }
 
 export function getSystemTaskTitle(
-  key: LeadTaskTemplateKey,
+  key: RequestTaskTemplateKey,
   t: (key: string) => string,
 ): string {
   return t(`taskTemplateTitles.${key}` as any);
 }
 
 export function getTransitionActionForSystemTaskCompletion(
-  lead: Lead,
-  task: LeadTask,
+  lead: Request,
+  task: RequestTask,
 ): string | null {
   if (!isSystemTask(task) || !task.templateKey) return null;
   const key = task.templateKey;
@@ -97,27 +100,27 @@ export function getTransitionActionForSystemTaskCompletion(
   }
 }
 
-function hasOpenTemplate(tasks: readonly LeadTask[], key: LeadTaskTemplateKey): boolean {
+function hasOpenTemplate(tasks: readonly RequestTask[], key: RequestTaskTemplateKey): boolean {
   return tasks.some((t) => t.templateKey === key && !t.completed);
 }
 
-function statusAtLeast(status: LeadStatus, baseline: LeadStatus): boolean {
+function statusAtLeast(status: RequestStatus, baseline: RequestStatus): boolean {
   if (status === "lost") return false;
   return getStateIndex(status) >= getStateIndex(baseline);
 }
 
-function quotationSent(lead: Lead): boolean {
+function quotationSent(lead: Request): boolean {
   return lead.quotations.some(
     (q) => q.status === "sent_to_patient" || q.status === "accepted",
   );
 }
 
 function patchTask(
-  task: LeadTask,
+  task: RequestTask,
   at: string,
-  resolution: LeadTaskResolution,
-  reason: LeadTaskCompletedReason,
-): LeadTask {
+  resolution: RequestTaskResolution,
+  reason: RequestTaskCompletedReason,
+): RequestTask {
   return {
     ...task,
     completed: true,
@@ -128,11 +131,11 @@ function patchTask(
 }
 
 function spawnTask(
-  key: LeadTaskTemplateKey,
+  key: RequestTaskTemplateKey,
   at: string,
   assigneeId?: string,
   dueAt?: string,
-): LeadTask {
+): RequestTask {
   return {
     id: newTaskId(),
     title: `system_task:${key}`,
@@ -157,8 +160,8 @@ function clampLeadQualificationSlaHours(raw: number | undefined): number {
  * Due instant for an open `lead_qualification` task: earliest appointment start if any,
  * otherwise `qualificationCreatedAt` + SLA hours.
  */
-export function computeLeadQualificationDueAt(
-  lead: Lead,
+export function computeRequestQualificationDueAt(
+  lead: Request,
   qualificationCreatedAt: string,
   slaHours: number,
 ): string {
@@ -174,17 +177,17 @@ export function computeLeadQualificationDueAt(
   return new Date(safeAnchor + hrs * 60 * 60 * 1000).toISOString();
 }
 
-function syncOpenLeadQualificationDueTasks(
-  tasks: LeadTask[],
-  lead: Lead,
+function syncOpenRequestQualificationDueTasks(
+  tasks: RequestTask[],
+  lead: Request,
   at: string,
   slaHours: number,
-): { tasks: LeadTask[]; modified: boolean } {
+): { tasks: RequestTask[]; modified: boolean } {
   let modified = false;
   const sla = clampLeadQualificationSlaHours(slaHours);
   const next = tasks.map((task) => {
     if (task.templateKey !== "lead_qualification" || task.completed) return task;
-    const nextDue = computeLeadQualificationDueAt(lead, task.createdAt, sla);
+    const nextDue = computeRequestQualificationDueAt(lead, task.createdAt, sla);
     const curMs = task.dueAt ? Date.parse(task.dueAt) : NaN;
     const nextMs = Date.parse(nextDue);
     if (curMs === nextMs) return task;
@@ -194,7 +197,7 @@ function syncOpenLeadQualificationDueTasks(
   return { tasks: modified ? next : tasks, modified };
 }
 
-export function ensureSystemTasks(lead: Lead, at: string): Lead {
+export function ensureSystemTasks(lead: Request, at: string): Request {
   const settings = getCrmSettingsSync();
   let tasks = [...lead.tasks];
   let changed = false;
@@ -203,14 +206,14 @@ export function ensureSystemTasks(lead: Lead, at: string): Lead {
   );
 
   const pushIf = (
-    key: LeadTaskTemplateKey,
+    key: RequestTaskTemplateKey,
     condition: boolean,
     assigneeId?: string,
   ) => {
     if (!condition || hasOpenTemplate(tasks, key)) return;
     const dueAt =
       key === "lead_qualification"
-        ? computeLeadQualificationDueAt(lead, at, slaHours)
+        ? computeRequestQualificationDueAt(lead, at, slaHours)
         : undefined;
     tasks.push(spawnTask(key, at, assigneeId, dueAt));
     changed = true;
@@ -243,12 +246,12 @@ export function ensureSystemTasks(lead: Lead, at: string): Lead {
     }
 
     if (st === "interested" && qualDone) {
-      pushIf("await_patient_estimate", true, LEAD_PATIENT_ASSIGNEE_ID);
+      pushIf("await_patient_estimate", true, REQUEST_PATIENT_ASSIGNEE_ID);
     }
   }
 
   if (st === "quotation_sent" && quotationSent(lead)) {
-    pushIf("await_patient_quote_response", true, LEAD_PATIENT_ASSIGNEE_ID);
+    pushIf("await_patient_quote_response", true, REQUEST_PATIENT_ASSIGNEE_ID);
   }
 
   const canPrep = canSpawnPrepareQuotation(lead, settings);
@@ -286,7 +289,7 @@ export function ensureSystemTasks(lead: Lead, at: string): Lead {
       break;
   }
 
-  const synced = syncOpenLeadQualificationDueTasks(tasks, lead, at, slaHours);
+  const synced = syncOpenRequestQualificationDueTasks(tasks, lead, at, slaHours);
   if (synced.modified) {
     tasks = synced.tasks;
     changed = true;
@@ -295,17 +298,17 @@ export function ensureSystemTasks(lead: Lead, at: string): Lead {
   return changed ? { ...lead, tasks } : lead;
 }
 
-export function resolveLeadTasksAfterLeadChange(
-  _prev: Lead,
-  next: Lead,
+export function resolveRequestTasksAfterRequestChange(
+  _prev: Request,
+  next: Request,
   at: string,
-): Lead {
+): Request {
   let tasks = next.tasks.map((t) => ({ ...t }));
 
   if (next.status === "lost") {
     tasks = tasks.map((task) => {
       if (task.completed || !isSystemTask(task)) return task;
-      return patchTask(task, at, "cancelled", "lead_rejected");
+      return patchTask(task, at, "cancelled", "request_rejected");
     });
     return { ...next, tasks };
   }
@@ -355,9 +358,9 @@ export function resolveLeadTasksAfterLeadChange(
   return { ...next, tasks };
 }
 
-export function processLeadTasks(prev: Lead, next: Lead, at: string): Lead {
+export function processRequestTasks(prev: Request, next: Request, at: string): Request {
   const ensured = ensureSystemTasks(next, at);
-  return resolveLeadTasksAfterLeadChange(prev, ensured, at);
+  return resolveRequestTasksAfterRequestChange(prev, ensured, at);
 }
 
 /**
@@ -365,7 +368,7 @@ export function processLeadTasks(prev: Lead, next: Lead, at: string): Lead {
  * legitimately be open. Used by {@link reconcileSystemTasksAfterStatusJump} to
  * cancel tasks orphaned by a direct `SET_STATUS` override (forward or backward).
  */
-export const TEMPLATE_HOME_STATUSES: Record<LeadTaskTemplateKey, LeadStatus[]> = {
+export const TEMPLATE_HOME_STATUSES: Record<RequestTaskTemplateKey, RequestStatus[]> = {
   lead_qualification: [
     "new",
     "interested",
@@ -414,10 +417,10 @@ export const TEMPLATE_HOME_STATUSES: Record<LeadTaskTemplateKey, LeadStatus[]> =
  * untouched. Previously-completed tasks are not reopened on backward skips.
  */
 export function reconcileSystemTasksAfterStatusJump(
-  prev: Lead,
-  next: Lead,
+  prev: Request,
+  next: Request,
   at: string,
-): Lead {
+): Request {
   const tasks = next.tasks.map((task) => {
     if (task.completed) return task;
     if (!isSystemTask(task) || !task.templateKey) return task;
@@ -426,14 +429,14 @@ export function reconcileSystemTasksAfterStatusJump(
     return patchTask(task, at, "cancelled", "status_skipped");
   });
 
-  const reconciled: Lead = { ...next, tasks };
+  const reconciled: Request = { ...next, tasks };
   if (next.status === "lost") {
     return reconciled;
   }
   return ensureSystemTasks(reconciled, at);
 }
 
-export function listLeadTaskTemplateKeys(): LeadTaskTemplateKey[] {
+export function listRequestTaskTemplateKeys(): RequestTaskTemplateKey[] {
   return [
     "lead_qualification",
     "await_patient_estimate",

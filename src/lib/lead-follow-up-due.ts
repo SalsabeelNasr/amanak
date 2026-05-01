@@ -2,7 +2,7 @@
  * CRM lead “follow-up due”: earliest commitment among open tasks (due dates),
  * appointments (start times), and an optional manual reminder.
  */
-import type { FollowUpDueHistoryEntry, Lead, MockUser } from "@/types";
+import type { FollowUpDueHistoryEntry, Request, MockUser } from "@/types";
 
 const DEFAULT_FOLLOW_UP_ACTOR: MockUser = {
   id: "crm_pipeline",
@@ -19,7 +19,7 @@ function instantKey(iso: string | undefined): string | null {
 }
 
 /** Earliest ISO instant among tasks (incomplete + dueAt), appointments (startsAt), manual reminder. */
-export function computeLeadFollowUpDueAt(lead: Lead): string | undefined {
+export function computeRequestFollowUpDueAt(lead: Request): string | undefined {
   const instants: number[] = [];
   for (const task of lead.tasks) {
     if (task.completed) continue;
@@ -47,20 +47,20 @@ export function followUpDueInstantChanged(
 }
 
 /**
- * Persists {@link Lead.followUpDueAt} from {@link computeLeadFollowUpDueAt} and appends
- * {@link Lead.followUpDueHistory} when the aggregated instant changes vs `prev`.
+ * Persists {@link Request.followUpDueAt} from {@link computeRequestFollowUpDueAt} and appends
+ * {@link Request.followUpDueHistory} when the aggregated instant changes vs `prev`.
  */
 export function applyFollowUpDueSync(
-  prev: Lead,
-  next: Lead,
+  prev: Request,
+  next: Request,
   ts: string,
   actor?: MockUser,
-): Lead {
-  const computed = computeLeadFollowUpDueAt(next);
-  const prevComputed = computeLeadFollowUpDueAt(prev);
+): Request {
+  const computed = computeRequestFollowUpDueAt(next);
+  const prevComputed = computeRequestFollowUpDueAt(prev);
   const resolvedActor = actor ?? DEFAULT_FOLLOW_UP_ACTOR;
 
-  const withDue: Lead = { ...next, followUpDueAt: computed };
+  const withDue: Request = { ...next, followUpDueAt: computed };
 
   if (!followUpDueInstantChanged(prevComputed, computed)) {
     return withDue;
