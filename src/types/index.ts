@@ -93,6 +93,18 @@ export type BookConsultationPayload = {
 
 // ─── Auth & portals ──────────────────────────────────────────────
 
+/**
+ * High-level journey overview for patients and CRM (timeline, badges).
+ * Not used for workflow rules — use {@link LeadStatus} and the state machine for transitions.
+ */
+export type LeadJourneyStage =
+  | "request_sent"
+  | "quotation_in_negotiation"
+  | "booked"
+  | "arrived"
+  | "in_treatment"
+  | "completed";
+
 /** Patient journey pipeline (PM spec). `changes_requested` loops back to `quotation_sent`. */
 export type LeadStatus =
   | "new"
@@ -139,6 +151,15 @@ export type StatusHistoryEntry = {
   timestamp: string;
 };
 
+/** Logged when the aggregated CRM follow-up due instant changes (tasks / appointments / manual). */
+export type FollowUpDueHistoryEntry = {
+  previousFollowUpDueAt?: string;
+  nextFollowUpDueAt?: string;
+  timestamp: string;
+  actorRole: ActorRole;
+  actorId: string;
+};
+
 export type LeadDocument = {
   id: string;
   type:
@@ -148,6 +169,8 @@ export type LeadDocument = {
     | "previous_operations"
     | "passport"
     | "visa"
+    | "payment_proof_downpayment"
+    | "payment_proof_remaining"
     | "other";
   name: string;
   mandatory: boolean;
@@ -193,6 +216,7 @@ export type QuotationItem = {
 export type LeadTaskTemplateKey =
   | "lead_qualification"
   | "collect_documents"
+  | "initial_consultation"
   | "consultant_review"
   | "prepare_quotation"
   | "send_contract"
@@ -361,10 +385,20 @@ export type Quotation = {
   packageTier: PackageTier;
   doctorId?: string;
   hospitalId?: string;
+  hotelId?: string;
   hotelName?: string;
+  /** Logistic inputs for the accommodation line item (stored with draft quotations). */
+  accommodationNights?: number;
+  accommodationGuests?: number;
+  flightOptionId?: string;
+  groundTransportSkuId?: string;
   /** BR-4.1 transport line item context (mock v1). */
   transportMode?: { ar: string; en: string };
   transportRouteCount?: number;
+  /** Planned package trips before one‑way airport adjustment (optional; see `transportAirportRoundTrip`). */
+  transportPackageTripPlan?: number;
+  /** When false, one inbound/outbound airport leg is deducted from billed ground routes for pricing. */
+  transportAirportRoundTrip?: boolean;
   items: QuotationItem[];
   totalUSD: number;
   status:
@@ -408,8 +442,80 @@ export type Lead = {
   notes?: string;
   tasks: LeadTask[];
   appointments: LeadAppointment[];
+  /**
+   * Soonest touchpoint among incomplete tasks with `dueAt`, all appointments’ `startsAt`,
+   * and optional {@link followUpDueManualAt}.
+   */
+  followUpDueAt?: string;
+  /** User-set reminder (header date picker); participates in {@link followUpDueAt}. */
+  followUpDueManualAt?: string;
+  followUpDueHistory?: FollowUpDueHistoryEntry[];
   createdAt: string;
   updatedAt: string;
+};
+
+/** Patient identity & contact saved in the browser (login + onboarding; mock until backend). */
+export type PatientProfileLocal = {
+  fullName: string;
+  phone: string;
+  email: string;
+  country: string;
+  updatedAt: string;
+};
+
+/** Browser-stored care submissions from the patient onboarding wizard (mock until backend). */
+export type PatientCareRequestPath = "estimate" | "talk" | "book";
+
+export type PatientEstimateBreakdownSnapshotLine = {
+  key: "treatment" | "flights" | "accommodation" | "transport";
+  minUSD: number;
+  maxUSD: number;
+};
+
+export type PatientEstimateSnapshot = {
+  totalMinUSD: number;
+  totalMaxUSD: number;
+  currency: "USD";
+  lines: PatientEstimateBreakdownSnapshotLine[];
+  computedAt: string;
+};
+
+export type PatientCareRequest = {
+  id: string;
+  treatmentSlug: string;
+  isB2B: boolean;
+  path: PatientCareRequestPath;
+  partySize?: "1" | "2";
+  travelerCount?: number;
+  timing?: "asap" | "one_month" | "three_months";
+  doctorId?: string;
+  hospitalId?: string;
+  includeFlights?: boolean;
+  includeAccommodation?: boolean;
+  includeTransport?: boolean;
+  estimateSnapshot?: PatientEstimateSnapshot;
+  phone?: string;
+  contactTime?: string;
+  bookingId?: string;
+  createdAt: string;
+  source: "onboarding";
+};
+
+/** Browser-stored callback / consultation follow-ups until CRM marks contacted (mock). */
+export type PatientPendingFollowUpKind = "callback" | "consultation";
+
+export type PatientPendingFollowUpStatus = "open" | "contacted";
+
+export type PatientPendingFollowUp = {
+  id: string;
+  leadId: string;
+  kind: PatientPendingFollowUpKind;
+  status: PatientPendingFollowUpStatus;
+  treatmentSlug?: string;
+  phone?: string;
+  contactTime?: string;
+  bookingId?: string;
+  createdAt: string;
 };
 
 export type MockUser = {

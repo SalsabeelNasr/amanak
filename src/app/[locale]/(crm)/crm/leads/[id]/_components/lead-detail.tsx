@@ -34,6 +34,7 @@ import {
   LEAD_DETAIL_TAB_IDS,
   type LeadConversationFilter,
   type LeadTasksSubtabFilter,
+  type LeadQuotationsTabFilter,
 } from "./lead-detail-types";
 
 function LeadDetailContent({
@@ -71,6 +72,8 @@ function LeadDetailContent({
     useState<LeadDocumentsTabFilter>("all");
   const [appointmentTabFilter, setAppointmentTabFilter] =
     useState<LeadAppointmentsTabFilter>("all");
+  const [quotationsTabFilter, setQuotationsTabFilter] =
+    useState<LeadQuotationsTabFilter>("all");
   const [conversations, setConversations] =
     useState<LeadConversationItem[]>(initialConversations);
   const [viewQuotation, setViewQuotation] = useState<Quotation | null>(null);
@@ -110,6 +113,16 @@ function LeadDetailContent({
     });
   }, [searchParams, lead.tasks, pathname, router, modals.openTaskDetail]);
 
+  useEffect(() => {
+    const tabParam = searchParams.get("tab");
+    if (!tabParam) return;
+    if (!LEAD_DETAIL_TAB_IDS.includes(tabParam as LeadDetailTabId)) return;
+    setTab(tabParam as LeadDetailTabId);
+    requestAnimationFrame(() => {
+      router.replace(pathname, { scroll: false });
+    });
+  }, [searchParams, pathname, router]);
+
   function openTaskDetail(taskId: string) {
     modals.openTaskDetail(taskId);
     setTaskActionError(null);
@@ -147,6 +160,16 @@ function LeadDetailContent({
     [lead.quotations],
   );
 
+  const filteredQuotationsForTab = useMemo(() => {
+    if (quotationsTabFilter === "all") return sortedQuotations;
+    if (quotationsTabFilter === "active") {
+      const id = lead.activeQuotationId;
+      if (!id) return [];
+      return sortedQuotations.filter((q) => q.id === id);
+    }
+    return sortedQuotations.filter((q) => q.status === quotationsTabFilter);
+  }, [sortedQuotations, lead.activeQuotationId, quotationsTabFilter]);
+
   const filteredConversations = useMemo(() => {
     if (conversationFilter === "all") return conversations;
     return conversations.filter((i) => i.channel === conversationFilter);
@@ -183,10 +206,11 @@ function LeadDetailContent({
   async function handleUpdateDueDate(date: string) {
     if (!session.isAuthenticated) return;
     try {
+      const iso = new Date(`${date}T12:00:00`).toISOString();
       const updated = await crm.leads.update(
         lead.id,
-        { updatedAt: new Date(date).toISOString() },
-        {},
+        { followUpDueManualAt: iso },
+        { actor: session.user },
       );
       setLead(updated);
       modals.close();
@@ -209,6 +233,7 @@ function LeadDetailContent({
       <LeadHeader
         lead={lead}
         locale={locale}
+        nowMs={nowMs}
         availableTransitions={availableTransitions}
         onPendingTransitionSelect={setPendingTransition}
         onUpdateOwner={handleUpdateOwner}
@@ -255,6 +280,8 @@ function LeadDetailContent({
             onOpenAddAppointment={() => appointmentsTabRef.current?.openAddModal()}
             documentsTabFilter={documentsTabFilter}
             onDocumentsFilter={setDocumentsTabFilter}
+            quotationsTabFilter={quotationsTabFilter}
+            onQuotationsFilter={setQuotationsTabFilter}
             onOpenDocumentUpload={() => documentsTabRef.current?.openUpload()}
             onOpenQuotationWizard={() => {
               setQuotationWizardKey((k) => k + 1);
@@ -302,7 +329,10 @@ function LeadDetailContent({
           expandedConversationIds={expandedConversationIds}
           onToggleConversationExpanded={toggleConversationExpanded}
           onViewQuotation={setViewQuotation}
+          isAuthenticatedForQuotations={session.isAuthenticated}
+          onApproveQuotationSuccess={() => setSuccessFlash(true)}
           sortedQuotations={sortedQuotations}
+          filteredQuotationsForTab={filteredQuotationsForTab}
           documentsTabFilter={documentsTabFilter}
           appointmentTabFilter={appointmentTabFilter}
           tasksForTasksTab={tasksForTasksTab}

@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Clock, Globe, Phone } from "lucide-react";
+import { Clock, Globe, Phone, Calendar as CalendarIcon } from "lucide-react";
 import Image from "next/image";
 import { useLocale, useTranslations } from "next-intl";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -48,12 +48,20 @@ function errorMessage(
 type Props = {
   initialSlots: ConsultationSlot[];
   consultant: ConsultantProfile;
+  /** Called after a booking is confirmed (mock / real). */
+  onBookingConfirmed?: (bookingId: string) => void;
+  compact?: boolean;
 };
 
 /** Temporarily disable consultation booking submissions */
 const CONSULTATION_BOOKING_SUBMIT_DISABLED = true;
 
-export function ConsultationBookingForm({ initialSlots, consultant }: Props) {
+export function ConsultationBookingForm({
+  initialSlots,
+  consultant,
+  onBookingConfirmed,
+  compact = false,
+}: Props) {
   const t = useTranslations("consultationBooking");
   const locale = useLocale();
   const [slots, setSlots] = useState(initialSlots);
@@ -164,6 +172,7 @@ export function ConsultationBookingForm({ initialSlots, consultant }: Props) {
     const res = await bookConsultationAction(values);
     if (res.ok) {
       setBookingId(res.id);
+      onBookingConfirmed?.(res.id);
       setSlots((prev) => prev.filter((s) => s.id !== values.slotId));
       form.reset({
         slotId: "",
@@ -199,64 +208,62 @@ export function ConsultationBookingForm({ initialSlots, consultant }: Props) {
   );
 
   return (
-    <div className="bg-muted/40 py-12 sm:py-16">
-      <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-        <div className="overflow-hidden rounded-xl border border-border bg-card shadow-sm">
-          <div className="grid xl:grid-cols-[minmax(0,16rem)_minmax(0,1fr)_minmax(0,16.5rem)]">
+    <div className={compact ? "py-0" : "py-8 sm:py-12 lg:py-16"}>
+      <div className={compact ? "w-full" : "mx-auto max-w-6xl px-4 sm:px-6 lg:px-8"}>
+        <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-lg">
+          <div className="grid grid-cols-1 lg:grid-cols-12">
             {/* Event / host column */}
-            <aside className="border-border p-6 sm:p-7 xl:border-e xl:bg-secondary/25">
-              <div className="space-y-6 text-start">
-                <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:gap-4">
+            <aside className="border-border p-6 sm:p-8 lg:col-span-3 lg:border-e lg:bg-secondary/25">
+              <div className="space-y-8 text-start">
+                <div className="flex flex-col items-start gap-4">
                   {consultant.imageSrc ? (
-                    <div className="relative size-14 shrink-0 overflow-hidden rounded-full ring-2 ring-primary/15">
+                    <div className="relative size-16 shrink-0 overflow-hidden rounded-full ring-4 ring-primary/10">
                       <Image
                         src={consultant.imageSrc}
                         alt={t(consultant.nameKey as "consultant.name")}
-                        width={56}
-                        height={56}
+                        width={64}
+                        height={64}
                         className="size-full object-cover"
                       />
                     </div>
                   ) : (
                     <div
-                      className="flex size-14 shrink-0 items-center justify-center rounded-full bg-primary/10 text-base font-semibold text-primary ring-2 ring-primary/15"
+                      className="flex size-16 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xl font-bold text-primary ring-4 ring-primary/10"
                       aria-hidden
                     >
                       {initials}
                     </div>
                   )}
-                  <div className="min-w-0 space-y-0.5">
-                    <p className="text-xs font-medium text-muted-foreground">
+                  <div className="min-w-0 space-y-1">
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
                       {t("consultant.subheading")}
                     </p>
-                    <p className="text-sm font-semibold text-foreground">
+                    <p className="text-base font-bold text-foreground">
                       {t(consultant.nameKey as "consultant.name")}
                     </p>
                   </div>
                 </div>
 
-                <div className="space-y-2">
-                  <h2 className="text-lg font-semibold tracking-tight text-foreground sm:text-xl">
+                <div className="space-y-3">
+                  <h2 className="text-xl font-bold tracking-tight text-foreground sm:text-2xl">
                     {t("title")}
                   </h2>
-                  <p className="max-w-sm text-sm leading-relaxed text-muted-foreground">
+                  <p className="text-sm leading-relaxed text-muted-foreground">
                     {t("lead")}
                   </p>
                 </div>
 
-                <ul className="flex flex-col gap-2 text-sm text-foreground">
-                  <li className="flex items-center gap-2">
-                    <Clock
-                      className="size-4 shrink-0 text-primary opacity-90"
-                      aria-hidden
-                    />
+                <ul className="flex flex-col gap-3 text-sm font-medium text-foreground">
+                  <li className="flex items-center gap-3">
+                    <div className="flex size-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                      <Clock className="size-4 shrink-0" aria-hidden />
+                    </div>
                     <span>{t("duration")}</span>
                   </li>
-                  <li className="flex items-center gap-2">
-                    <Phone
-                      className="size-4 shrink-0 text-primary opacity-90"
-                      aria-hidden
-                    />
+                  <li className="flex items-center gap-3">
+                    <div className="flex size-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                      <Phone className="size-4 shrink-0" aria-hidden />
+                    </div>
                     <span>{t("meetingFormat")}</span>
                   </li>
                 </ul>
@@ -264,8 +271,8 @@ export function ConsultationBookingForm({ initialSlots, consultant }: Props) {
             </aside>
 
             {/* Calendar column */}
-            <div className="border-border p-6 sm:p-7 xl:border-e">
-              <h2 className="mb-4 text-base font-semibold tracking-tight text-foreground sm:text-lg">
+            <div className="border-border p-6 sm:p-8 lg:col-span-5 lg:border-e">
+              <h2 className="mb-6 text-lg font-bold tracking-tight text-foreground sm:text-xl">
                 {t("selectDateTime")}
               </h2>
 
@@ -308,69 +315,70 @@ export function ConsultationBookingForm({ initialSlots, consultant }: Props) {
                     root: "w-full min-w-0",
                     months: "w-full",
                     month: "w-full gap-4",
-                    month_caption: "mb-1 h-10 px-9 sm:h-11 sm:px-10",
+                    month_caption: "mb-2 h-10 px-9 sm:h-12 sm:px-10",
                     caption_label:
-                      "text-sm font-semibold text-foreground sm:text-base",
+                      "text-base font-bold text-foreground sm:text-lg",
                     button_previous: cn(
                       buttonVariants({ variant: "outline", size: "icon" }),
-                      "size-9 shrink-0 rounded-full border-border bg-background shadow-none sm:size-10",
+                      "size-10 shrink-0 rounded-full border-border bg-background shadow-sm sm:size-11",
                     ),
                     button_next: cn(
                       buttonVariants({ variant: "outline", size: "icon" }),
-                      "size-9 shrink-0 rounded-full border-primary/25 bg-primary/5 text-primary shadow-none hover:bg-primary/10 sm:size-10",
+                      "size-10 shrink-0 rounded-full border-primary/25 bg-primary/5 text-primary shadow-sm hover:bg-primary/10 sm:size-11",
                     ),
-                    weekdays: "w-full gap-0.5",
+                    weekdays: "w-full gap-1",
                     weekday:
-                      "flex-1 text-[0.65rem] font-medium text-muted-foreground sm:text-[0.7rem]",
-                    week: "mt-2 flex w-full gap-0.5 sm:mt-2.5 sm:gap-1",
+                      "flex-1 text-[0.7rem] font-bold uppercase tracking-wider text-muted-foreground sm:text-[0.75rem]",
+                    week: "mt-3 flex w-full gap-1 sm:mt-4 sm:gap-2",
                     day: "flex-1 p-0 text-center text-sm",
                     day_button: cn(
                       buttonVariants({ variant: "ghost" }),
-                      "mx-auto size-9 rounded-full p-0 text-sm font-normal aria-selected:opacity-100 sm:size-10",
+                      "mx-auto size-10 rounded-full p-0 text-sm font-medium aria-selected:opacity-100 sm:size-11",
                     ),
                     selected:
-                      "[&_button]:rounded-full [&_button]:bg-primary [&_button]:font-medium [&_button]:text-primary-foreground [&_button]:hover:bg-primary [&_button]:hover:text-primary-foreground [&_button]:focus:bg-primary [&_button]:focus:text-primary-foreground",
-                    today: "font-medium text-primary",
+                      "[&_button]:rounded-full [&_button]:bg-primary [&_button]:font-bold [&_button]:text-primary-foreground [&_button]:hover:bg-primary [&_button]:hover:text-primary-foreground [&_button]:focus:bg-primary [&_button]:focus:text-primary-foreground [&_button]:shadow-lg [&_button]:shadow-primary/20",
+                    today: "font-bold text-primary",
                   }}
                 />
               </div>
 
-              <div className="mt-5 flex flex-wrap items-baseline gap-x-2 gap-y-1 border-t border-border pt-4 text-sm">
-                <Globe
-                  className="size-3.5 shrink-0 translate-y-0.5 text-primary opacity-90"
-                  aria-hidden
-                />
-                <span className="font-medium text-foreground">
-                  {t("timeZoneLabel")}
-                </span>
-                <span className="min-w-0 break-all text-muted-foreground">
-                  {clientTimeZone ?? "…"}
-                </span>
+              <div className="mt-8 flex flex-wrap items-center gap-x-3 gap-y-2 border-t border-border pt-6 text-sm">
+                <div className="flex size-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                  <Globe className="size-4 shrink-0" aria-hidden />
+                </div>
+                <div>
+                  <span className="font-bold text-foreground">
+                    {t("timeZoneLabel")}
+                  </span>
+                  <p className="text-xs text-muted-foreground">
+                    {clientTimeZone ?? "…"} • {t("localTimeNote")}
+                  </p>
+                </div>
               </div>
-              <p className="mt-1.5 text-xs leading-snug text-muted-foreground">
-                {t("localTimeNote")}
-              </p>
             </div>
 
             {/* Times & booking */}
-            <div className="p-6 sm:p-7">
-              <h2 className="mb-4 text-base font-semibold tracking-tight text-foreground sm:text-lg">
+            <div className="p-6 sm:p-8 lg:col-span-4">
+              <h2 className="mb-6 text-lg font-bold tracking-tight text-foreground sm:text-xl">
                 {selectedDate
                   ? formatSelectedHeading(selectedDate)
                   : t("slotsHeading")}
               </h2>
 
               {slotsForDay.length === 0 ? (
-                <p className="text-sm leading-relaxed text-muted-foreground">
-                  {t("noSlotsDay")}
-                </p>
+                <div className="flex flex-col items-center justify-center rounded-3xl bg-muted/30 py-12 text-center">
+                  <CalendarIcon className="mb-3 size-8 text-muted-foreground/40" />
+                  <p className="text-sm font-medium text-muted-foreground">
+                    {t("noSlotsDay")}
+                  </p>
+                </div>
               ) : (
                 <Controller
                   name="slotId"
                   control={form.control}
                   render={({ field }) => (
                     <div
-                      className="flex flex-col gap-1.5"
+                      className="flex flex-col gap-2.5"
                       role="listbox"
                       aria-label={t("slotsHeading")}
                     >
@@ -385,8 +393,8 @@ export function ConsultationBookingForm({ initialSlots, consultant }: Props) {
                               role="option"
                               aria-selected={false}
                               className={cn(
-                                buttonVariants({ variant: "outline", size: "sm" }),
-                                "h-10 w-full justify-center rounded-md border-primary/35 bg-background text-sm font-medium text-primary shadow-none hover:bg-primary/5",
+                                buttonVariants({ variant: "outline", size: "lg" }),
+                                "h-12 w-full justify-center rounded-2xl border-primary/20 bg-background text-sm font-bold text-primary shadow-sm hover:border-primary hover:bg-primary hover:text-white transition-all",
                               )}
                               onClick={() => {
                                 field.onChange(s.id);
@@ -400,18 +408,18 @@ export function ConsultationBookingForm({ initialSlots, consultant }: Props) {
                         return (
                           <div
                             key={s.id}
-                            className="flex w-full overflow-hidden rounded-md border border-primary shadow-none"
+                            className="flex w-full overflow-hidden rounded-2xl border-2 border-primary shadow-md animate-in fade-in zoom-in-95 duration-200"
                             role="option"
                             aria-selected
                           >
-                            <span className="flex min-h-10 flex-1 items-center justify-center bg-muted px-3 text-sm font-medium text-foreground">
+                            <span className="flex min-h-12 flex-1 items-center justify-center bg-muted/50 px-3 text-sm font-bold text-foreground">
                               {label}
                             </span>
                             <button
                               type="button"
                               className={cn(
-                                buttonVariants({ variant: "default", size: "sm" }),
-                                "h-10 shrink-0 rounded-none px-4 text-sm font-semibold shadow-none sm:min-w-[5.75rem]",
+                                buttonVariants({ variant: "default", size: "lg" }),
+                                "h-12 shrink-0 rounded-none px-6 text-sm font-bold shadow-none",
                               )}
                               onClick={openDetails}
                             >
@@ -426,7 +434,7 @@ export function ConsultationBookingForm({ initialSlots, consultant }: Props) {
               )}
 
               {form.formState.errors.slotId?.message && (
-                <p className="mt-2 text-xs text-destructive sm:text-sm" role="alert">
+                <p className="mt-4 text-xs font-medium text-destructive sm:text-sm" role="alert">
                   {errorMessage(t, form.formState.errors.slotId.message)}
                 </p>
               )}
@@ -434,28 +442,32 @@ export function ConsultationBookingForm({ initialSlots, consultant }: Props) {
               <div
                 ref={detailsRef}
                 className={cn(
-                  "mt-6 space-y-3 border-t border-border pt-6 text-start transition-opacity duration-200",
+                  "mt-8 space-y-4 border-t border-border pt-8 text-start transition-all duration-300",
                   contactStep === "details"
-                    ? "opacity-100"
-                    : "pointer-events-none opacity-40",
+                    ? "opacity-100 translate-y-0"
+                    : "pointer-events-none opacity-20 translate-y-4",
                 )}
               >
-                <h3 className="text-xs font-semibold text-muted-foreground sm:text-sm">
-                  {t("detailsHeading")}
-                </h3>
+                <div className="flex items-center gap-2">
+                  <div className="size-1.5 rounded-full bg-primary" />
+                  <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
+                    {t("detailsHeading")}
+                  </h3>
+                </div>
 
-                <form onSubmit={onSubmit} className="space-y-3">
-                  <div className="space-y-1.5">
-                    <Label htmlFor="cb-fullName">{t("fields.fullName")}</Label>
+                <form onSubmit={onSubmit} className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="cb-fullName" className="font-semibold">{t("fields.fullName")}</Label>
                     <Input
                       id="cb-fullName"
                       autoComplete="name"
+                      className="h-11 rounded-xl border-2 focus-visible:ring-primary"
                       disabled={contactStep !== "details"}
                       {...form.register("fullName")}
                       aria-invalid={!!form.formState.errors.fullName}
                     />
                     {form.formState.errors.fullName?.message && (
-                      <p className="text-xs text-destructive sm:text-sm" role="alert">
+                      <p className="text-xs font-medium text-destructive" role="alert">
                         {errorMessage(
                           t,
                           form.formState.errors.fullName.message,
@@ -463,56 +475,58 @@ export function ConsultationBookingForm({ initialSlots, consultant }: Props) {
                       </p>
                     )}
                   </div>
-                  <div className="space-y-1.5">
-                    <Label htmlFor="cb-email">{t("fields.email")}</Label>
+                  <div className="space-y-2">
+                    <Label htmlFor="cb-email" className="font-semibold">{t("fields.email")}</Label>
                     <Input
                       id="cb-email"
                       type="email"
                       autoComplete="email"
+                      className="h-11 rounded-xl border-2 focus-visible:ring-primary"
                       disabled={contactStep !== "details"}
                       {...form.register("email")}
                       aria-invalid={!!form.formState.errors.email}
                     />
                     {form.formState.errors.email?.message && (
-                      <p className="text-xs text-destructive sm:text-sm" role="alert">
+                      <p className="text-xs font-medium text-destructive" role="alert">
                         {errorMessage(t, form.formState.errors.email.message)}
                       </p>
                     )}
                   </div>
-                  <div className="space-y-1.5">
-                    <Label htmlFor="cb-phone">{t("fields.phone")}</Label>
+                  <div className="space-y-2">
+                    <Label htmlFor="cb-phone" className="font-semibold">{t("fields.phone")}</Label>
                     <Input
                       id="cb-phone"
                       type="tel"
                       autoComplete="tel"
                       dir="ltr"
+                      className="h-11 rounded-xl border-2 focus-visible:ring-primary"
                       disabled={contactStep !== "details"}
                       {...form.register("phone")}
                       aria-invalid={!!form.formState.errors.phone}
                     />
                     {form.formState.errors.phone?.message && (
-                      <p className="text-xs text-destructive sm:text-sm" role="alert">
+                      <p className="text-xs font-medium text-destructive" role="alert">
                         {errorMessage(t, form.formState.errors.phone.message)}
                       </p>
                     )}
                   </div>
 
                   {form.formState.errors.root?.message === "slotUnavailable" && (
-                    <p className="text-xs text-destructive sm:text-sm" role="alert">
+                    <p className="text-xs font-medium text-destructive" role="alert">
                       {t("errors.slotUnavailable")}
                     </p>
                   )}
 
                   {bookingId && (
-                    <p className="text-sm leading-snug text-primary" role="status">
+                    <div className="rounded-xl bg-primary/10 p-4 text-sm font-bold text-primary animate-in fade-in slide-in-from-top-2" role="status">
                       {t("success", { id: bookingId })}
-                    </p>
+                    </div>
                   )}
 
                   <Button
                     type="submit"
-                    size="default"
-                    className="mt-1 h-10 w-full rounded-md px-6 text-sm font-semibold sm:w-auto"
+                    size="lg"
+                    className="h-12 w-full rounded-full text-sm font-bold shadow-lg shadow-primary/20 transition-all hover:shadow-xl"
                     disabled={
                       form.formState.isSubmitting ||
                       contactStep !== "details" ||
@@ -520,7 +534,7 @@ export function ConsultationBookingForm({ initialSlots, consultant }: Props) {
                     }
                     data-testid="consultation-book-submit"
                   >
-                    {t("submit")}
+                    {form.formState.isSubmitting ? "Booking..." : t("submit")}
                   </Button>
                 </form>
               </div>

@@ -447,9 +447,6 @@ export function LeadCommunicateDialog({
             {attachedQuotationIds.map((id) => {
               const q = quotations.find((x) => x.id === id);
               if (!q) return null;
-              const tierLabel = t(
-                `leadQuotation.tiers.${q.packageTier}` as Parameters<typeof t>[0],
-              );
               return (
                 <div
                   key={id}
@@ -462,7 +459,7 @@ export function LeadCommunicateDialog({
                     className="h-8 rounded-md px-2.5 text-xs font-semibold"
                     onClick={() => onRequestViewQuotation(q)}
                   >
-                    {tierLabel} · v{q.version}
+                    {t("quotesTabHeading")}, v{q.version}
                   </Button>
                   <Button
                     type="button"
@@ -505,9 +502,6 @@ export function LeadCommunicateDialog({
                 </li>
               ) : (
                 attachMatches.map((q) => {
-                  const tierLabel = t(
-                    `leadQuotation.tiers.${q.packageTier}` as Parameters<typeof t>[0],
-                  );
                   return (
                     <li key={q.id} role="option" aria-selected={false}>
                       <button
@@ -520,7 +514,7 @@ export function LeadCommunicateDialog({
                         }}
                       >
                         <span className="min-w-0 truncate">
-                          {tierLabel} · v{q.version}
+                          {t("quotesTabHeading")}, v{q.version}
                         </span>
                         <span className="shrink-0 tabular-nums text-muted-foreground">
                           ${q.totalUSD.toLocaleString()}

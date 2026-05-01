@@ -8,6 +8,8 @@ const FALLBACK_DOC_NAMES: Record<LeadDocument["type"], string> = {
   previous_operations: "Previous operations",
   passport: "Passport",
   visa: "Visa",
+  payment_proof_downpayment: "Down payment proof",
+  payment_proof_remaining: "Remaining balance proof",
   other: "Attachment",
 };
 

@@ -37,8 +37,10 @@ alwaysApply: false
 
 - **Do** compose marketing sections as small server components plus minimal client islands (header, forms, Sheet).
 - **Do** use `next/image` with meaningful `sizes` and `priority` only for above-the-fold LCP candidates.
+- **Do** document product/process/prototype caveats in `README.md` (after checking and updating contradictory notes there), not as explanatory/disclaimer sentences in UI copy.
 - **Don’t** add a second ad-hoc blue palette in components; extend `globals.css` / Tailwind theme if a new semantic is needed.
 - **Don’t** hardcode `/ar/...` or locale-less internal paths in JSX; use `Link` + pathnames without locale prefix OR `ROUTES.*`.
+- **Don’t** add UI copy that explains this is a prototype, “overview only,” or internal team workflow notes.
 
 ## Testing expectations (UI)
 

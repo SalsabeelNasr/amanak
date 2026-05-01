@@ -25,6 +25,8 @@ import { Clock, ChevronDown, UserPlus } from "lucide-react";
 type LeadHeaderProps = {
   lead: Lead;
   locale: string;
+  /** Align overdue checks with task rows (`leadTaskDueBadge`). */
+  nowMs: number;
   availableTransitions: StateTransition[];
   onPendingTransitionSelect: (tr: StateTransition) => void;
   onUpdateOwner: (ownerId: string) => void | Promise<void>;
@@ -34,6 +36,7 @@ type LeadHeaderProps = {
 export function LeadHeader({
   lead,
   locale,
+  nowMs,
   availableTransitions,
   onPendingTransitionSelect,
   onUpdateOwner,
@@ -42,6 +45,13 @@ export function LeadHeader({
   const t = useTranslations("crm");
   const langKey = useLangKey();
   const modals = useLeadModals();
+
+  const overdueTaskCount = lead.tasks.filter(
+    (tk) =>
+      !tk.completed &&
+      tk.dueAt &&
+      new Date(tk.dueAt).getTime() < nowMs,
+  ).length;
 
   return (
     <div className="flex flex-col gap-4 rounded-xl border border-border bg-card p-4 shadow-sm ring-1 ring-black/5 sm:p-5">
@@ -99,6 +109,18 @@ export function LeadHeader({
                 </DialogBody>
               </DialogContent>
             </Dialog>
+            {overdueTaskCount > 0 ? (
+              <Badge
+                variant="outline"
+                className={cn(
+                  "inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium shadow-none",
+                  "border-destructive/40 bg-destructive/10 text-destructive ring-1 ring-destructive/15",
+                )}
+              >
+                <Clock className="size-3 shrink-0 opacity-90" aria-hidden />
+                {t("leadHeaderOverdueBadge", { count: overdueTaskCount })}
+              </Badge>
+            ) : null}
           </div>
         </div>
 
@@ -159,7 +181,11 @@ export function LeadHeader({
             >
               <Clock className="size-3.5 text-muted-foreground" />
               <span className="text-muted-foreground">{t("dueDate")}:</span>
-              <span className="text-foreground">{formatDueDate(lead.updatedAt, locale)}</span>
+              <span className="text-foreground">
+                {lead.followUpDueAt
+                  ? formatDueDate(lead.followUpDueAt, locale)
+                  : t("taskDueNone")}
+              </span>
               <ChevronDown className="size-3 opacity-40" />
             </Button>
             <DialogContent

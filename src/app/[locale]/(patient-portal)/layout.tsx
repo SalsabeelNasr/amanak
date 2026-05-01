@@ -1,14 +1,14 @@
 "use client";
 
 import { useEffect, type ReactNode } from "react";
-import { useTranslations } from "next-intl";
+import { useSearchParams } from "next/navigation";
 import { Link, useRouter } from "@/i18n/navigation";
-import { Button } from "@/components/ui/button";
-import { LocaleSwitcher } from "@/components/locale-switcher";
+import { listDemoPatientOptions } from "@/lib/patient-demo";
 import { ROUTES } from "@/lib/routes";
 import { useSession } from "@/lib/mock-session";
 import { wordmarkFont } from "@/lib/wordmark-font";
 import { cn } from "@/lib/utils";
+import { PatientUserMenu } from "./_components/patient-user-menu";
 
 const LOGOUT_TO_HOME_KEY = "amanak_logout_to_home";
 
@@ -17,10 +17,13 @@ export default function PatientPortalLayout({
 }: {
   children: ReactNode;
 }) {
-  const { session, logout } = useSession();
+  const { session, login, logout } = useSession();
   const router = useRouter();
-  const t = useTranslations("auth");
-  const tPortal = useTranslations("portal");
+  const searchParams = useSearchParams();
+  const demoPatients = listDemoPatientOptions();
+  const activePatientId =
+    searchParams.get("patient") ??
+    (session.isAuthenticated && session.user.role === "patient" ? session.user.id : "patient_1");
 
   useEffect(() => {
     if (session.isAuthenticated && session.user.role === "patient") return;
@@ -45,6 +48,12 @@ export default function PatientPortalLayout({
     router.replace("/");
   }
 
+  function handleSwitchPatient(nextPatientId: string) {
+    const target = demoPatients.find((entry) => entry.patientId === nextPatientId);
+    if (!target) return;
+    router.push(`${ROUTES.patientProfile}?patient=${encodeURIComponent(target.patientId)}`);
+  }
+
   if (!session.isAuthenticated || session.user.role !== "patient") {
     return null;
   }
@@ -52,9 +61,9 @@ export default function PatientPortalLayout({
   return (
     <div className="flex min-h-screen flex-col bg-background" data-amanak-app-ui>
       <header className="sticky top-0 z-40 border-b border-border/80 bg-card/90 backdrop-blur supports-backdrop-filter:bg-card/80">
-        <div className="mx-auto flex min-h-14 max-w-6xl items-center gap-3 px-4 sm:px-6">
+        <div className="mx-auto flex min-h-14 w-full max-w-screen-2xl items-center gap-3 px-4 [direction:ltr] sm:px-6 lg:px-10">
           <Link
-            href={ROUTES.patientProfile}
+            href={`${ROUTES.patientProfile}?patient=${encodeURIComponent(activePatientId)}`}
             data-amanak-wordmark
             className={cn(
               wordmarkFont.variable,
@@ -64,23 +73,17 @@ export default function PatientPortalLayout({
           >
             Amanak
           </Link>
-          <div className="ms-auto flex items-center gap-3">
-            <Link
-              href={ROUTES.patientOnboarding}
-              className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-              prefetch={false}
-            >
-              {tPortal("onboardingTitle")}
-            </Link>
-            <LocaleSwitcher />
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              onClick={handleLogout}
-            >
-              {t("logout")}
-            </Button>
+          <div className="ml-auto flex items-center gap-3">
+            <PatientUserMenu
+              user={session.user}
+              activePatientId={activePatientId}
+              patientOptions={demoPatients.map((entry) => entry.user)}
+              onSwitchPatient={(nextUser) => {
+                login(nextUser);
+                handleSwitchPatient(nextUser.id);
+              }}
+              onLogout={handleLogout}
+            />
           </div>
         </div>
       </header>

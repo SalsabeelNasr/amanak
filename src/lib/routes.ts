@@ -10,9 +10,10 @@ export const ROUTES = {
   login: "/login",
   backofficeLogin: "/backoffice-login",
   patientProfile: "/profile",
+  patientTreatmentDetails: "/profile/treatment",
   patientOnboarding: "/onboarding",
-  crmDashboard: "/crm/dashboard",
-  crmQuotationCreation: "/crm/quotation-creation",
+  crmSettings: "/crm/settings",
   crmInsights: "/crm/insights",
   crmLeads: "/crm/leads",
+  crmDashboard: "/crm/leads",
 } as const;

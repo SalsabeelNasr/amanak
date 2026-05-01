@@ -149,12 +149,7 @@ export function LeadConversationItemView({
                       className="h-8 rounded-lg px-3 text-xs font-semibold"
                       onClick={() => onViewQuotation(q)}
                     >
-                      {t(
-                        `leadQuotation.tiers.${q.packageTier}` as Parameters<
-                          typeof t
-                        >[0],
-                      )}{" "}
-                      · v{q.version}
+                      {t("quotesTabHeading")}, v{q.version}
                     </Button>
                   ) : (
                     <span

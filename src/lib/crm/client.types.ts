@@ -23,8 +23,6 @@ export type {
   GetLeadConversationsOptions,
 } from "@/lib/api/lead-conversations";
 
-export type { CrmTodayDigest } from "@/lib/crm-today-digest";
-
 export {
   CRM_TASK_ASSIGNEE_IDS,
   LEAD_DOCUMENT_TYPE_ORDER,

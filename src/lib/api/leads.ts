@@ -29,10 +29,17 @@ import {
   parseLeadTaskCreationInput,
   validateLeadTaskCreationCompletion,
 } from "@/lib/lead-task-creation-schema";
-import { buildCrmTodayDigest } from "@/lib/crm-today-digest";
-import type { CrmTodayDigest } from "@/lib/crm-today-digest";
+import { applyFollowUpDueSync } from "@/lib/lead-follow-up-due";
 import { applyMockDelay } from "./mock-delay";
 import { PIPELINE_MOCK_SEED } from "./leads-pipeline-seed";
+
+/** Used for CRM API actions that apply the formal pipeline transitions. */
+const CRM_AUTOMATION_ACTOR: MockUser = {
+  id: "crm_pipeline",
+  name: "CRM",
+  role: "admin",
+  email: "crm@amanak.internal",
+};
 
 export {
   ensureSystemTasks,
@@ -140,14 +147,21 @@ const SEED: Lead[] = PIPELINE_MOCK_SEED;
 
 const STORE = new Map<string, Lead>();
 
-function persistProcessedLead(prev: Lead, next: Lead, at: string): Lead {
+function persistProcessedLead(
+  prev: Lead,
+  next: Lead,
+  at: string,
+  opts?: { followUpActor?: MockUser },
+): Lead {
   const processed = processLeadTasks(prev, { ...next, updatedAt: at }, at);
-  STORE.set(processed.id, processed);
-  return processed;
+  const synced = applyFollowUpDueSync(prev, processed, at, opts?.followUpActor);
+  STORE.set(synced.id, synced);
+  return synced;
 }
 
 for (const l of SEED) {
-  STORE.set(l.id, processLeadTasks(l, l, l.updatedAt));
+  const at = l.updatedAt;
+  persistProcessedLead(l, { ...l, updatedAt: at }, at);
 }
 
 export type LeadFilters = {
@@ -155,15 +169,6 @@ export type LeadFilters = {
   country?: string;
   patientId?: string;
 };
-
-export async function getCrmTodayDigest(options?: {
-  simulateDelay?: boolean;
-}): Promise<CrmTodayDigest> {
-  await applyMockDelay(options?.simulateDelay);
-  return buildCrmTodayDigest(Array.from(STORE.values()), {
-    memberOrder: CRM_TASK_ASSIGNEE_IDS,
-  });
-}
 
 export async function listLeads(
   filters?: LeadFilters,
@@ -353,6 +358,8 @@ export const LEAD_DOCUMENT_TYPE_ORDER: LeadDocument["type"][] = [
   "previous_operations",
   "passport",
   "visa",
+  "payment_proof_downpayment",
+  "payment_proof_remaining",
   "other",
 ];
 
@@ -366,6 +373,8 @@ const DOCUMENT_TYPE_DEFAULTS: Record<
   previous_operations: { mandatory: false },
   passport: { mandatory: true },
   visa: { mandatory: false },
+  payment_proof_downpayment: { mandatory: false },
+  payment_proof_remaining: { mandatory: false },
   other: { mandatory: false },
 };
 
@@ -758,9 +767,16 @@ export type CreateDraftQuotationInput = {
   packageTier: PackageTier;
   doctorId?: string;
   hospitalId?: string;
+  hotelId?: string;
   hotelName?: string;
+  accommodationNights?: number;
+  accommodationGuests?: number;
+  flightOptionId?: string;
+  groundTransportSkuId?: string;
   transportMode: { ar: string; en: string };
   transportRouteCount: number;
+  transportPackageTripPlan?: number;
+  transportAirportRoundTrip?: boolean;
   items: QuotationItem[];
   totalUSD: number;
   downpaymentRequired: boolean;
@@ -792,9 +808,16 @@ export async function createDraftQuotation(
     packageTier: input.packageTier,
     doctorId: input.doctorId,
     hospitalId: input.hospitalId,
+    hotelId: input.hotelId,
     hotelName: input.hotelName,
+    accommodationNights: input.accommodationNights,
+    accommodationGuests: input.accommodationGuests,
+    flightOptionId: input.flightOptionId,
+    groundTransportSkuId: input.groundTransportSkuId,
     transportMode: input.transportMode,
     transportRouteCount: input.transportRouteCount,
+    transportPackageTripPlan: input.transportPackageTripPlan,
+    transportAirportRoundTrip: input.transportAirportRoundTrip,
     items: input.items,
     totalUSD: input.totalUSD,
     status: "draft",
@@ -814,6 +837,43 @@ export async function createDraftQuotation(
 }
 
 /**
+ * Sets a draft quotation’s status to `sent_to_patient` after CRM approval.
+ */
+export async function sendDraftQuotationToPatient(
+  leadId: string,
+  quotationId: string,
+  options?: { simulateDelay?: boolean },
+): Promise<Lead> {
+  await applyMockDelay(options?.simulateDelay);
+  const existing = STORE.get(leadId);
+  if (!existing) {
+    throw new Error(`Lead ${leadId} not found`);
+  }
+  const idx = existing.quotations.findIndex((q) => q.id === quotationId);
+  if (idx < 0) {
+    throw new Error(`Quotation ${quotationId} not found on lead ${leadId}`);
+  }
+  const q = existing.quotations[idx];
+  if (q.status !== "draft") {
+    throw new Error("Only quotations in draft status can be sent for approval.");
+  }
+  const at = new Date().toISOString();
+  const quotations = [...existing.quotations];
+  quotations[idx] = { ...q, status: "sent_to_patient" };
+  let next: Lead = {
+    ...existing,
+    quotations,
+    updatedAt: at,
+  };
+  if (existing.status === "estimate_reviewed") {
+    next = applyTransition(next, "DELIVER_QUOTATION", CRM_AUTOMATION_ACTOR);
+  } else if (existing.status === "changes_requested") {
+    next = applyTransition(next, "DELIVER_QUOTATION_REVISION", CRM_AUTOMATION_ACTOR);
+  }
+  return persistProcessedLead(existing, next, next.updatedAt);
+}
+
+/**
  * Shallow-merges `updates` into the lead. For nested collections (`documents`,
  * `quotations`, `tasks`, …), pass a **full** replacement array when needed; for
  * tasks, prefer {@link addLeadTask}, {@link updateLeadTask}, {@link deleteLeadTask}.
@@ -821,7 +881,7 @@ export async function createDraftQuotation(
 export async function updateLead(
   id: string,
   updates: Partial<Lead>,
-  options?: { simulateDelay?: boolean },
+  options?: { simulateDelay?: boolean; actor?: MockUser },
 ): Promise<Lead> {
   await applyMockDelay(options?.simulateDelay);
   const existing = STORE.get(id);
@@ -834,5 +894,7 @@ export async function updateLead(
     ...updates,
     updatedAt: at,
   };
-  return persistProcessedLead(existing, updated, at);
+  return persistProcessedLead(existing, updated, at, {
+    followUpActor: options?.actor,
+  });
 }

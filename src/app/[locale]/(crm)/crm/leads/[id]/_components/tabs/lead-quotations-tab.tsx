@@ -1,11 +1,26 @@
 "use client";
 
+import {
+  type Dispatch,
+  type SetStateAction,
+  useState,
+} from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+  DialogBody,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { DialogShell } from "@/components/crm/dialog-shell";
 import { formatDateTime } from "@/components/crm/date-format";
 import { formatUSD } from "@/components/crm/money";
 import { EmptyState } from "@/components/crm/empty-state";
+import { crm } from "@/lib/crm/client";
 import type { Lead, Quotation } from "@/types";
 import { cn } from "@/lib/utils";
 import { FileCheck } from "lucide-react";
@@ -13,35 +28,136 @@ import { FileCheck } from "lucide-react";
 type LeadQuotationsTabProps = {
   lead: Lead;
   sortedQuotations: Quotation[];
+  displayedQuotations: Quotation[];
   onViewQuotation: (q: Quotation) => void;
+  isAuthenticated: boolean;
+  setLead: Dispatch<SetStateAction<Lead>>;
+  onApproveQuotationSuccess?: () => void;
 };
 
 export function LeadQuotationsTab({
   lead,
   sortedQuotations,
+  displayedQuotations,
   onViewQuotation,
+  isAuthenticated,
+  setLead,
+  onApproveQuotationSuccess,
 }: LeadQuotationsTabProps) {
   const t = useTranslations("crm");
   const tPortal = useTranslations("portal");
   const locale = useLocale();
+  const [approveTargetId, setApproveTargetId] = useState<string | null>(null);
+  const [approveSubmitting, setApproveSubmitting] = useState(false);
+  const [approveError, setApproveError] = useState<string | null>(null);
+
+  const approveTarget =
+    approveTargetId && lead.quotations.some((x) => x.id === approveTargetId)
+      ? lead.quotations.find((x) => x.id === approveTargetId)
+      : null;
+
+  async function confirmApproveSend() {
+    if (!approveTarget || !approveTarget.id) return;
+    setApproveSubmitting(true);
+    setApproveError(null);
+    try {
+      const updated = await crm.leads.sendDraftQuotationToPatient(
+        lead.id,
+        approveTarget.id,
+        {},
+      );
+      setLead(updated);
+      onApproveQuotationSuccess?.();
+      setApproveTargetId(null);
+    } catch (e) {
+      console.error(e);
+      setApproveError(t("leadQuotation.approveErrorGeneric"));
+    } finally {
+      setApproveSubmitting(false);
+    }
+  }
 
   if (sortedQuotations.length === 0) {
     return (
-      <EmptyState
-        icon={FileCheck}
-        title={t("quotesTabEmpty")}
-        className="rounded-2xl bg-card/50 p-16 shadow-sm ring-1 ring-black/5"
-      />
+      <div className="space-y-4">
+        <EmptyState
+          icon={FileCheck}
+          title={t("quotesTabEmpty")}
+          className="rounded-2xl bg-card/50 p-16 shadow-sm ring-1 ring-black/5"
+        />
+      </div>
+    );
+  }
+
+  if (displayedQuotations.length === 0) {
+    return (
+      <div className="space-y-4">
+        <EmptyState
+          icon={FileCheck}
+          title={t("quotesTabEmptyFiltered")}
+          className="rounded-2xl bg-card/50 p-16 shadow-sm ring-1 ring-black/5"
+        />
+      </div>
     );
   }
 
   return (
     <div className="space-y-4">
-      {sortedQuotations.map((q) => {
+      <DialogShell
+        open={Boolean(approveTargetId)}
+        onOpenChange={(open) => {
+          if (open) return;
+          if (approveSubmitting) return;
+          setApproveTargetId(null);
+          setApproveError(null);
+        }}
+      >
+        <DialogContent size="md" layout="default" showCloseButton>
+          <DialogHeader>
+            <DialogTitle>{t("leadQuotation.approveDialogTitle")}</DialogTitle>
+            <DialogDescription>
+              {t("leadQuotation.approveDialogDescription")}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogBody className="space-y-4">
+            {approveTarget ? (
+              <p className="text-muted-foreground text-sm">
+                {t("quotesTabHeading")}, v{approveTarget.version},{" "}
+                {formatUSD(approveTarget.totalUSD, locale)}
+              </p>
+            ) : null}
+            {approveError ? (
+              <p className="text-destructive text-sm font-medium" role="alert">
+                {approveError}
+              </p>
+            ) : null}
+          </DialogBody>
+          <DialogFooter className="gap-2 border-t border-border pt-4 sm:gap-0">
+            <Button
+              type="button"
+              variant="ghost"
+              className="rounded-xl text-sm font-semibold"
+              disabled={approveSubmitting}
+              onClick={() => setApproveTargetId(null)}
+            >
+              {t("leadQuotation.approveCancel")}
+            </Button>
+            <Button
+              type="button"
+              className="rounded-xl text-sm font-semibold shadow-md"
+              disabled={approveSubmitting || !approveTarget}
+              onClick={confirmApproveSend}
+            >
+              {approveSubmitting
+                ? t("leadQuotation.approveSubmitting")
+                : t("leadQuotation.approveConfirm")}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </DialogShell>
+
+      {displayedQuotations.map((q) => {
         const isActive = q.id === lead.activeQuotationId;
-        const tierLabel = t(
-          `leadQuotation.tiers.${q.packageTier}` as Parameters<typeof t>[0],
-        );
         const statusLabel = t(
           `leadQuotation.viewStatus.${q.status}` as Parameters<typeof t>[0],
         );
@@ -72,7 +188,7 @@ export function LeadQuotationsTab({
                     isActive ? "text-white" : "text-foreground",
                   )}
                 >
-                  {tierLabel} · v{q.version}
+                  {t("quotesTabHeading")}, v{q.version}
                 </h2>
                 {isActive ? (
                   <Badge
@@ -122,18 +238,38 @@ export function LeadQuotationsTab({
                   {t("quotesTabCreated")}: {formatDateTime(q.createdAt, locale)}
                 </p>
               </div>
-              <Button
-                type="button"
-                size="sm"
-                variant={isActive ? "secondary" : "default"}
-                className={cn(
-                  "h-9 shrink-0 rounded-xl px-4 text-sm font-semibold shadow-sm",
-                  isActive && "bg-white text-primary hover:bg-white/90",
-                )}
-                onClick={() => onViewQuotation(q)}
-              >
-                {t("quotesTabView")}
-              </Button>
+              <div className="flex flex-wrap items-center gap-2">
+                {q.status === "draft" && isAuthenticated ? (
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    className={cn(
+                      "h-9 shrink-0 rounded-xl px-4 text-sm font-semibold",
+                      isActive &&
+                        "border-white/40 bg-white/10 text-white hover:bg-white/20",
+                    )}
+                    onClick={() => {
+                      setApproveError(null);
+                      setApproveTargetId(q.id);
+                    }}
+                  >
+                    {t("leadQuotation.approveButton")}
+                  </Button>
+                ) : null}
+                <Button
+                  type="button"
+                  size="sm"
+                  variant={isActive ? "secondary" : "default"}
+                  className={cn(
+                    "h-9 shrink-0 rounded-xl px-4 text-sm font-semibold shadow-sm",
+                    isActive && "bg-white text-primary hover:bg-white/90",
+                  )}
+                  onClick={() => onViewQuotation(q)}
+                >
+                  {t("quotesTabView")}
+                </Button>
+              </div>
             </div>
           </section>
         );

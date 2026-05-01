@@ -36,7 +36,10 @@ import {
   validateLeadTaskCreationCompletion,
 } from "@/lib/lead-task-creation-schema";
 import { ALL_TRANSITIONS } from "@/lib/services/state-machine.service";
-import { getTransitionActionForSystemTaskCompletion } from "@/lib/services/lead-task-rules";
+import {
+  getSystemTaskTitle,
+  getTransitionActionForSystemTaskCompletion,
+} from "@/lib/services/lead-task-rules";
 import type { Lead, LeadTask, MockUser } from "@/types";
 import { Upload } from "lucide-react";
 
@@ -116,6 +119,13 @@ export function LeadTaskDetailDialog({
     () => resolveTask(lead, taskId),
     [lead, taskId],
   );
+
+  function resolveTitle(tsk: LeadTask): string {
+    if (tsk.templateKey) {
+      return getSystemTaskTitle(tsk.templateKey, t as any);
+    }
+    return tsk.title;
+  }
 
   const metaSchema = useMemo(
     () => createAddTaskDialogMetaSchema(t("taskValidationInvalidAssignee")),
@@ -475,17 +485,12 @@ export function LeadTaskDetailDialog({
         ) : task ? (
           <>
             <DialogHeader>
-              <DialogTitle className="pe-8">{task.title}</DialogTitle>
+              <DialogTitle className="pe-8">{resolveTitle(task)}</DialogTitle>
               <DialogDescription>{t("taskDetailDescription")}</DialogDescription>
               <div className="flex flex-wrap gap-2 pt-2">
                 {task.completed ? (
                   <Badge variant="secondary">{t("taskCompletedLabel")}</Badge>
                 ) : null}
-                {(task.source === "system" || task.templateKey) && (
-                  <Badge variant="outline" className="text-xs">
-                    {t("taskSourceAuto")}
-                  </Badge>
-                )}
                 {task.creationTypeId && creationDef ? (
                   <Badge variant="outline" className="text-xs">
                     {t(`taskCreation.types.${task.creationTypeId}.title`)}

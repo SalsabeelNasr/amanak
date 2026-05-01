@@ -1,13 +1,12 @@
 "use client";
 
-import { useCallback, useId, useState } from "react";
+import { useCallback, useEffect, useId, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Button, buttonVariants } from "@/components/ui/button";
 import {
   Dialog,
   DialogBody,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -25,6 +24,8 @@ type Props = {
   uploadedByUserId?: string;
   /** When the dialog opens, pre-select this type (e.g. from a checklist row). */
   defaultType?: LeadDocument["type"];
+  /** Overrides the default upload dialog title (e.g. next-action payment proofs). */
+  dialogTitle?: string;
   onUploaded: (lead: Lead) => void;
 };
 
@@ -34,6 +35,7 @@ export function DocumentUploadDialog({
   leadId,
   uploadedByUserId,
   defaultType,
+  dialogTitle,
   onUploaded,
 }: Props) {
   const t = useTranslations("portal");
@@ -47,16 +49,23 @@ export function DocumentUploadDialog({
   const [saving, setSaving] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
 
+  /** Controlled `open` from parent does not call `onOpenChange(true)` — sync type when the dialog opens. */
+  useEffect(() => {
+    if (!open) return;
+    setDocType(defaultType ?? "medical_report");
+    setFile(null);
+    setFormError(null);
+  }, [open, defaultType]);
+
   const handleOpenChange = useCallback(
     (next: boolean) => {
-      if (next) {
-        setDocType(defaultType ?? "medical_report");
+      if (!next) {
         setFile(null);
         setFormError(null);
       }
       onOpenChange(next);
     },
-    [defaultType, onOpenChange],
+    [onOpenChange],
   );
 
   async function handleSubmit(e: React.FormEvent) {
@@ -89,39 +98,16 @@ export function DocumentUploadDialog({
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent dir={dir} size="md" layout="scrollable">
+      <DialogContent dir={dir} size="lg" layout="scrollable">
         <form
           onSubmit={handleSubmit}
           className="flex min-h-0 flex-1 flex-col gap-0 overflow-hidden"
         >
           <DialogHeader>
-            <DialogTitle>{t("uploadModalTitle")}</DialogTitle>
-            <DialogDescription>{t("uploadModalDescription")}</DialogDescription>
+            <DialogTitle>{dialogTitle ?? t("uploadModalTitle")}</DialogTitle>
           </DialogHeader>
 
-          <DialogBody className="space-y-5 py-2">
-            <div className="space-y-2">
-              <Label htmlFor={typeGroupId} className="amanak-app-field-label">
-                {t("docTypeLabel")}
-              </Label>
-              <select
-                id={typeGroupId}
-                value={docType}
-                onChange={(e) => setDocType(e.target.value as LeadDocument["type"])}
-                className={cn(
-                  "h-11 w-full rounded-xl border border-border bg-background px-3 py-2 text-sm font-medium outline-none transition-all",
-                  "focus-visible:border-primary/50 focus-visible:ring-2 focus-visible:ring-primary/20",
-                  "disabled:cursor-not-allowed disabled:opacity-50",
-                )}
-              >
-                {LEAD_DOCUMENT_TYPE_ORDER.map((type) => (
-                  <option key={type} value={type}>
-                    {t(`docType_${type}`)}
-                  </option>
-                ))}
-              </select>
-            </div>
-
+          <DialogBody className="space-y-4 py-2">
             <div className="space-y-2">
               <Label htmlFor={fileInputId} className="amanak-app-field-label">
                 {t("docFileLabel")}
@@ -133,6 +119,28 @@ export function DocumentUploadDialog({
                 chooseLabel={t("chooseFile")}
                 noneLabel={t("noFileChosen")}
               />
+            </div>
+
+            <div className="space-y-2 max-w-xs">
+              <Label htmlFor={typeGroupId} className="amanak-app-field-label">
+                {t("docTypeLabel")}
+              </Label>
+              <select
+                id={typeGroupId}
+                value={docType}
+                onChange={(e) => setDocType(e.target.value as LeadDocument["type"])}
+                className={cn(
+                  "h-9 w-full rounded-lg border border-border bg-background px-3 text-sm font-medium outline-none transition-all",
+                  "focus-visible:border-primary/50 focus-visible:ring-2 focus-visible:ring-primary/20",
+                  "disabled:cursor-not-allowed disabled:opacity-50",
+                )}
+              >
+                {LEAD_DOCUMENT_TYPE_ORDER.map((type) => (
+                  <option key={type} value={type}>
+                    {t(`docType_${type}`)}
+                  </option>
+                ))}
+              </select>
             </div>
 
             {formError ? (

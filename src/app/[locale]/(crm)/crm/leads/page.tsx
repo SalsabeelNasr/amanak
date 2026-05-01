@@ -6,6 +6,7 @@ import { LeadsTable } from "./_components/leads-table";
 export default async function CrmLeadsPage() {
   const t = await getTranslations("crm");
   const leads = await crm.leads.list(undefined, getServerCrmCtx());
+  const settings = await crm.settings.get(getServerCrmCtx());
 
   return (
     <div className="mx-auto max-w-7xl space-y-4 p-4 sm:p-8">
@@ -15,7 +16,7 @@ export default async function CrmLeadsPage() {
           {leads.length} {t("totalLeads")}
         </p>
       </header>
-      <LeadsTable leads={leads} />
+      <LeadsTable leads={leads} settings={settings} />
     </div>
   );
 }

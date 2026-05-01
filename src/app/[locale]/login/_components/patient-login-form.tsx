@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { isLoginGatePassword } from "@/lib/login-gate";
 import { ROUTES } from "@/lib/routes";
 import { MOCK_USERS, useSession } from "@/lib/mock-session";
+const ONBOARDING_DONE_KEY = "amanak_onboarding_demo_done";
 
 export function PatientLoginForm() {
   const t = useTranslations("auth");
@@ -26,7 +27,10 @@ export function PatientLoginForm() {
     const patient = MOCK_USERS.find((u) => u.role === "patient");
     if (!patient) return;
     login(patient);
-    router.push(ROUTES.patientProfile);
+    const onboardingDone =
+      typeof window !== "undefined" &&
+      window.localStorage.getItem(ONBOARDING_DONE_KEY) === "1";
+    router.push(onboardingDone ? ROUTES.patientProfile : ROUTES.patientOnboarding);
   }
 
   return (
@@ -59,7 +63,7 @@ export function PatientLoginForm() {
             ) : null}
           </div>
           <Button type="submit" size="lg" className="w-full">
-            {t("patientLogin")}
+            {t("continueWithGoogle")}
           </Button>
         </form>
       </CardContent>

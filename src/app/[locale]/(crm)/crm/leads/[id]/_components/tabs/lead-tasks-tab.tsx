@@ -5,13 +5,10 @@ import { Badge } from "@/components/ui/badge";
 import { InfiniteCardList } from "@/components/crm/infinite-card-list";
 import type { LeadTask } from "@/types";
 import { cn } from "@/lib/utils";
-import {
-  crmTeamMemberName,
-  leadTaskDueBadge,
-  leadTaskSourceBadge,
-} from "../lead-task-badges";
+import { getSystemTaskTitle } from "@/lib/services/lead-task-rules";
+import { crmTeamMemberName, leadTaskDueBadge } from "../lead-task-badges";
 import type { LeadTasksSubtabFilter } from "../lead-detail-types";
-import { ChevronRight, Pin } from "lucide-react";
+import { ChevronRight, Clock, Pin } from "lucide-react";
 
 type LeadTasksTabProps = {
   tasks: LeadTask[];
@@ -30,6 +27,13 @@ export function LeadTasksTab({
 }: LeadTasksTabProps) {
   const t = useTranslations("crm");
   const locale = useLocale();
+
+  function resolveTitle(task: LeadTask): string {
+    if (task.templateKey) {
+      return getSystemTaskTitle(task.templateKey, t as any);
+    }
+    return task.title;
+  }
 
   return (
     <div className="space-y-6">
@@ -59,8 +63,7 @@ export function LeadTasksTab({
         }
         renderItem={(taskItem) => {
           const isOpen = !taskItem.completed;
-          const badge = leadTaskDueBadge(taskItem, t, locale, nowMs);
-          const autoBadge = isOpen ? leadTaskSourceBadge(taskItem, t) : null;
+          const dueUi = leadTaskDueBadge(taskItem, t, locale, nowMs);
           return (
             <button
               type="button"
@@ -86,7 +89,7 @@ export function LeadTasksTab({
                       !isOpen && "text-muted-foreground line-through",
                     )}
                   >
-                    {taskItem.title}
+                    {resolveTitle(taskItem)}
                   </p>
                 </div>
                 <div
@@ -95,22 +98,28 @@ export function LeadTasksTab({
                     isOpen && "ms-[calc(0.875rem+0.5rem)]",
                   )}
                 >
-                  {autoBadge ? (
+                  {dueUi.variant === "overdue" ? (
                     <Badge
                       variant="outline"
-                      className={cn("px-2 py-0.5 text-xs font-medium", autoBadge.className)}
+                      className={cn(
+                        "gap-1 px-2 py-0.5 text-xs font-medium tabular-nums shadow-none",
+                        "border-destructive/40 bg-destructive/10 text-destructive ring-1 ring-destructive/15",
+                      )}
                     >
-                      {autoBadge.label}
+                      <Clock className="size-3 shrink-0 opacity-90" aria-hidden />
+                      {dueUi.label}
                     </Badge>
-                  ) : null}
-                  {badge ? (
+                  ) : (
                     <Badge
                       variant="outline"
-                      className={cn("px-2 py-0.5 text-xs font-medium", badge.className)}
+                      className={cn(
+                        "px-2 py-0.5 text-xs font-medium",
+                        dueUi.className,
+                      )}
                     >
-                      {badge.label}
+                      {dueUi.label}
                     </Badge>
-                  ) : null}
+                  )}
                   <p className="amanak-app-field-label shrink-0">
                     {t("taskAssigneeLabel")}: {crmTeamMemberName(t, taskItem.assigneeId)}
                   </p>

@@ -84,7 +84,7 @@ export function SiteHeader() {
   return (
     <header className="sticky top-0 z-40 border-b border-border/80 bg-card/90 pt-[env(safe-area-inset-top,0px)] backdrop-blur supports-backdrop-filter:bg-card/80">
       {/* Mobile: flex + justify-between mirrors in RTL (logo inline-start, actions inline-end). md+: 3-col grid. */}
-      <div className="mx-auto flex min-h-14 w-full max-w-6xl items-center justify-between gap-0 px-4 sm:px-6 md:grid md:grid-cols-[auto_1fr_auto] md:items-center md:gap-3 md:justify-normal">
+      <div className="mx-auto flex min-h-14 w-full max-w-6xl items-center justify-between gap-0 px-4 [direction:ltr] sm:px-6 md:grid md:grid-cols-[auto_1fr_auto] md:items-center md:gap-3 md:justify-normal">
         <Link
           href="/"
           data-amanak-wordmark

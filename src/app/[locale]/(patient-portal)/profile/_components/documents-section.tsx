@@ -1,14 +1,23 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
-import { FileText, Image as ImageIcon, FlaskConical, BookOpen, Upload } from "lucide-react";
+import {
+  FileText,
+  Image as ImageIcon,
+  FlaskConical,
+  BookOpen,
+  Upload,
+  CircleCheck,
+  Banknote,
+} from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { DocumentUploadDialog } from "@/components/leads/document-upload-dialog";
 import { useSession } from "@/lib/mock-session";
 import { cn } from "@/lib/utils";
-import type { Lead, LeadDocument } from "@/types";
+import type { Lead, LeadDocument, Quotation } from "@/types";
+import { DocumentFileRow } from "./document-file-row";
 
 function iconFor(type: LeadDocument["type"]) {
   switch (type) {
@@ -19,6 +28,9 @@ function iconFor(type: LeadDocument["type"]) {
     case "passport":
     case "visa":
       return BookOpen;
+    case "payment_proof_downpayment":
+    case "payment_proof_remaining":
+      return Banknote;
     default:
       return FileText;
   }
@@ -27,9 +39,14 @@ function iconFor(type: LeadDocument["type"]) {
 export function DocumentsSection({
   leadId,
   initialDocuments,
+  paymentQuotation,
+  initialPaymentUpload,
 }: {
   leadId: string;
   initialDocuments: LeadDocument[];
+  /** Quotation used for down payment / remaining amounts (accepted, or active sent quote). */
+  paymentQuotation?: Quotation | null;
+  initialPaymentUpload?: "downpayment" | "remaining" | null;
 }) {
   const t = useTranslations("portal");
   const { session } = useSession();
@@ -37,148 +54,242 @@ export function DocumentsSection({
   const [uploadOpen, setUploadOpen] = useState(false);
   const [uploadDefaultType, setUploadDefaultType] = useState<LeadDocument["type"] | undefined>();
 
+  const paymentIntentOpened = useRef(false);
+
   const missingMandatory = useMemo(
     () => docs.filter((d) => d.mandatory && d.status === "pending"),
     [docs],
   );
+
+  const downpaymentUsd = useMemo(() => {
+    if (!paymentQuotation?.downpaymentRequired || paymentQuotation.downpaymentUSD == null) {
+      return null;
+    }
+    return paymentQuotation.downpaymentUSD;
+  }, [paymentQuotation]);
 
   const openUpload = useCallback((type?: LeadDocument["type"]) => {
     setUploadDefaultType(type);
     setUploadOpen(true);
   }, []);
 
+  useEffect(() => {
+    if (paymentIntentOpened.current || !initialPaymentUpload || !paymentQuotation) return;
+    paymentIntentOpened.current = true;
+    const type: LeadDocument["type"] =
+      initialPaymentUpload === "downpayment" && downpaymentUsd != null
+        ? "payment_proof_downpayment"
+        : "payment_proof_remaining";
+    openUpload(type);
+  }, [initialPaymentUpload, paymentQuotation, downpaymentUsd, openUpload]);
+
   const onUploaded = useCallback((updated: Lead) => {
     setDocs(updated.documents);
   }, []);
 
-  return (
-    <div className="space-y-4">
-      <section className="overflow-hidden rounded-2xl border border-border/50 bg-card shadow-sm">
-        <div className="flex flex-col gap-4 border-b border-border/50 bg-muted/20 px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
-          <div className="flex items-center gap-2.5">
-            <div className="flex size-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
-              <FileText className="size-4" aria-hidden />
-            </div>
-            <h2 className="amanak-app-panel-title text-base">{t("documents")}</h2>
-          </div>
+  const renderPaymentProofRow = (
+    docType: "payment_proof_downpayment" | "payment_proof_remaining",
+    hint: string,
+  ) => {
+    const doc = docs.find((d) => d.type === docType);
+    const isUploaded = doc?.status === "uploaded" || doc?.status === "verified";
+    const Icon = iconFor(docType);
+    return (
+      <DocumentFileRow
+        leading={<Icon className="size-6 text-primary/70" aria-hidden />}
+        primary={t(`docType_${docType}`)}
+        secondary={hint}
+        badges={
+          isUploaded ? (
+            <span className="inline-flex items-center gap-1 text-[10px] font-medium text-emerald-600">
+              <CircleCheck className="size-3.5" aria-hidden />
+              {t("paymentProofUploadedLabel")}
+            </span>
+          ) : null
+        }
+        action={
           <Button
             type="button"
+            variant={isUploaded ? "outline" : "default"}
             size="sm"
-            className="h-9 gap-2 rounded-xl text-sm font-semibold shadow-sm"
-            onClick={() => openUpload(undefined)}
+            className="h-8 gap-1.5 rounded-lg text-xs font-medium"
+            onClick={() => openUpload(docType)}
           >
             <Upload className="size-3.5" aria-hidden />
-            {t("uploadFileButton")}
+            {isUploaded ? t("paymentProofReplaceUpload") : t("paymentProofUploadProof")}
           </Button>
-        </div>
+        }
+      />
+    );
+  };
 
-        <div className="space-y-4 p-5 sm:p-6">
-          {missingMandatory.length > 0 ? (
-            <div
-              className="rounded-xl border border-amber-500/25 bg-amber-500/5 px-4 py-3 text-sm"
-              role="status"
+  const checklistDocs = useMemo(
+    () =>
+      docs.filter(
+        (d) => d.type !== "payment_proof_downpayment" && d.type !== "payment_proof_remaining",
+      ),
+    [docs],
+  );
+
+  return (
+    <div className="space-y-4">
+      {missingMandatory.length > 0 ? (
+        <div
+          className="rounded-xl border border-amber-500/25 bg-amber-500/5 px-4 py-3 text-sm"
+          role="status"
+        >
+          <p className="font-semibold text-foreground">
+            {t("missingRequiredTitle", { count: missingMandatory.length })}
+          </p>
+          <p className="mt-1 text-muted-foreground">{t("missingRequiredHint")}</p>
+          <ul className="mt-2 list-inside list-disc font-medium text-foreground/90">
+            {missingMandatory.slice(0, 5).map((d) => (
+              <li key={d.id}>{d.name}</li>
+            ))}
+          </ul>
+          {missingMandatory.length > 5 ? (
+            <p className="mt-1 text-xs text-muted-foreground">
+              {t("moreMissingCount", { count: missingMandatory.length - 5 })}
+            </p>
+          ) : null}
+        </div>
+      ) : null}
+
+      {paymentQuotation ? (
+        <div className="space-y-5">
+          <h2 className="text-sm font-semibold tracking-tight text-muted-foreground">
+            {t("paymentProofSectionTitle")}
+          </h2>
+
+          {downpaymentUsd != null ? (
+            <section
+              className="rounded-2xl border border-border/50 bg-card p-4 shadow-sm sm:p-5"
+              aria-labelledby="files-payment-downpayment-heading"
             >
-              <p className="font-semibold text-foreground">
-                {t("missingRequiredTitle", { count: missingMandatory.length })}
-              </p>
-              <p className="mt-1 text-muted-foreground">{t("missingRequiredHint")}</p>
-              <ul className="mt-2 list-inside list-disc font-medium text-foreground/90">
-                {missingMandatory.slice(0, 5).map((d) => (
-                  <li key={d.id}>{d.name}</li>
-                ))}
-              </ul>
-              {missingMandatory.length > 5 ? (
+              <header id="files-payment-downpayment-heading" className="mb-4 border-b border-border/40 pb-3">
+                <h3 className="text-base font-bold tracking-tight text-foreground">
+                  {t("paymentProofDownpaymentFilesSectionTitle")}
+                </h3>
                 <p className="mt-1 text-xs text-muted-foreground">
-                  {t("moreMissingCount", { count: missingMandatory.length - 5 })}
+                  {t("paymentProofDownpaymentFilesSectionDescription")}
                 </p>
-              ) : null}
-            </div>
+              </header>
+              {renderPaymentProofRow(
+                "payment_proof_downpayment",
+                t("paymentProofDownpaymentCardHint"),
+              )}
+            </section>
           ) : null}
 
-          <div className="grid gap-4 sm:grid-cols-2">
-            {docs.length === 0 && (
-              <p className="text-sm text-muted-foreground col-span-full text-center py-8 rounded-2xl border border-dashed border-border bg-muted/10">
-                {t("noDocs")}
+          <section
+            className="rounded-2xl border border-border/50 bg-card p-4 shadow-sm sm:p-5"
+            aria-labelledby="files-payment-remaining-heading"
+          >
+            <header id="files-payment-remaining-heading" className="mb-4 border-b border-border/40 pb-3">
+              <h3 className="text-base font-bold tracking-tight text-foreground">
+                {t("paymentProofRemainingFilesSectionTitle")}
+              </h3>
+              <p className="mt-1 text-xs text-muted-foreground">
+                {t("paymentProofRemainingFilesSectionDescription")}
               </p>
-            )}
-            {docs.map((doc) => {
-              const Icon = iconFor(doc.type);
-              return (
-                <div
-                  key={doc.id}
-                  className={cn(
-                    "group flex items-center gap-4 rounded-2xl border bg-card p-4 transition-all duration-200 hover:shadow-md",
-                    doc.mandatory && doc.status === "pending"
-                      ? "border-amber-500/35 hover:border-amber-500/50"
-                      : "border-border/50 hover:border-primary/20",
-                  )}
-                >
-                    <div className="size-12 shrink-0 rounded-xl bg-primary/5 flex items-center justify-center group-hover:bg-primary/10 transition-colors">
-                      {doc.status === "uploaded" || doc.status === "verified" ? (
-                        <a
-                          href="#"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            alert(`Opening ${doc.name}...`);
-                          }}
-                          className="flex size-full items-center justify-center"
-                          title={t("viewFile")}
-                        >
-                          <Icon className="size-6 text-primary/60 group-hover:text-primary transition-colors" aria-hidden />
-                        </a>
-                      ) : (
-                        <Icon className="size-6 text-primary/60 group-hover:text-primary transition-colors" aria-hidden />
-                      )}
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      {doc.status === "uploaded" || doc.status === "verified" ? (
-                        <a
-                          href="#"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            alert(`Opening ${doc.name}...`);
-                          }}
-                          className="truncate text-sm font-bold text-foreground hover:text-primary transition-colors"
-                          title={t("viewFile")}
-                        >
-                          {doc.name}
-                        </a>
-                      ) : (
-                        <p className="truncate text-sm font-bold text-foreground">{doc.name}</p>
-                      )}
-                      <p className="amanak-app-field-label mt-0.5">
-                        {t(`docType_${doc.type}`)} · {doc.mandatory ? t("mandatory") : t("optional")}
-                      </p>
-                    </div>
-                  <div className="shrink-0">
-                    {doc.status === "verified" && (
-                      <Badge className="bg-emerald-500/10 text-emerald-600 border-transparent text-[10px] px-2 py-0">
-                        {t("docVerified")}
-                      </Badge>
-                    )}
-                    {doc.status === "uploaded" && (
-                      <Badge variant="secondary" className="text-[10px] px-2 py-0">
-                        {t("docUploaded")}
-                      </Badge>
-                    )}
-                    {doc.status === "pending" && (
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        className="h-8 text-xs font-medium rounded-lg hover:bg-primary hover:text-primary-foreground transition-all"
-                        onClick={() => openUpload(doc.type)}
-                      >
-                        {t("uploadDoc")}
-                      </Button>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+            </header>
+            {renderPaymentProofRow("payment_proof_remaining", t("paymentProofRemainingCardHint"))}
+          </section>
         </div>
-      </section>
+      ) : null}
+
+      <div className="space-y-3">
+        {checklistDocs.length === 0 && !paymentQuotation ? (
+          <p className="col-span-full rounded-2xl border border-dashed border-border bg-muted/10 py-8 text-center text-sm text-muted-foreground">
+            {t("noDocs")}
+          </p>
+        ) : null}
+        {checklistDocs.length === 0 && paymentQuotation ? (
+          <p className="text-xs text-muted-foreground">{t("paymentProofNoOtherDocs")}</p>
+        ) : null}
+        {checklistDocs.map((doc) => {
+          const Icon = iconFor(doc.type);
+          const isUploaded = doc.status === "uploaded" || doc.status === "verified";
+          const primary = isUploaded ? (
+            <a
+              href="#"
+              onClick={(e) => {
+                e.preventDefault();
+                alert(`Opening ${doc.name}...`);
+              }}
+              className="block truncate"
+              title={t("viewFile")}
+            >
+              {doc.name}
+            </a>
+          ) : (
+            <p className="truncate">{doc.name}</p>
+          );
+
+          const leading = isUploaded ? (
+            <a
+              href="#"
+              onClick={(e) => {
+                e.preventDefault();
+                alert(`Opening ${doc.name}...`);
+              }}
+              className="flex size-full items-center justify-center"
+              title={t("viewFile")}
+            >
+              <Icon className="size-6 text-primary/70" aria-hidden />
+            </a>
+          ) : (
+            <Icon className="size-6 text-primary/70" aria-hidden />
+          );
+
+          return (
+            <DocumentFileRow
+              key={doc.id}
+              leading={leading}
+              primary={primary}
+              secondary={t(`docType_${doc.type}`)}
+              pendingHighlight={doc.mandatory && doc.status === "pending"}
+              badges={
+                <>
+                  <Badge
+                    variant={doc.mandatory ? "default" : "secondary"}
+                    className="px-2 py-0 text-[10px]"
+                  >
+                    {doc.mandatory ? t("mandatory") : t("optional")}
+                  </Badge>
+                  {isUploaded ? (
+                    <span className="inline-flex items-center gap-1 text-[10px] font-medium text-emerald-600">
+                      <CircleCheck className="size-3.5" aria-hidden />
+                    </span>
+                  ) : null}
+                  {doc.status === "verified" ? (
+                    <Badge className="border-transparent bg-emerald-500/10 px-2 py-0 text-[10px] text-emerald-600">
+                      {t("docVerified")}
+                    </Badge>
+                  ) : null}
+                  {doc.status === "uploaded" ? (
+                    <Badge variant="secondary" className="px-2 py-0 text-[10px]">
+                      {t("docUploaded")}
+                    </Badge>
+                  ) : null}
+                </>
+              }
+              action={
+                <Button
+                  type="button"
+                  variant={doc.status === "pending" ? "default" : "outline"}
+                  size="sm"
+                  className="h-8 gap-1.5 rounded-lg text-xs font-medium"
+                  onClick={() => openUpload(doc.type)}
+                >
+                  <Upload className="size-3.5" aria-hidden />
+                  {doc.status === "pending" ? t("uploadDoc") : t("uploadFileButton")}
+                </Button>
+              }
+            />
+          );
+        })}
+      </div>
 
       <DocumentUploadDialog
         open={uploadOpen}

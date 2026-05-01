@@ -1,5 +1,7 @@
 /**
  * Lead pipeline (PM spec — 12 statuses, loop changes_requested → quotation_sent).
+ * These statuses drive transitions, tasks, and CRM actions. For a coarse patient-facing
+ * funnel without decision logic, see `src/lib/lead-journey-stage.ts` ({@link LeadJourneyStage}).
  * Pure: no React, no next/* imports.
  */
 import type {
@@ -207,6 +209,34 @@ export function applyTransition(
     note,
     timestamp: new Date().toISOString(),
   };
+
+  // If CRM confirms quotation acceptance on behalf of the patient (e.g. phone call),
+  // immediately move to booking so ownership stays on CRM and patient-side action is waived.
+  if (action === "PATIENT_ACCEPTS_QUOTATION" && actor.role !== "patient") {
+    const bookingTransition = ALL_TRANSITIONS.find(
+      (t) =>
+        t.from === transition.to &&
+        t.action === "START_BOOKING" &&
+        t.allowedRoles.includes(actor.role),
+    );
+    if (bookingTransition) {
+      const bookingEntry: StatusHistoryEntry = {
+        from: bookingTransition.from,
+        to: bookingTransition.to,
+        action: bookingTransition.action,
+        actorRole: actor.role,
+        actorId: actor.id,
+        note,
+        timestamp: new Date().toISOString(),
+      };
+      return {
+        ...lead,
+        status: bookingTransition.to,
+        statusHistory: [...lead.statusHistory, entry, bookingEntry],
+        updatedAt: bookingEntry.timestamp,
+      };
+    }
+  }
 
   return {
     ...lead,

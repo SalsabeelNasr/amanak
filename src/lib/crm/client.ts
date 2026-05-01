@@ -1,3 +1,4 @@
+import type { CrmSettings, DeepPartial } from "@/lib/api/crm-settings";
 import type {
   Lead,
   LeadConversationChannel,
@@ -8,7 +9,6 @@ import type {
   AddLeadAppointmentInput,
   AddLeadTaskInput,
   CreateDraftQuotationInput,
-  CrmTodayDigest,
   LeadFilters,
   UpdateLeadTaskPatch,
   UploadLeadDocumentInput,
@@ -49,6 +49,11 @@ export interface CrmClient {
       input: CreateDraftQuotationInput,
       ctx: CrmCtx,
     ): Promise<Lead>;
+    sendDraftQuotationToPatient(
+      leadId: string,
+      quotationId: string,
+      ctx: CrmCtx,
+    ): Promise<Lead>;
   };
   conversations: {
     list(
@@ -62,8 +67,9 @@ export interface CrmClient {
       ctx: CrmCtx,
     ): Promise<LeadConversationItem>;
   };
-  digest: {
-    today(ctx: CrmCtx): Promise<CrmTodayDigest>;
+  settings: {
+    get(ctx: CrmCtx): Promise<CrmSettings>;
+    update(partial: DeepPartial<CrmSettings>, ctx: CrmCtx): Promise<CrmSettings>;
   };
 }
 

@@ -23,6 +23,7 @@
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar: var(--sidebar);
   --color-app-canvas: var(--app-canvas);
+  --color-crm-app-canvas: var(--crm-app-canvas);
   --color-success: var(--success);
   --color-success-foreground: var(--success-foreground);
   --color-chart-5: var(--chart-5);
@@ -92,6 +93,8 @@
   --sidebar-ring: #034cb6;
   --brand-wordmark: #034cb6;
   --app-canvas: oklch(0.985 0 0);
+  /* CRM main area: barely darker than app canvas for subtle contrast with cards */
+  --crm-app-canvas: oklch(0.975 0 0);
   --success: oklch(0.627 0.194 149.214);
   --success-foreground: oklch(0.985 0 0);
   /* Dialog shells: max-widths at sm+; heights cap long forms */
@@ -138,6 +141,8 @@
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
   --app-canvas: oklch(0.12 0 0);
+  /* CRM main area: barely darker than app canvas */
+  --crm-app-canvas: oklch(0.115 0 0);
   --success: oklch(0.627 0.194 149.214);
   --success-foreground: oklch(0.985 0 0);
 }
@@ -196,10 +201,10 @@
   }
 
   .amanak-app-page-title {
-    @apply text-2xl font-bold tracking-tight text-foreground sm:text-3xl;
+    @apply text-start text-2xl font-bold tracking-tight text-foreground sm:text-3xl;
   }
   .amanak-app-panel-title {
-    @apply text-sm font-semibold tracking-tight text-foreground/90;
+    @apply text-start text-sm font-semibold tracking-tight text-foreground/90;
   }
   .amanak-app-field-label {
     @apply text-xs font-medium text-muted-foreground;
@@ -209,6 +214,192 @@
   }
   .amanak-app-value {
     @apply text-base font-medium text-foreground;
+  }
+
+  /** App/crm “card” surface: matches leads list rows — border, not ring. Compose on shadcn `Card` with `ring-0` below. */
+  .amanak-app-surface-card {
+    @apply rounded-2xl border border-border/50 bg-card ring-0 lg:rounded-xl;
+  }
+
+  .amanak-app-surface-card-interactive {
+    @apply transition-all duration-200 hover:border-primary/30 hover:shadow-md hover:shadow-primary/5 active:scale-[0.99];
+  }
+
+  /**
+   * Patient onboarding wizard — same density and card language as CRM (rounded-xl, border-border/50, text-sm body).
+   * Set --wizard-progress-fill (0%–100%) on the progress rail parent for the fill bar width.
+   */
+  .amanak-wizard-outer {
+    @apply mx-auto w-full max-w-screen-2xl space-y-4 sm:space-y-5;
+  }
+
+  .amanak-wizard-progress-wrap {
+    @apply mx-auto mb-4 w-full max-w-4xl px-1 sm:mb-6 sm:px-4;
+  }
+
+  .amanak-wizard-progress-rail {
+    @apply relative flex justify-between;
+  }
+
+  .amanak-wizard-progress-bg {
+    @apply absolute top-1/2 h-0.5 w-full -translate-y-1/2 bg-muted;
+  }
+
+  .amanak-wizard-progress-fill {
+    @apply absolute top-1/2 h-0.5 -translate-y-1/2 bg-primary transition-all duration-500;
+    width: var(--wizard-progress-fill, 0%);
+  }
+
+  .amanak-wizard-step-dot {
+    @apply relative z-10 flex size-10 items-center justify-center rounded-full border-2 bg-background transition-all duration-500;
+  }
+
+  .amanak-wizard-step-dot-label {
+    @apply absolute -bottom-7 hidden whitespace-nowrap text-[10px] font-semibold tracking-tight transition-colors sm:block;
+  }
+
+  .amanak-wizard-root-card {
+    @apply overflow-hidden rounded-xl border border-border/50 bg-card shadow-lg ring-0 sm:rounded-xl;
+  }
+
+  .amanak-wizard-sidebar {
+    @apply hidden flex-col justify-between border-r border-border/50 bg-muted/30 p-6 xl:p-8 lg:col-span-3 lg:flex;
+  }
+
+  .amanak-wizard-sidebar-kicker {
+    @apply inline-flex items-center rounded-full bg-primary/10 px-3 py-1 text-[10px] font-semibold tracking-tight text-primary;
+  }
+
+  .amanak-wizard-sidebar-block {
+    @apply space-y-3;
+  }
+
+  .amanak-wizard-sidebar-section {
+    @apply space-y-6;
+  }
+
+  .amanak-wizard-sidebar-title {
+    @apply text-lg font-bold tracking-tight text-foreground;
+  }
+
+  .amanak-wizard-sidebar-lead {
+    @apply text-sm leading-relaxed text-muted-foreground;
+  }
+
+  .amanak-wizard-sidebar-tile {
+    @apply flex items-center gap-3 rounded-2xl border border-border/50 bg-card p-3 ring-0 sm:p-4 lg:rounded-xl;
+  }
+
+  .amanak-wizard-sidebar-tile-icon {
+    @apply flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary;
+  }
+
+  .amanak-wizard-main {
+    @apply p-6 sm:p-8 lg:col-span-9 lg:p-8 xl:p-10;
+  }
+
+  .amanak-wizard-step-clip {
+    @apply min-h-96 animate-in fade-in slide-in-from-bottom-4 duration-700;
+  }
+
+  .amanak-wizard-step-stack {
+    @apply space-y-6 sm:space-y-8;
+  }
+
+  .amanak-wizard-step-header {
+    @apply space-y-1.5;
+  }
+
+  .amanak-wizard-fork-column {
+    @apply mx-auto w-full max-w-md space-y-5;
+  }
+
+  .amanak-wizard-fork-options {
+    @apply flex flex-col gap-2;
+  }
+
+  .amanak-wizard-inset-panel {
+    @apply rounded-2xl border border-border/50 bg-muted/20 p-4 ring-0 lg:rounded-xl;
+  }
+
+  .amanak-wizard-treatment-scroll {
+    @apply flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory [-ms-overflow-style:none] [scrollbar-width:none] xl:grid xl:min-w-0 xl:grid-cols-[repeat(auto-fill,minmax(13.75rem,1fr))] xl:gap-4 xl:overflow-visible xl:snap-none xl:pb-0;
+  }
+
+  .amanak-wizard-treatment-scroll::-webkit-scrollbar {
+    display: none;
+  }
+
+  .amanak-wizard-treatment-tile {
+    @apply flex min-h-28 w-full flex-col gap-2 rounded-xl border-2 border-border bg-card p-3 text-start ring-0 transition-all duration-200 hover:border-primary/40 hover:shadow-sm active:scale-[0.99];
+  }
+
+  .amanak-wizard-treatment-tile[data-selected="true"] {
+    @apply border-primary bg-primary/5 ring-2 ring-primary/15;
+  }
+
+  .amanak-wizard-option-row {
+    @apply flex h-auto min-h-0 w-full items-center justify-start gap-3 rounded-xl border-2 border-border bg-card p-3 text-start font-normal transition-all duration-200 hover:border-primary/40 hover:shadow-sm;
+  }
+
+  .amanak-wizard-option-row[data-selected="true"] {
+    @apply border-primary bg-primary/5 ring-2 ring-primary/15;
+  }
+
+  .amanak-wizard-option-row-icon {
+    @apply flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground;
+  }
+
+  .amanak-wizard-option-row-body {
+    @apply min-w-0 flex-1 space-y-0.5 text-start;
+  }
+
+  .amanak-wizard-option-row-title {
+    @apply text-sm font-semibold leading-tight text-foreground;
+  }
+
+  .amanak-wizard-option-row-desc {
+    @apply text-xs leading-snug text-muted-foreground;
+  }
+
+  .amanak-wizard-choice-row {
+    @apply flex gap-3 sm:gap-4;
+  }
+
+  .amanak-wizard-choice-pill {
+    @apply flex-1 rounded-xl border-2 border-border bg-card py-5 text-base font-semibold transition-colors hover:border-primary/40 sm:py-6 sm:text-lg;
+  }
+
+  .amanak-wizard-choice-pill[data-selected="true"] {
+    @apply border-primary bg-primary text-primary-foreground shadow-md shadow-primary/15;
+  }
+
+  .amanak-wizard-hint-panel {
+    @apply rounded-2xl border border-border/40 bg-muted/30 p-5 ring-0 sm:p-6 lg:rounded-xl;
+  }
+
+  .amanak-wizard-booking-shell {
+    @apply -mx-6 sm:-mx-8 lg:-mx-8 xl:-mx-10;
+  }
+
+  .amanak-wizard-booking-inner {
+    @apply p-0;
+  }
+
+  .amanak-wizard-footer {
+    @apply shrink-0 border-t border-border/60 bg-muted/40 px-4 py-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:px-8 lg:px-8 xl:px-10;
+  }
+
+  .amanak-wizard-footer-actions {
+    @apply flex w-full items-center gap-4;
+  }
+
+  .amanak-wizard-footer-slot {
+    @apply flex flex-1 items-center;
+  }
+
+  .amanak-wizard-nav-primary {
+    @apply min-h-11 rounded-full px-6 font-semibold shadow-sm sm:min-h-12 sm:px-8;
   }
 
   @keyframes marquee {

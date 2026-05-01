@@ -1,6 +1,12 @@
 /**
  * CRM auto-tasks for the patient pipeline (mock parity with future BE).
  */
+import {
+  areMandatoryDocumentsSatisfied,
+  canSpawnPrepareQuotation,
+  getCrmSettingsSync,
+  isSystemTaskTemplateCompleted,
+} from "@/lib/api/crm-settings";
 import type {
   Lead,
   LeadStatus,
@@ -11,9 +17,14 @@ import type {
 } from "@/types";
 import { getStateIndex } from "@/lib/services/state-machine.service";
 
+/**
+ * Legacy static titles kept for seed/test modules that need deterministic labels
+ * outside of React i18n context.
+ */
 export const LEAD_TASK_TEMPLATE_TITLES: Record<LeadTaskTemplateKey, string> = {
   lead_qualification: "Lead qualification — validate request and contact",
   collect_documents: "Collect and verify required documents",
+  initial_consultation: "Initial consultation with patient / coordinator",
   consultant_review: "Clinical / coordinator review",
   prepare_quotation: "Prepare or deliver formal quotation",
   send_contract: "Follow up on quotation and next steps",
@@ -30,6 +41,13 @@ function newTaskId(): string {
 export function isSystemTask(task: LeadTask): boolean {
   if (task.source === "system") return true;
   return task.templateKey !== undefined && task.kind !== "manual";
+}
+
+export function getSystemTaskTitle(
+  key: LeadTaskTemplateKey,
+  t: (key: string) => string,
+): string {
+  return t(`taskTemplateTitles.${key}` as any);
 }
 
 export function getTransitionActionForSystemTaskCompletion(
@@ -50,6 +68,9 @@ export function getTransitionActionForSystemTaskCompletion(
       return null;
     case "treatment_followup":
       return status === "in_treatment" ? "COMPLETE_TREATMENT" : null;
+    case "initial_consultation":
+    case "collect_documents":
+      return null;
     case "create_order":
       return status === "quotation_accepted" ? "START_BOOKING" : null;
     case "assign_specialist":
@@ -95,10 +116,11 @@ function spawnTask(
   key: LeadTaskTemplateKey,
   at: string,
   assigneeId?: string,
+  dueAt?: string,
 ): LeadTask {
   return {
     id: newTaskId(),
-    title: LEAD_TASK_TEMPLATE_TITLES[key],
+    title: `system_task:${key}`,
     completed: false,
     kind: key,
     source: "system",
@@ -107,39 +129,120 @@ function spawnTask(
     createdAt: at,
     updatedAt: at,
     assigneeId,
+    ...(dueAt ? { dueAt } : {}),
   };
 }
 
+function clampLeadQualificationSlaHours(raw: number | undefined): number {
+  const n = typeof raw === "number" && Number.isFinite(raw) ? raw : 24;
+  return Math.max(1, Math.min(168, Math.round(n)));
+}
+
+/**
+ * Due instant for an open `lead_qualification` task: earliest appointment start if any,
+ * otherwise `qualificationCreatedAt` + SLA hours.
+ */
+export function computeLeadQualificationDueAt(
+  lead: Lead,
+  qualificationCreatedAt: string,
+  slaHours: number,
+): string {
+  const apptMs = lead.appointments
+    .map((a) => Date.parse(a.startsAt))
+    .filter((n) => !Number.isNaN(n));
+  if (apptMs.length > 0) {
+    return new Date(Math.min(...apptMs)).toISOString();
+  }
+  const anchorMs = Date.parse(qualificationCreatedAt);
+  const safeAnchor = Number.isNaN(anchorMs) ? Date.now() : anchorMs;
+  const hrs = clampLeadQualificationSlaHours(slaHours);
+  return new Date(safeAnchor + hrs * 60 * 60 * 1000).toISOString();
+}
+
+function syncOpenLeadQualificationDueTasks(
+  tasks: LeadTask[],
+  lead: Lead,
+  at: string,
+  slaHours: number,
+): { tasks: LeadTask[]; modified: boolean } {
+  let modified = false;
+  const sla = clampLeadQualificationSlaHours(slaHours);
+  const next = tasks.map((task) => {
+    if (task.templateKey !== "lead_qualification" || task.completed) return task;
+    const nextDue = computeLeadQualificationDueAt(lead, task.createdAt, sla);
+    const curMs = task.dueAt ? Date.parse(task.dueAt) : NaN;
+    const nextMs = Date.parse(nextDue);
+    if (curMs === nextMs) return task;
+    modified = true;
+    return { ...task, dueAt: nextDue, updatedAt: at };
+  });
+  return { tasks: modified ? next : tasks, modified };
+}
+
 export function ensureSystemTasks(lead: Lead, at: string): Lead {
-  const tasks = [...lead.tasks];
+  const settings = getCrmSettingsSync();
+  let tasks = [...lead.tasks];
   let changed = false;
+  const slaHours = clampLeadQualificationSlaHours(
+    settings.taskRules.leadQualificationSlaHours,
+  );
+
   const pushIf = (
     key: LeadTaskTemplateKey,
     condition: boolean,
     assigneeId?: string,
   ) => {
     if (!condition || hasOpenTemplate(tasks, key)) return;
-    tasks.push(spawnTask(key, at, assigneeId));
+    const dueAt =
+      key === "lead_qualification"
+        ? computeLeadQualificationDueAt(lead, at, slaHours)
+        : undefined;
+    tasks.push(spawnTask(key, at, assigneeId, dueAt));
     changed = true;
   };
 
-  switch (lead.status) {
-    case "new":
-    case "interested":
-      pushIf("lead_qualification", true, lead.ownerId);
-      break;
+  const st = lead.status;
+
+  if (st === "new") {
+    pushIf("lead_qualification", true, lead.ownerId);
+  } else if (
+    st === "interested" ||
+    st === "estimate_requested" ||
+    st === "estimate_reviewed" ||
+    st === "changes_requested" ||
+    (st === "quotation_sent" && !quotationSent(lead))
+  ) {
+    pushIf("lead_qualification", true, lead.ownerId);
+
+    const qualDone = isSystemTaskTemplateCompleted(lead, "lead_qualification");
+    if (qualDone && settings.taskRules.spawnCollectWhenMandatoryDocsMissing) {
+      if (!areMandatoryDocumentsSatisfied(lead)) {
+        pushIf("collect_documents", true, lead.ownerId);
+      }
+    }
+
+    const docsOkForInitial =
+      !settings.quotationTaskGates.requireDocuments || areMandatoryDocumentsSatisfied(lead);
+    if (qualDone && settings.taskRules.spawnInitialConsultation && docsOkForInitial) {
+      pushIf("initial_consultation", true, lead.ownerId);
+    }
+  }
+
+  const canPrep = canSpawnPrepareQuotation(lead, settings);
+
+  switch (st) {
     case "estimate_requested":
-      pushIf("prepare_quotation", true, lead.ownerId);
+      pushIf("prepare_quotation", canPrep, lead.ownerId);
       break;
     case "estimate_reviewed":
       if (!quotationSent(lead)) {
-        pushIf("prepare_quotation", true, lead.ownerId);
+        pushIf("prepare_quotation", canPrep, lead.ownerId);
       }
       break;
     case "quotation_sent":
     case "changes_requested":
       if (!quotationSent(lead)) {
-        pushIf("prepare_quotation", true, lead.ownerId);
+        pushIf("prepare_quotation", canPrep, lead.ownerId);
       } else {
         pushIf("send_contract", true, lead.ownerId);
       }
@@ -158,6 +261,12 @@ export function ensureSystemTasks(lead: Lead, at: string): Lead {
       break;
     default:
       break;
+  }
+
+  const synced = syncOpenLeadQualificationDueTasks(tasks, lead, at, slaHours);
+  if (synced.modified) {
+    tasks = synced.tasks;
+    changed = true;
   }
 
   return changed ? { ...lead, tasks } : lead;
@@ -223,5 +332,16 @@ export function processLeadTasks(prev: Lead, next: Lead, at: string): Lead {
 }
 
 export function listLeadTaskTemplateKeys(): LeadTaskTemplateKey[] {
-  return Object.keys(LEAD_TASK_TEMPLATE_TITLES) as LeadTaskTemplateKey[];
+  return [
+    "lead_qualification",
+    "collect_documents",
+    "initial_consultation",
+    "consultant_review",
+    "prepare_quotation",
+    "send_contract",
+    "confirm_payment",
+    "create_order",
+    "assign_specialist",
+    "treatment_followup",
+  ];
 }

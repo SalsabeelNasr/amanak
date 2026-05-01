@@ -1,26 +1,49 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ChevronDown } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import type { Quotation } from "@/types";
+import { DocumentUploadDialog } from "@/components/leads/document-upload-dialog";
+import { useSession } from "@/lib/mock-session";
+import type { Lead, Quotation } from "@/types";
+import { cn } from "@/lib/utils";
+import { PatientQuotationDetails } from "./patient-quotation-details";
 
 export function QuotationSection({
-  quotation,
+  quotations,
+  activeQuotationId,
+  treatmentSlug,
+  clientType,
+  leadId,
+  onPaymentProofUploaded,
 }: {
-  quotation: Quotation | null;
+  quotations: Quotation[];
+  activeQuotationId?: string;
+  treatmentSlug: string;
+  clientType: Lead["clientType"];
+  leadId: string;
+  /** Optional: parent can refresh data after a successful upload. */
+  onPaymentProofUploaded?: (lead: Lead) => void;
 }) {
   const t = useTranslations("portal");
   const locale = useLocale();
   const langKey = locale === "ar" ? "ar" : "en";
-  const [current, setCurrent] = useState<Quotation | null>(quotation);
-  const [showRejectForm, setShowRejectForm] = useState(false);
-  const [reason, setReason] = useState("");
+  const amountLocaleTag = langKey === "ar" ? "ar-EG" : "en-US";
+  const [openQuoteId, setOpenQuoteId] = useState<string | null>(null);
+  const [localStatuses, setLocalStatuses] = useState<Record<string, Quotation["status"]>>({});
+  const [showRejectFormForId, setShowRejectFormForId] = useState<string | null>(null);
+  const [rejectionReasons, setRejectionReasons] = useState<Record<string, string>>({});
+  const [paymentUploadOpen, setPaymentUploadOpen] = useState(false);
+  const { session } = useSession();
 
-  if (!current) {
+  const openPaymentProofUpload = useCallback(() => {
+    setPaymentUploadOpen(true);
+  }, []);
+
+  if (!quotations.length) {
     return (
       <div className="bg-card rounded-2xl border border-dashed border-border p-12 text-center">
         <p className="text-sm text-muted-foreground">{t("noQuotation")}</p>
@@ -28,136 +51,162 @@ export function QuotationSection({
     );
   }
 
-  function handleAccept() {
-    setCurrent((prev) => (prev ? { ...prev, status: "accepted" } : prev));
+  function statusFor(quote: Quotation): Quotation["status"] {
+    return localStatuses[quote.id] ?? quote.status;
   }
 
-  function handleReject() {
-    if (!reason.trim()) return;
-    setCurrent((prev) => (prev ? { ...prev, status: "rejected" } : prev));
-    setShowRejectForm(false);
+  function handleAccept(quoteId: string) {
+    setLocalStatuses((prev) => ({ ...prev, [quoteId]: "accepted" }));
+    setShowRejectFormForId((prev) => (prev === quoteId ? null : prev));
   }
 
-  const showActions = current.status === "sent_to_patient";
+  function handleReject(quoteId: string) {
+    const reason = rejectionReasons[quoteId]?.trim();
+    if (!reason) return;
+    setLocalStatuses((prev) => ({ ...prev, [quoteId]: "rejected" }));
+    setShowRejectFormForId((prev) => (prev === quoteId ? null : prev));
+  }
 
   return (
-    <div className="bg-card rounded-2xl border border-border/50 shadow-sm overflow-hidden">
-      <div className="px-6 py-4 border-b border-border/40 bg-muted/5 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Badge variant="outline" className="text-xs font-semibold border-primary/20 text-primary">
-            {current.packageTier}
-          </Badge>
-        </div>
-        {current.status === "accepted" && (
-          <Badge className="bg-emerald-500/10 text-emerald-600 border-transparent text-[10px] px-3 py-0.5">
-            {t("accepted")}
-          </Badge>
-        )}
-        {current.status === "rejected" && (
-          <Badge className="bg-destructive/10 text-destructive border-transparent text-[10px] px-3 py-0.5">
-            {t("rejected")}
-          </Badge>
-        )}
-      </div>
+    <div className="space-y-3">
+      <DocumentUploadDialog
+        open={paymentUploadOpen}
+        onOpenChange={setPaymentUploadOpen}
+        leadId={leadId}
+        uploadedByUserId={session.user?.id}
+        defaultType="payment_proof_downpayment"
+        onUploaded={(updated) => {
+          onPaymentProofUploaded?.(updated);
+        }}
+      />
+      {quotations.map((quote) => {
+        const quoteStatus = statusFor(quote);
+        const showActions = quoteStatus === "sent_to_patient";
+        const showRejectForm = showRejectFormForId === quote.id;
+        const reason = rejectionReasons[quote.id] ?? "";
+        const isOpen = openQuoteId === quote.id;
 
-      <div className="p-6 space-y-8">
-        <div className="space-y-4">
-          {current.items.map((item, i) => (
-            <div
-              key={i}
-              className="flex items-center justify-between text-sm group"
+        return (
+          <div
+            key={quote.id}
+            className={cn(
+              "relative overflow-hidden rounded-2xl border border-border/50 bg-card shadow-sm",
+              quote.id === activeQuotationId && "border-primary/30 ring-1 ring-primary/10",
+            )}
+          >
+            {quote.id === activeQuotationId ? (
+              <div className="absolute start-0 top-0 h-full w-3 bg-primary" />
+            ) : null}
+            <button
+              type="button"
+              onClick={() => setOpenQuoteId((prev) => (prev === quote.id ? null : quote.id))}
+              className={cn(
+                "flex w-full items-center justify-between gap-3 px-5 py-4 text-start",
+                quote.id === activeQuotationId && "ps-7",
+              )}
             >
-              <span className="text-muted-foreground group-hover:text-foreground transition-colors">{item.label[langKey]}</span>
-              <span className="font-semibold tabular-nums text-foreground">
-                ${item.amountUSD.toLocaleString()}
-              </span>
-            </div>
-          ))}
-          <div className="flex items-center justify-between border-t border-border/40 pt-6 mt-4">
-            <div>
-              <p className="amanak-app-field-label mb-1">{t("total")}</p>
-              <p className="text-3xl font-bold tracking-tight text-primary">
-                ${current.totalUSD.toLocaleString()}
-              </p>
-            </div>
-            {current.downpaymentRequired && current.downpaymentUSD && (
-              <div className="text-end">
-                <p className="amanak-app-field-label mb-1">{t("downpayment")}</p>
-                <p className="text-lg font-bold text-foreground">
-                  ${current.downpaymentUSD.toLocaleString()}
+              <div className="min-w-0">
+                <p className="flex flex-wrap items-baseline gap-x-1.5 gap-y-0 text-2xl font-bold tracking-tight text-primary">
+                  <span>${quote.totalUSD.toLocaleString(amountLocaleTag)}</span>
+                  <span className="text-sm font-semibold tabular-nums text-muted-foreground">
+                    #{quote.id}
+                  </span>
                 </p>
               </div>
-            )}
-          </div>
-        </div>
+              <div className="flex items-center gap-2">
+                {quote.id === activeQuotationId ? (
+                  <Badge className="bg-primary/10 text-primary border-transparent text-[10px] px-2 py-0.5">
+                    {t("active")}
+                  </Badge>
+                ) : null}
+                {quoteStatus === "accepted" ? (
+                  <Badge className="bg-emerald-500/10 text-emerald-600 border-transparent text-[10px] px-3 py-0.5">
+                    {t("accepted")}
+                  </Badge>
+                ) : null}
+                {quoteStatus === "rejected" ? (
+                  <Badge className="bg-destructive/10 text-destructive border-transparent text-[10px] px-3 py-0.5">
+                    {t("rejected")}
+                  </Badge>
+                ) : null}
+                <ChevronDown
+                  className={cn("size-4 text-muted-foreground transition-transform", isOpen && "rotate-180")}
+                  aria-hidden
+                />
+              </div>
+            </button>
 
-        <div className="rounded-xl bg-muted/30 border border-border/20 p-4">
-          <p className="amanak-app-field-label mb-2">Terms & Conditions</p>
-          <p className="text-xs text-muted-foreground leading-relaxed">
-            {current.termsAndConditions}
-          </p>
-        </div>
+            {isOpen ? (
+              <div className="border-t border-border/40 p-5 space-y-6">
+                <PatientQuotationDetails
+                  quote={quote}
+                  quoteStatus={statusFor(quote)}
+                  treatmentSlug={treatmentSlug}
+                  clientType={clientType}
+                  langKey={langKey}
+                  locale={locale}
+                  onUploadPaymentProof={openPaymentProofUpload}
+                />
 
-        {showActions && !showRejectForm && (
-          <div className="flex flex-col sm:flex-row gap-3 pt-4">
-            <Button 
-              type="button" 
-              size="lg" 
-              className="flex-1 rounded-xl shadow-md shadow-primary/10 hover:shadow-lg hover:shadow-primary/20 transition-all text-sm font-semibold"
-              onClick={handleAccept}
-            >
-              {t("approveQuote")}
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              size="lg"
-              className="flex-1 rounded-xl text-sm font-semibold hover:bg-destructive/5 hover:text-destructive hover:border-destructive/30 transition-all"
-              onClick={() => setShowRejectForm(true)}
-            >
-              {t("rejectQuote")}
-            </Button>
-          </div>
-        )}
+                {showActions && !showRejectForm ? (
+                  <div className="flex flex-row flex-wrap justify-end gap-2 pt-2">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => setShowRejectFormForId(quote.id)}
+                    >
+                      {t("rejectQuote")}
+                    </Button>
+                    <Button type="button" onClick={() => handleAccept(quote.id)}>
+                      {t("approveQuote")}
+                    </Button>
+                  </div>
+                ) : null}
 
-        {showActions && showRejectForm && (
-          <div className="space-y-4 pt-4 border-t border-border/40 animate-in slide-in-from-bottom-2">
-            <div className="space-y-2">
-              <Label htmlFor="reject-reason" className="amanak-app-field-label">
-                {t("rejectReason")}
-              </Label>
-              <textarea
-                id="reject-reason"
-                value={reason}
-                onChange={(e) => setReason(e.target.value)}
-                placeholder={t("rejectReasonPlaceholder")}
-                className="min-h-24 w-full rounded-xl border border-border bg-background p-4 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20 transition-all resize-none"
-              />
-            </div>
-            <div className="flex gap-3">
-              <Button
-                type="button"
-                variant="destructive"
-                size="sm"
-                className="flex-1 rounded-lg text-sm font-medium"
-                onClick={handleReject}
-                disabled={!reason.trim()}
-              >
-                {t("confirm")}
-              </Button>
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                className="flex-1 rounded-lg text-sm font-medium"
-                onClick={() => setShowRejectForm(false)}
-              >
-                {t("cancel")}
-              </Button>
-            </div>
+                {showActions && showRejectForm ? (
+                  <div className="space-y-4 pt-2 border-t border-border/40">
+                    <div className="space-y-2">
+                      <Label htmlFor={`reject-reason-${quote.id}`} className="amanak-app-field-label">
+                        {t("rejectReason")}
+                      </Label>
+                      <textarea
+                        id={`reject-reason-${quote.id}`}
+                        value={reason}
+                        onChange={(e) =>
+                          setRejectionReasons((prev) => ({ ...prev, [quote.id]: e.target.value }))
+                        }
+                        placeholder={t("rejectReasonPlaceholder")}
+                        className="min-h-24 w-full rounded-xl border border-border bg-background p-4 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20 resize-none"
+                      />
+                    </div>
+                    <div className="flex gap-3">
+                      <Button
+                        type="button"
+                        variant="destructive"
+                        size="sm"
+                        className="flex-1 rounded-lg text-sm font-medium"
+                        onClick={() => handleReject(quote.id)}
+                        disabled={!reason.trim()}
+                      >
+                        {t("confirm")}
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        className="flex-1 rounded-lg text-sm font-medium"
+                        onClick={() => setShowRejectFormForId(null)}
+                      >
+                        {t("cancel")}
+                      </Button>
+                    </div>
+                  </div>
+                ) : null}
+              </div>
+            ) : null}
           </div>
-        )}
-      </div>
+        );
+      })}
     </div>
   );
 }

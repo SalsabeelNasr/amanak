@@ -1145,3 +1145,7 @@ export async function getDoctorsByIds(
 export function listDoctorIdsSync(): string[] {
   return DOCTORS.map((d) => d.id);
 }
+
+export function getDoctorByIdSync(id: string): Doctor | undefined {
+  return DOCTORS.find((d) => d.id === id);
+}

@@ -36,10 +36,7 @@ function WidgetSection({
 }) {
   return (
     <section
-      className={cn(
-        "rounded-2xl border border-border/50 bg-card p-5 shadow-sm sm:p-6",
-        className,
-      )}
+      className={cn("amanak-app-surface-card p-5 shadow-sm sm:p-6", className)}
     >
       {children}
     </section>
@@ -59,7 +56,11 @@ export async function CrmInsights() {
       <div className="grid auto-rows-min gap-4 sm:gap-6">
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
           {KPIS.map((kpi) => (
-            <Card key={kpi.key} size="sm" className="shadow-sm ring-1 ring-border/40">
+            <Card
+              key={kpi.key}
+              size="sm"
+              className="amanak-app-surface-card shadow-none"
+            >
               <CardHeader>
                 <CardTitle className="text-xs font-medium text-muted-foreground">
                   {t(`kpis.${kpi.key}`)}

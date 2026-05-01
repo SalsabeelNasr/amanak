@@ -8,7 +8,18 @@ import {
   type LeadDetailTabId,
   type LeadConversationFilter,
   type LeadTasksSubtabFilter,
+  type LeadQuotationsTabFilter,
 } from "./lead-detail-types";
+import type { Quotation } from "@/types";
+
+const QUOTATION_STATUS_FILTERS: Quotation["status"][] = [
+  "draft",
+  "pending_admin",
+  "sent_to_patient",
+  "accepted",
+  "rejected",
+  "expired",
+];
 import type { LeadAppointmentsTabFilter } from "./lead-appointments-tab";
 import type { LeadDocumentsTabFilter } from "./lead-documents-tab";
 
@@ -28,6 +39,8 @@ type LeadTabToolbarsProps = {
   documentsTabFilter: LeadDocumentsTabFilter;
   onDocumentsFilter: (f: LeadDocumentsTabFilter) => void;
   onOpenDocumentUpload: () => void;
+  quotationsTabFilter: LeadQuotationsTabFilter;
+  onQuotationsFilter: (f: LeadQuotationsTabFilter) => void;
   onOpenQuotationWizard: () => void;
 };
 
@@ -47,6 +60,8 @@ export function LeadTabToolbars({
   documentsTabFilter,
   onDocumentsFilter,
   onOpenDocumentUpload,
+  quotationsTabFilter,
+  onQuotationsFilter,
   onOpenQuotationWizard,
 }: LeadTabToolbarsProps) {
   const t = useTranslations("crm");
@@ -205,7 +220,41 @@ export function LeadTabToolbars({
 
   if (activeTab === "quotes") {
     return (
-      <div className="flex flex-wrap items-center justify-end gap-x-3 gap-y-2">
+      <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
+        <div className="flex flex-wrap gap-2" role="group" aria-label={t("quotesFiltersAria")}>
+          <Button
+            type="button"
+            size="sm"
+            variant={quotationsTabFilter === "all" ? "default" : "outline"}
+            className="h-8 rounded-full px-4 text-sm font-medium transition-all"
+            onClick={() => onQuotationsFilter("all")}
+          >
+            {t("quotesFilterAll")}
+          </Button>
+          <Button
+            type="button"
+            size="sm"
+            variant={quotationsTabFilter === "active" ? "default" : "outline"}
+            className="h-8 rounded-full px-4 text-sm font-medium transition-all"
+            onClick={() => onQuotationsFilter("active")}
+          >
+            {t("quotesFilterActive")}
+          </Button>
+          {QUOTATION_STATUS_FILTERS.map((status) => (
+            <Button
+              key={status}
+              type="button"
+              size="sm"
+              variant={quotationsTabFilter === status ? "default" : "outline"}
+              className="h-8 rounded-full px-4 text-sm font-medium transition-all"
+              onClick={() => onQuotationsFilter(status)}
+            >
+              {t(
+                `leadQuotation.viewStatus.${status}` as Parameters<typeof t>[0],
+              )}
+            </Button>
+          ))}
+        </div>
         {isAuthenticated ? (
           <Button
             type="button"

@@ -23,6 +23,7 @@ const CATEGORY_ORDER = [
   "cosmetic",
   "dental",
   "mental",
+  "specialized",
 ] as const satisfies readonly TreatmentCategory[];
 
 type TreatmentTabCategory = (typeof CATEGORY_ORDER)[number];

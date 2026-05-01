@@ -32,9 +32,6 @@ export default async function BackofficeLoginPage() {
           </p>
         </div>
         <BackofficeLoginForm />
-        <p className="text-center text-xs text-muted-foreground/80">
-          {t("mockNote")}
-        </p>
       </div>
 
       <footer className="mt-16 text-center">

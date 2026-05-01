@@ -1,6 +1,9 @@
 "use client";
 
+import { Fragment } from "react";
 import { useTranslations } from "next-intl";
+import { formatUSD } from "@/components/crm/money";
+import { computeQuotationOutCommissionUsd, getCrmSettingsSync } from "@/lib/api/crm-settings";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -21,6 +24,19 @@ type Props = {
   locale: string;
 };
 
+function isMedicalProcedureLine(item: { label: { en: string; ar: string } }): boolean {
+  return (
+    item.label.en === "Medical procedure" || item.label.ar === "الإجراء الطبي"
+  );
+}
+
+function isHospitalFacilityLine(item: { label: { en: string; ar: string } }): boolean {
+  return (
+    item.label.en === "Hospital stay & facility" ||
+    item.label.ar === "إقامة المستشفى والمرافق"
+  );
+}
+
 export function LeadQuotationViewDialog({
   open,
   onOpenChange,
@@ -32,7 +48,10 @@ export function LeadQuotationViewDialog({
 
   if (!quotation) return null;
 
-  const tierLabel = t(`tiers.${quotation.packageTier}` as Parameters<typeof t>[0]);
+  const qr = getCrmSettingsSync().quotationRules;
+  const doctorCommPct = Math.min(100, Math.max(0, Number(qr.doctorOutCommissionPercent) || 0));
+  const hospitalCommPct = Math.min(100, Math.max(0, Number(qr.hospitalOutCommissionPercent) || 0));
+
   const statusLabel = t(
     `viewStatus.${quotation.status}` as Parameters<typeof t>[0],
   );
@@ -56,9 +75,6 @@ export function LeadQuotationViewDialog({
 
         <DialogBody className="space-y-6 py-4">
           <div className="flex flex-wrap items-center gap-2">
-            <Badge variant="outline" className="text-xs font-semibold">
-              {tierLabel}
-            </Badge>
             <Badge variant="secondary" className="text-xs font-semibold">
               {statusLabel}
             </Badge>
@@ -66,17 +82,34 @@ export function LeadQuotationViewDialog({
 
           <div className="space-y-4">
             {quotation.items.map((item, i) => (
-              <div
-                key={`${quotation.id}-item-${i}`}
-                className="flex items-center justify-between gap-4 text-sm"
-              >
-                <span className="font-medium text-muted-foreground">
-                  {item.label[langKey]}
-                </span>
-                <span className="shrink-0 font-semibold tabular-nums text-foreground">
-                  ${item.amountUSD.toLocaleString()}
-                </span>
-              </div>
+              <Fragment key={`${quotation.id}-item-${i}`}>
+                <div className="flex items-center justify-between gap-4 text-sm">
+                  <span className="font-medium text-muted-foreground">
+                    {item.label[langKey]}
+                  </span>
+                  <span className="shrink-0 font-semibold tabular-nums text-foreground">
+                    ${item.amountUSD.toLocaleString()}
+                  </span>
+                </div>
+                {isMedicalProcedureLine(item) && doctorCommPct > 0 ? (
+                  <p className="ps-2 text-[11px] font-medium tabular-nums text-emerald-800 dark:text-emerald-400">
+                    {t("outCommissionLine", { percent: doctorCommPct })}{" "}
+                    {formatUSD(
+                      computeQuotationOutCommissionUsd(item.amountUSD, doctorCommPct),
+                      locale,
+                    )}
+                  </p>
+                ) : null}
+                {isHospitalFacilityLine(item) && hospitalCommPct > 0 ? (
+                  <p className="ps-2 text-[11px] font-medium tabular-nums text-emerald-800 dark:text-emerald-400">
+                    {t("outCommissionLine", { percent: hospitalCommPct })}{" "}
+                    {formatUSD(
+                      computeQuotationOutCommissionUsd(item.amountUSD, hospitalCommPct),
+                      locale,
+                    )}
+                  </p>
+                ) : null}
+              </Fragment>
             ))}
             <div className="flex flex-col gap-4 border-t border-border pt-4 sm:flex-row sm:items-end sm:justify-between">
               <div>
@@ -94,13 +127,6 @@ export function LeadQuotationViewDialog({
                 </div>
               ) : null}
             </div>
-          </div>
-
-          <div className="rounded-xl border border-border/40 bg-muted/30 p-4">
-            <p className="amanak-app-field-label mb-2">{t("termsLabel")}</p>
-            <p className="text-xs font-medium leading-relaxed text-muted-foreground">
-              {quotation.termsAndConditions}
-            </p>
           </div>
         </DialogBody>
 

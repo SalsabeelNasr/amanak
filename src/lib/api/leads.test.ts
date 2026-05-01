@@ -1,9 +1,11 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it } from "vitest";
+import { resetCrmSettingsForTests } from "@/lib/api/crm-settings";
+import { LEAD_TASK_TEMPLATE_TITLES, processLeadTasks } from "@/lib/services/lead-task-rules";
 import { ORDERED_STATES } from "@/lib/services/state-machine.service";
-import { processLeadTasks } from "@/lib/services/lead-task-rules";
-import type { Lead, LeadStatus, LeadTask, Quotation } from "@/types";
+import type { Lead, LeadDocument, LeadStatus, LeadTask, Quotation } from "@/types";
 import type { MockUser } from "@/types";
 import { listAvailableSlots } from "./consultation-booking";
+import { computeLeadFollowUpDueAt } from "@/lib/lead-follow-up-due";
 import {
   addLeadAppointment,
   addLeadTask,
@@ -11,7 +13,9 @@ import {
   deleteLeadTask,
   getLeadById,
   listLeads,
+  sendDraftQuotationToPatient,
   sortLeadTasksForDisplay,
+  updateLead,
   updateLeadTask,
   uploadLeadDocument,
 } from "./leads";
@@ -179,6 +183,46 @@ describe("updateLeadTask system-driven status", () => {
       actor: MOCK_CS,
     });
     expect(out.status).toBe("quotation_sent");
+  });
+});
+
+describe("lead follow-up due aggregation", () => {
+  it("updates followUpDueAt and logs history when adding a dated task shifts the aggregate", async () => {
+    const before = await getLeadById("lead_8");
+    expect(before).toBeDefined();
+    const prevHist = before!.followUpDueHistory ?? [];
+    const prevComputed = computeLeadFollowUpDueAt(before!);
+
+    const due = "2038-03-15T12:00:00.000Z";
+    const after = await addLeadTask("lead_8", {
+      title: "Aggregation test task",
+      dueAt: due,
+      createdByUserId: "admin_1",
+    });
+
+    expect(after.followUpDueAt).toBe(computeLeadFollowUpDueAt(after));
+    const nextComputed = after.followUpDueAt;
+    expect(nextComputed).toBeDefined();
+
+    if (prevComputed !== nextComputed) {
+      expect((after.followUpDueHistory ?? []).length).toBeGreaterThan(prevHist.length);
+      const last = (after.followUpDueHistory ?? [])[
+        (after.followUpDueHistory ?? []).length - 1
+      ];
+      expect(last?.nextFollowUpDueAt).toBe(nextComputed);
+    }
+  });
+
+  it("records manual reminder changes via updateLead with actor", async () => {
+    await updateLead(
+      "lead_12",
+      { followUpDueManualAt: "2035-06-01T12:00:00.000Z" },
+      { actor: MOCK_CS },
+    );
+    const lead = await getLeadById("lead_12");
+    expect(lead?.followUpDueManualAt).toBe("2035-06-01T12:00:00.000Z");
+    expect(lead?.followUpDueAt).toBe("2035-06-01T12:00:00.000Z");
+    expect(lead?.followUpDueHistory?.length).toBeGreaterThan(0);
   });
 });
 
@@ -408,8 +452,43 @@ describe("createDraftQuotation", () => {
   });
 });
 
+describe("sendDraftQuotationToPatient", () => {
+  it("sets quotation to sent_to_patient, moves estimate_reviewed to quotation_sent, and completes prepare_quotation", async () => {
+    const base = {
+      packageTier: "silver" as const,
+      doctorId: "rashad_bishara",
+      hospitalId: "hospital_cairo_1",
+      transportMode: { en: "Limousine", ar: "ليموزين" },
+      transportRouteCount: 4,
+      items: [{ label: { ar: "عنصر", en: "Line" }, amountUSD: 900 }],
+      totalUSD: 900,
+      downpaymentRequired: true,
+      downpaymentUSD: 200,
+      termsAndConditions: "terms",
+    };
+
+    const withDraft = await createDraftQuotation("lead_5", base);
+    const q = withDraft.quotations[withDraft.quotations.length - 1];
+    expect(q.status).toBe("draft");
+
+    const after = await sendDraftQuotationToPatient("lead_5", q.id);
+    const updatedQ = after.quotations.find((x) => x.id === q.id);
+    expect(updatedQ?.status).toBe("sent_to_patient");
+    expect(after.status).toBe("quotation_sent");
+
+    const prep = after.tasks.find((t) => t.templateKey === "prepare_quotation");
+    expect(prep?.completed).toBe(true);
+
+    await expect(sendDraftQuotationToPatient("lead_5", q.id)).rejects.toThrow(/draft/i);
+  });
+});
+
 describe("processLeadTasks (hybrid auto tasks)", () => {
   const at = "2024-06-01T12:00:00.000Z";
+
+  afterEach(() => {
+    resetCrmSettingsForTests();
+  });
 
   it("ensures lead_qualification for new status", () => {
     const lead = sampleLead({ id: "syn_new", status: "new" });
@@ -432,10 +511,40 @@ describe("processLeadTasks (hybrid auto tasks)", () => {
   });
 
   it("auto-completes prepare_quotation when a quotation is sent to patient", () => {
+    const doc: LeadDocument = {
+      id: "d_syn",
+      type: "medical_report",
+      name: "m",
+      mandatory: true,
+      status: "uploaded",
+      uploadedAt: at,
+      uploadedBy: "p",
+    };
+    const done = (
+      id: string,
+      k: "lead_qualification" | "collect_documents" | "initial_consultation",
+    ): LeadTask => ({
+      id,
+      title: LEAD_TASK_TEMPLATE_TITLES[k],
+      completed: true,
+      kind: k,
+      source: "system",
+      templateKey: k,
+      resolution: "completed_rule",
+      completedReason: "user",
+      createdAt: at,
+      updatedAt: at,
+    });
     const lead = sampleLead({
       id: "syn_quote",
       status: "estimate_reviewed",
       ownerId: "cs_sara",
+      documents: [doc],
+      tasks: [
+        done("sq1", "lead_qualification"),
+        done("sq2", "collect_documents"),
+        done("sq3", "initial_consultation"),
+      ],
     });
     const withPrep = processLeadTasks(lead, lead, at);
     const prepOpen = withPrep.tasks.find((x) => x.templateKey === "prepare_quotation");
@@ -462,5 +571,53 @@ describe("processLeadTasks (hybrid auto tasks)", () => {
     const prep = out.tasks.find((x) => x.templateKey === "prepare_quotation");
     expect(prep?.completed).toBe(true);
     expect(prep?.completedReason).toBe("quotation_sent");
+  });
+
+  it("does not add prepare_quotation before quotation gates are satisfied", () => {
+    const lead = sampleLead({ id: "syn_gate", status: "estimate_reviewed" });
+    const out = processLeadTasks(lead, lead, at);
+    const prep = out.tasks.filter((t) => t.templateKey === "prepare_quotation");
+    expect(prep).toHaveLength(0);
+  });
+
+  it("adds open prepare_quotation when gates and mandatory documents are satisfied", () => {
+    const doc: LeadDocument = {
+      id: "d_gate2",
+      type: "medical_report",
+      name: "m",
+      mandatory: true,
+      status: "uploaded",
+      uploadedAt: at,
+      uploadedBy: "p",
+    };
+    const done = (
+      id: string,
+      k: "lead_qualification" | "collect_documents" | "initial_consultation",
+    ): LeadTask => ({
+      id,
+      title: LEAD_TASK_TEMPLATE_TITLES[k],
+      completed: true,
+      kind: k,
+      source: "system",
+      templateKey: k,
+      resolution: "completed_rule",
+      completedReason: "user",
+      createdAt: at,
+      updatedAt: at,
+    });
+    const lead = sampleLead({
+      id: "syn_ok",
+      status: "estimate_reviewed",
+      ownerId: "cs_sara",
+      documents: [doc],
+      tasks: [
+        done("ok1", "lead_qualification"),
+        done("ok2", "collect_documents"),
+        done("ok3", "initial_consultation"),
+      ],
+    });
+    const out = processLeadTasks(lead, lead, at);
+    const prep = out.tasks.find((t) => t.templateKey === "prepare_quotation" && !t.completed);
+    expect(prep).toBeDefined();
   });
 });

@@ -1,11 +1,12 @@
+import { getCrmSettings, updateCrmSettings } from "@/lib/api/crm-settings";
 import {
   addLeadAppointment,
   addLeadTask,
   createDraftQuotation,
   deleteLeadTask,
-  getCrmTodayDigest,
   getLeadById,
   listLeads,
+  sendDraftQuotationToPatient,
   updateLead,
   updateLeadTask,
   uploadLeadDocument,
@@ -34,7 +35,10 @@ export function createMockCrmClient(): CrmClient {
         return getLeadById(id, { simulateDelay: ctx.simulateDelay });
       },
       update(id, updates, ctx) {
-        return updateLead(id, updates, { simulateDelay: ctx.simulateDelay });
+        return updateLead(id, updates, {
+          simulateDelay: ctx.simulateDelay,
+          actor: ctx.actor,
+        });
       },
       addTask(leadId, input, ctx) {
         return addLeadTask(leadId, input, { simulateDelay: ctx.simulateDelay });
@@ -64,6 +68,11 @@ export function createMockCrmClient(): CrmClient {
           simulateDelay: ctx.simulateDelay,
         });
       },
+      sendDraftQuotationToPatient(leadId, quotationId, ctx) {
+        return sendDraftQuotationToPatient(leadId, quotationId, {
+          simulateDelay: ctx.simulateDelay,
+        });
+      },
     },
     conversations: {
       list(leadId, filters, ctx) {
@@ -78,9 +87,12 @@ export function createMockCrmClient(): CrmClient {
         });
       },
     },
-    digest: {
-      today(ctx) {
-        return getCrmTodayDigest({ simulateDelay: ctx.simulateDelay });
+    settings: {
+      get() {
+        return Promise.resolve(getCrmSettings());
+      },
+      update(partial, ctx) {
+        return updateCrmSettings(partial, { simulateDelay: ctx.simulateDelay });
       },
     },
   };

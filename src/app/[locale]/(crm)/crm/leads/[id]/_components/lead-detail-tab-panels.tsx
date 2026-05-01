@@ -24,7 +24,11 @@ import type {
   StateTransition,
 } from "@/types";
 import { type Dispatch, type RefObject, type SetStateAction } from "react";
-import type { LeadConversationFilter, LeadDetailTabId, LeadTasksSubtabFilter } from "./lead-detail-types";
+import type {
+  LeadConversationFilter,
+  LeadDetailTabId,
+  LeadTasksSubtabFilter,
+} from "./lead-detail-types";
 
 type LeadDetailTabPanelsProps = {
   documentsTabRef: RefObject<LeadDocumentsTabRef | null>;
@@ -51,7 +55,10 @@ type LeadDetailTabPanelsProps = {
   expandedConversationIds: Set<string>;
   onToggleConversationExpanded: (id: string) => void;
   onViewQuotation: (q: Quotation | null) => void;
+  isAuthenticatedForQuotations: boolean;
+  onApproveQuotationSuccess: () => void;
   sortedQuotations: Quotation[];
+  filteredQuotationsForTab: Quotation[];
   documentsTabFilter: LeadDocumentsTabFilter;
   appointmentTabFilter: LeadAppointmentsTabFilter;
   tasksForTasksTab: LeadTask[];
@@ -83,7 +90,10 @@ export function LeadDetailTabPanels({
   expandedConversationIds,
   onToggleConversationExpanded,
   onViewQuotation,
+  isAuthenticatedForQuotations,
+  onApproveQuotationSuccess,
   sortedQuotations,
+  filteredQuotationsForTab,
   documentsTabFilter,
   appointmentTabFilter,
   tasksForTasksTab,
@@ -134,7 +144,11 @@ export function LeadDetailTabPanels({
         <LeadQuotationsTab
           lead={lead}
           sortedQuotations={sortedQuotations}
+          displayedQuotations={filteredQuotationsForTab}
           onViewQuotation={onViewQuotation}
+          isAuthenticated={isAuthenticatedForQuotations}
+          setLead={setLead}
+          onApproveQuotationSuccess={onApproveQuotationSuccess}
         />
       </TabsContent>
 

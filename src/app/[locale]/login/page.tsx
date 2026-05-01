@@ -32,9 +32,6 @@ export default async function PatientLoginPage() {
           </p>
         </div>
         <PatientLoginForm />
-        <p className="text-center text-xs text-muted-foreground/80">
-          {t("mockNote")}
-        </p>
       </div>
 
       <footer className="mt-16 text-center">
