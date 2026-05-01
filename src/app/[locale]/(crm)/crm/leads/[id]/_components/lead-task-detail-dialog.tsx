@@ -37,11 +37,12 @@ import {
 } from "@/lib/lead-task-creation-schema";
 import { ALL_TRANSITIONS } from "@/lib/services/state-machine.service";
 import {
+  LEAD_PATIENT_ASSIGNEE_ID,
   getSystemTaskTitle,
   getTransitionActionForSystemTaskCompletion,
 } from "@/lib/services/lead-task-rules";
 import type { Lead, LeadTask, MockUser } from "@/types";
-import { Upload } from "lucide-react";
+import { Upload, UserCircle2 } from "lucide-react";
 
 function dueDateFromIso(iso: string | undefined): string {
   if (!iso) return "";
@@ -210,6 +211,13 @@ export function LeadTaskDetailDialog({
     !task?.completed &&
     transitionMeta?.requiresNote === true;
 
+  const isPatientAssigned = task?.assigneeId === LEAD_PATIENT_ASSIGNEE_ID;
+  const isMultiOutcomeQuoteTask =
+    !!task &&
+    !task.completed &&
+    task.templateKey === "await_patient_quote_response" &&
+    lead.status === "quotation_sent";
+
   const appendSlotFiles = (
     slotId: string,
     incoming: FileList | null,
@@ -352,6 +360,14 @@ export function LeadTaskDetailDialog({
       return;
     }
 
+    await runCompleteSubmit();
+  }
+
+  async function runCompleteSubmit(
+    extraPatch?: { completionOutcome?: "accepted" | "changes_requested" },
+  ) {
+    if (!task || !isAuthenticated) return;
+
     void handleSubmit(async (values: AddTaskDialogMetaForm) => {
       if (requiresPipelineNote && !pipelineNote.trim()) {
         const msg = t("taskCompleteNoteDescription");
@@ -413,6 +429,9 @@ export function LeadTaskDetailDialog({
               ? { creationFields: getFieldValues() }
               : {}),
             ...(newAttachments.length ? { attachments: newAttachments } : {}),
+            ...(extraPatch?.completionOutcome
+              ? { completionOutcome: extraPatch.completionOutcome }
+              : {}),
           },
           { actor: user ?? undefined, note: pipelineNote.trim() || undefined },
         );
@@ -496,7 +515,21 @@ export function LeadTaskDetailDialog({
                     {t(`taskCreation.types.${task.creationTypeId}.title`)}
                   </Badge>
                 ) : null}
+                {isPatientAssigned ? (
+                  <Badge
+                    variant="outline"
+                    className="gap-1 border-amber-500/30 bg-amber-500/10 text-amber-700 dark:text-amber-300"
+                  >
+                    <UserCircle2 className="size-3" aria-hidden />
+                    {t("taskAssigneePatientBadge")}
+                  </Badge>
+                ) : null}
               </div>
+              {isPatientAssigned && !task.completed ? (
+                <p className="pt-2 text-xs font-medium text-muted-foreground">
+                  {t("taskAssigneePatientHint")}
+                </p>
+              ) : null}
             </DialogHeader>
 
             <DialogBody className="space-y-6 py-4">
@@ -522,19 +555,29 @@ export function LeadTaskDetailDialog({
                   label={t("taskDueLabel")}
                   type="date"
                   id="task-detail-due"
-                  disabled={!isAuthenticated || task.completed}
+                  disabled={!isAuthenticated || task.completed || isPatientAssigned}
                   className="space-y-2.5 [&_input]:h-11 [&_input]:rounded-xl [&_input]:border-border [&_input]:font-medium"
                 />
-                <SelectField
-                  control={control}
-                  name="assigneeId"
-                  label={t("taskAssigneeLabel")}
-                  placeholderOption={{ value: "", label: t("taskAssigneeNone") }}
-                  options={assigneeOptions}
-                  id="task-detail-assignee"
-                  disabled={!isAuthenticated || task.completed}
-                  className="space-y-2.5 [&_select]:h-11 [&_select]:min-h-11 [&_select]:w-full [&_select]:rounded-xl [&_select]:border-border [&_select]:px-3 [&_select]:text-sm [&_select]:font-medium"
-                />
+                {isPatientAssigned ? (
+                  <div className="space-y-2.5">
+                    <p className="amanak-app-field-label">{t("taskAssigneeLabel")}</p>
+                    <div className="flex h-11 items-center rounded-xl border border-border bg-muted/30 px-3 text-sm font-medium text-foreground">
+                      <UserCircle2 className="me-2 size-4 text-amber-600 dark:text-amber-400" aria-hidden />
+                      {t("taskAssigneePatientBadge")}
+                    </div>
+                  </div>
+                ) : (
+                  <SelectField
+                    control={control}
+                    name="assigneeId"
+                    label={t("taskAssigneeLabel")}
+                    placeholderOption={{ value: "", label: t("taskAssigneeNone") }}
+                    options={assigneeOptions}
+                    id="task-detail-assignee"
+                    disabled={!isAuthenticated || task.completed}
+                    className="space-y-2.5 [&_select]:h-11 [&_select]:min-h-11 [&_select]:w-full [&_select]:rounded-xl [&_select]:border-border [&_select]:px-3 [&_select]:text-sm [&_select]:font-medium"
+                  />
+                )}
               </div>
 
               {creationDef && creationDef.fields.length > 0 ? (
@@ -744,7 +787,7 @@ export function LeadTaskDetailDialog({
                 >
                   {t("cancel")}
                 </Button>
-                {isAuthenticated && !task.completed ? (
+                {isAuthenticated && !task.completed && !isPatientAssigned ? (
                   <Button
                     type="button"
                     variant="secondary"
@@ -755,7 +798,33 @@ export function LeadTaskDetailDialog({
                     {t("taskSaveChanges")}
                   </Button>
                 ) : null}
-                {isAuthenticated ? (
+                {isAuthenticated && isMultiOutcomeQuoteTask ? (
+                  <>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="rounded-xl"
+                      disabled={saving}
+                      onClick={() =>
+                        void runCompleteSubmit({
+                          completionOutcome: "changes_requested",
+                        })
+                      }
+                    >
+                      {t("taskOutcomeChangesRequested")}
+                    </Button>
+                    <Button
+                      type="button"
+                      className="rounded-xl shadow-md"
+                      disabled={saving}
+                      onClick={() =>
+                        void runCompleteSubmit({ completionOutcome: "accepted" })
+                      }
+                    >
+                      {t("taskOutcomeAccepted")}
+                    </Button>
+                  </>
+                ) : isAuthenticated ? (
                   <Button
                     type="button"
                     className="rounded-xl shadow-md"

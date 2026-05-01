@@ -14,11 +14,13 @@ import {
   getLeadById,
   listLeads,
   sendDraftQuotationToPatient,
+  setLeadStatus,
   sortLeadTasksForDisplay,
   updateLead,
   updateLeadTask,
   uploadLeadDocument,
 } from "./leads";
+import { LEAD_PATIENT_ASSIGNEE_ID } from "@/lib/services/lead-task-rules";
 
 const MOCK_ADMIN: MockUser = {
   id: "admin_1",
@@ -619,5 +621,202 @@ describe("processLeadTasks (hybrid auto tasks)", () => {
     const out = processLeadTasks(lead, lead, at);
     const prep = out.tasks.find((t) => t.templateKey === "prepare_quotation" && !t.completed);
     expect(prep).toBeDefined();
+  });
+
+  it("spawns await_patient_estimate at status=interested once lead_qualification is done", () => {
+    const done = (
+      id: string,
+      k: "lead_qualification" | "collect_documents" | "initial_consultation",
+    ): LeadTask => ({
+      id,
+      title: LEAD_TASK_TEMPLATE_TITLES[k],
+      completed: true,
+      kind: k,
+      source: "system",
+      templateKey: k,
+      resolution: "completed_rule",
+      completedReason: "status_transition",
+      createdAt: at,
+      updatedAt: at,
+    });
+    const lead = sampleLead({
+      id: "syn_await_estimate",
+      status: "interested",
+      ownerId: "cs_sara",
+      tasks: [done("aq1", "lead_qualification")],
+    });
+    const out = processLeadTasks(lead, lead, at);
+    const await_t = out.tasks.find(
+      (t) => t.templateKey === "await_patient_estimate" && !t.completed,
+    );
+    expect(await_t).toBeDefined();
+    expect(await_t?.assigneeId).toBe(LEAD_PATIENT_ASSIGNEE_ID);
+    expect(await_t?.source).toBe("system");
+  });
+
+  it("auto-completes await_patient_estimate when status moves past interested", () => {
+    const done = (
+      id: string,
+      k: "lead_qualification",
+    ): LeadTask => ({
+      id,
+      title: LEAD_TASK_TEMPLATE_TITLES[k],
+      completed: true,
+      kind: k,
+      source: "system",
+      templateKey: k,
+      resolution: "completed_rule",
+      completedReason: "status_transition",
+      createdAt: at,
+      updatedAt: at,
+    });
+    const lead = sampleLead({
+      id: "syn_await_estimate2",
+      status: "interested",
+      ownerId: "cs_sara",
+      tasks: [done("aq1", "lead_qualification")],
+    });
+    const seeded = processLeadTasks(lead, lead, at);
+    expect(
+      seeded.tasks.find((t) => t.templateKey === "await_patient_estimate" && !t.completed),
+    ).toBeDefined();
+
+    const moved = { ...seeded, status: "estimate_requested" as const };
+    const after = processLeadTasks(seeded, moved, at);
+    const closed = after.tasks.find(
+      (t) => t.templateKey === "await_patient_estimate",
+    );
+    expect(closed?.completed).toBe(true);
+    expect(closed?.completedReason).toBe("patient_action");
+  });
+
+  it("spawns await_patient_quote_response when a quotation is sent_to_patient and status=quotation_sent", () => {
+    const lead = sampleLead({
+      id: "syn_await_quote",
+      status: "quotation_sent",
+      ownerId: "cs_sara",
+      quotations: [
+        {
+          id: "qsr",
+          leadId: "syn_await_quote",
+          packageTier: "normal",
+          items: [{ label: { ar: "x", en: "x" }, amountUSD: 100 }],
+          totalUSD: 100,
+          status: "sent_to_patient",
+          downpaymentRequired: false,
+          termsAndConditions: "t",
+          createdAt: at,
+          version: 1,
+        },
+      ],
+    });
+    const out = processLeadTasks(lead, lead, at);
+    const t = out.tasks.find(
+      (x) => x.templateKey === "await_patient_quote_response" && !x.completed,
+    );
+    expect(t).toBeDefined();
+    expect(t?.assigneeId).toBe(LEAD_PATIENT_ASSIGNEE_ID);
+  });
+});
+
+describe("setLeadStatus (skip override)", () => {
+  it("appends SET_STATUS history, cancels orphaned system tasks, spawns new status's tasks", async () => {
+    const before = await getLeadById("lead_1");
+    expect(before).toBeDefined();
+    const fromStatus = before!.status;
+    const orphanedKeys = before!.tasks
+      .filter((t) => !t.completed && t.source === "system" && t.templateKey)
+      .map((t) => t.templateKey!);
+
+    const after = await setLeadStatus("lead_1", "booking", {
+      actor: MOCK_CS,
+      note: "Patient confirmed booking by phone",
+    });
+
+    expect(after.status).toBe("booking");
+    const lastEntry = after.statusHistory[after.statusHistory.length - 1];
+    expect(lastEntry.action).toBe("SET_STATUS");
+    expect(lastEntry.from).toBe(fromStatus);
+    expect(lastEntry.to).toBe("booking");
+    expect(lastEntry.note).toBe("Patient confirmed booking by phone");
+
+    for (const key of orphanedKeys) {
+      const matching = after.tasks.filter((t) => t.templateKey === key);
+      const stillOpen = matching.some(
+        (t) => !t.completed && t.source === "system",
+      );
+      if (key === "send_contract") continue;
+      expect(stillOpen).toBe(false);
+    }
+
+    const cancelled = after.tasks.filter(
+      (t) =>
+        t.completed &&
+        t.completedReason === "status_skipped" &&
+        t.resolution === "cancelled",
+    );
+    expect(cancelled.length).toBeGreaterThan(0);
+
+    const newTask = after.tasks.find(
+      (t) => !t.completed && t.templateKey === "assign_specialist",
+    );
+    expect(newTask).toBeDefined();
+  });
+
+  it("backward skip cancels create_order and re-spawns prepare_quotation", async () => {
+    const before = await getLeadById("lead_7");
+    expect(before).toBeDefined();
+    expect(before!.status).toBe("quotation_accepted");
+    const after = await setLeadStatus(before!.id, "estimate_reviewed", {
+      actor: MOCK_CS,
+      note: "Reverting back — patient changed mind",
+    });
+    expect(after.status).toBe("estimate_reviewed");
+    const stillOpenCreateOrder = after.tasks.some(
+      (t) => !t.completed && t.templateKey === "create_order",
+    );
+    expect(stillOpenCreateOrder).toBe(false);
+    const cancelled = after.tasks.find(
+      (t) =>
+        t.templateKey === "create_order" &&
+        t.completed &&
+        t.completedReason === "status_skipped",
+    );
+    expect(cancelled).toBeDefined();
+  });
+
+  it("rejects skip with empty note", async () => {
+    const lead = await getLeadById("lead_5");
+    expect(lead).toBeDefined();
+    const otherStatus: LeadStatus =
+      lead!.status === "booking" ? "interested" : "booking";
+    await expect(
+      setLeadStatus(lead!.id, otherStatus, { actor: MOCK_CS, note: "  " }),
+    ).rejects.toThrow(/non-empty note/i);
+  });
+
+  it("rejects skip from terminal state", async () => {
+    const completed = await getLeadById("lead_11");
+    expect(completed).toBeDefined();
+    expect(completed!.status).toBe("completed");
+    await expect(
+      setLeadStatus(completed!.id, "booking", {
+        actor: MOCK_CS,
+        note: "Test override",
+      }),
+    ).rejects.toThrow(/terminal state/i);
+  });
+
+  it("rejects skip when actor role is patient", async () => {
+    const lead = await getLeadById("lead_4");
+    expect(lead).toBeDefined();
+    const otherStatus: LeadStatus =
+      lead!.status === "booking" ? "interested" : "booking";
+    await expect(
+      setLeadStatus(lead!.id, otherStatus, {
+        actor: MOCK_PATIENT,
+        note: "Trying as patient",
+      }),
+    ).rejects.toThrow(/cannot override/i);
   });
 });

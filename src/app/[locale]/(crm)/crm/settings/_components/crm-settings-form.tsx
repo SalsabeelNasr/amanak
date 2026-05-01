@@ -48,10 +48,12 @@ const TASK_TEMPLATE_KEYS = listLeadTaskTemplateKeys();
 
 const TASK_TEMPLATE_LABEL_KEYS = {
   lead_qualification: "taskTemplateLabels.lead_qualification",
+  await_patient_estimate: "taskTemplateLabels.await_patient_estimate",
   collect_documents: "taskTemplateLabels.collect_documents",
   initial_consultation: "taskTemplateLabels.initial_consultation",
   consultant_review: "taskTemplateLabels.consultant_review",
   prepare_quotation: "taskTemplateLabels.prepare_quotation",
+  await_patient_quote_response: "taskTemplateLabels.await_patient_quote_response",
   send_contract: "taskTemplateLabels.send_contract",
   confirm_payment: "taskTemplateLabels.confirm_payment",
   create_order: "taskTemplateLabels.create_order",

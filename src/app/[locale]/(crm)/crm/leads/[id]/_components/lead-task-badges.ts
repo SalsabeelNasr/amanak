@@ -1,4 +1,5 @@
 import { formatDateTime, formatDueDate } from "@/components/crm/date-format";
+import { LEAD_PATIENT_ASSIGNEE_ID } from "@/lib/services/lead-task-rules";
 import type { LeadTask } from "@/types";
 
 /** `useTranslations("crm")` (narrow keys at call site). */
@@ -11,6 +12,7 @@ export type LeadTaskDueBadgeResult =
 
 export function crmTeamMemberName(t: CrmT, id: string | undefined): string {
   if (!id) return t("taskAssigneeNone");
+  if (id === LEAD_PATIENT_ASSIGNEE_ID) return t("taskAssigneePatientBadge");
   return t(`taskAssignees.${id}`);
 }
 

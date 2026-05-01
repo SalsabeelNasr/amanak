@@ -21,7 +21,6 @@ import type {
   LeadConversationItem,
   LeadTask,
   Quotation,
-  StateTransition,
 } from "@/types";
 import { type Dispatch, type RefObject, type SetStateAction } from "react";
 import type {
@@ -37,16 +36,8 @@ type LeadDetailTabPanelsProps = {
   lead: Lead;
   setLead: Dispatch<SetStateAction<Lead>>;
   otherLeads: Lead[];
-  overviewActiveTasks: LeadTask[];
   successFlash: boolean;
   taskActionError: string | null;
-  pendingTransition: StateTransition | null;
-  onPendingTransition: (t: StateTransition | null) => void;
-  note: string;
-  onNoteChange: (n: string) => void;
-  isActivityExpanded: boolean;
-  onToggleActivityExpanded: () => void;
-  onConfirmTransition: () => void;
   onOpenTaskDetail: (taskId: string) => void;
   nowMs: number;
   setTab: (id: LeadDetailTabId) => void;
@@ -72,16 +63,8 @@ export function LeadDetailTabPanels({
   lead,
   setLead,
   otherLeads,
-  overviewActiveTasks,
   successFlash,
   taskActionError,
-  pendingTransition,
-  onPendingTransition,
-  note,
-  onNoteChange,
-  isActivityExpanded,
-  onToggleActivityExpanded,
-  onConfirmTransition,
   onOpenTaskDetail,
   nowMs,
   setTab,
@@ -108,16 +91,8 @@ export function LeadDetailTabPanels({
         <LeadOverviewTab
           lead={lead}
           otherLeads={otherLeads}
-          overviewActiveTasks={overviewActiveTasks}
           successFlash={successFlash}
           taskActionError={taskActionError}
-          pendingTransition={pendingTransition}
-          onPendingTransition={onPendingTransition}
-          note={note}
-          onNoteChange={onNoteChange}
-          onConfirmTransition={onConfirmTransition}
-          isActivityExpanded={isActivityExpanded}
-          onToggleActivityExpanded={onToggleActivityExpanded}
           onOpenTaskDetail={onOpenTaskDetail}
           nowMs={nowMs}
         />

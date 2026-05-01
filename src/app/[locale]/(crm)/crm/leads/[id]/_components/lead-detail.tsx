@@ -14,7 +14,11 @@ import { LeadHeader } from "./lead-header";
 import { LeadTabToolbars } from "./lead-tab-toolbars";
 import { LeadDetailModals } from "./lead-detail-modals";
 import { LeadDetailTabPanels } from "./lead-detail-tab-panels";
-import { applyTransition, getAvailableTransitions } from "@/lib/services/state-machine.service";
+import {
+  applyTransition,
+  getAvailableTransitions,
+  getReachableStatusesForSkip,
+} from "@/lib/services/state-machine.service";
 import { crm } from "@/lib/crm/client";
 import {
   LeadModalsProvider,
@@ -26,6 +30,7 @@ import type {
   ConsultationSlot,
   Lead,
   LeadConversationItem,
+  LeadStatus,
   Quotation,
   StateTransition,
 } from "@/types";
@@ -54,8 +59,11 @@ function LeadDetailContent({
   const modals = useLeadModals();
   const [lead, setLead] = useState<Lead>(initialLead);
   const [tab, setTab] = useState<LeadDetailTabId>("overview");
-  const [pendingTransition, setPendingTransition] = useState<StateTransition | null>(null);
-  const [note, setNote] = useState("");
+  const [pendingTransition, setPendingTransitionState] =
+    useState<StateTransition | null>(null);
+  const [pendingSkipStatus, setPendingSkipStatusState] =
+    useState<LeadStatus | null>(null);
+  const [confirmTransitionSaving, setConfirmTransitionSaving] = useState(false);
   const [successFlash, setSuccessFlash] = useState(false);
   const [conversationFilter, setConversationFilter] =
     useState<LeadConversationFilter>("all");
@@ -67,7 +75,6 @@ function LeadDetailContent({
   const router = useRouter();
   const pathname = usePathname();
   const [tasksTabFilter, setTasksTabFilter] = useState<LeadTasksSubtabFilter>("all");
-  const [isActivityExpanded, setIsActivityExpanded] = useState(false);
   const [documentsTabFilter, setDocumentsTabFilter] =
     useState<LeadDocumentsTabFilter>("all");
   const [appointmentTabFilter, setAppointmentTabFilter] =
@@ -91,6 +98,14 @@ function LeadDetailContent({
     () =>
       session.isAuthenticated
         ? getAvailableTransitions(lead.status, session.user.role)
+        : [],
+    [lead.status, session],
+  );
+
+  const skipToStatuses = useMemo(
+    () =>
+      session.isAuthenticated
+        ? getReachableStatusesForSkip(lead.status, session.user.role)
         : [],
     [lead.status, session],
   );
@@ -137,20 +152,69 @@ function LeadDetailContent({
     });
   }, []);
 
-  async function handleConfirm() {
-    if (!pendingTransition || !session.isAuthenticated) return;
-    if (pendingTransition.requiresNote && !note.trim()) return;
-    try {
-      const updated = applyTransition(lead, pendingTransition.action, session.user, note.trim() || undefined);
-      const persisted = await crm.leads.update(lead.id, updated, {});
-      setLead(persisted);
-      setPendingTransition(null);
-      setNote("");
-      setSuccessFlash(true);
-    } catch (err) {
-      console.error(err);
-    }
-  }
+  const setPendingTransition = useCallback(
+    (tr: StateTransition | null) => {
+      setPendingTransitionState(tr);
+      setPendingSkipStatusState(null);
+      if (tr) modals.openConfirmTransition();
+    },
+    [modals],
+  );
+
+  const setPendingSkipStatus = useCallback(
+    (toStatus: LeadStatus) => {
+      setPendingSkipStatusState(toStatus);
+      setPendingTransitionState(null);
+      modals.openConfirmTransition();
+    },
+    [modals],
+  );
+
+  const cancelPendingTransition = useCallback(() => {
+    setPendingTransitionState(null);
+    setPendingSkipStatusState(null);
+    if (modals.state.open === "confirm-transition") modals.close();
+  }, [modals]);
+
+  const handleConfirmFromModal = useCallback(
+    async (modalNote: string) => {
+      if (!session.isAuthenticated) return;
+      setConfirmTransitionSaving(true);
+      try {
+        if (pendingSkipStatus) {
+          const persisted = await crm.leads.setStatus(
+            lead.id,
+            pendingSkipStatus,
+            { actor: session.user, note: modalNote },
+          );
+          setLead(persisted);
+          setPendingSkipStatusState(null);
+          setSuccessFlash(true);
+          modals.close();
+          return;
+        }
+        if (pendingTransition) {
+          if (pendingTransition.requiresNote && !modalNote.trim()) return;
+          const updated = applyTransition(
+            lead,
+            pendingTransition.action,
+            session.user,
+            modalNote.trim() || undefined,
+          );
+          const persisted = await crm.leads.update(lead.id, updated, {});
+          setLead(persisted);
+          setPendingTransitionState(null);
+          setSuccessFlash(true);
+          modals.close();
+        }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setConfirmTransitionSaving(false);
+      }
+    },
+    [session, lead, pendingSkipStatus, pendingTransition, modals],
+  );
 
   const sortedQuotations = useMemo(
     () =>
@@ -178,11 +242,6 @@ function LeadDetailContent({
   const sortedTasks = useMemo(
     () => sortLeadTasksForDisplay(lead.tasks),
     [lead.tasks],
-  );
-
-  const overviewActiveTasks = useMemo(
-    () => sortedTasks.filter((task) => !task.completed),
-    [sortedTasks],
   );
 
   const tasksForTasksTab = useMemo(() => {
@@ -235,7 +294,9 @@ function LeadDetailContent({
         locale={locale}
         nowMs={nowMs}
         availableTransitions={availableTransitions}
+        skipToStatuses={skipToStatuses}
         onPendingTransitionSelect={setPendingTransition}
+        onPendingSkipSelect={setPendingSkipStatus}
         onUpdateOwner={handleUpdateOwner}
         onUpdateDueDate={handleUpdateDueDate}
       />
@@ -302,6 +363,15 @@ function LeadDetailContent({
           quotationWizardKey={quotationWizardKey}
           onSuccessFlash={() => setSuccessFlash(true)}
           onTaskError={setTaskActionError}
+          pendingTransition={pendingTransition}
+          pendingSkip={
+            pendingSkipStatus
+              ? { from: lead.status, to: pendingSkipStatus }
+              : null
+          }
+          confirmTransitionSaving={confirmTransitionSaving}
+          onConfirmTransition={handleConfirmFromModal}
+          onCancelTransition={cancelPendingTransition}
         />
 
         <LeadDetailTabPanels
@@ -311,16 +381,8 @@ function LeadDetailContent({
           lead={lead}
           setLead={setLead}
           otherLeads={otherLeads}
-          overviewActiveTasks={overviewActiveTasks}
           successFlash={successFlash}
           taskActionError={taskActionError}
-          pendingTransition={pendingTransition}
-          onPendingTransition={setPendingTransition}
-          note={note}
-          onNoteChange={setNote}
-          isActivityExpanded={isActivityExpanded}
-          onToggleActivityExpanded={() => setIsActivityExpanded((e) => !e)}
-          onConfirmTransition={handleConfirm}
           onOpenTaskDetail={openTaskDetail}
           nowMs={nowMs}
           setTab={setTab}

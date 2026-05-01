@@ -7,6 +7,7 @@ import {
   getLeadById,
   listLeads,
   sendDraftQuotationToPatient,
+  setLeadStatus,
   updateLead,
   updateLeadTask,
   uploadLeadDocument,
@@ -38,6 +39,19 @@ export function createMockCrmClient(): CrmClient {
         return updateLead(id, updates, {
           simulateDelay: ctx.simulateDelay,
           actor: ctx.actor,
+        });
+      },
+      setStatus(leadId, toStatus, ctx) {
+        if (!ctx.actor) {
+          throw new Error("setStatus requires ctx.actor");
+        }
+        if (!ctx.note?.trim()) {
+          throw new Error("setStatus requires ctx.note (override reason)");
+        }
+        return setLeadStatus(leadId, toStatus, {
+          actor: ctx.actor,
+          note: ctx.note,
+          simulateDelay: ctx.simulateDelay,
         });
       },
       addTask(leadId, input, ctx) {

@@ -15,6 +15,7 @@ type ModalState =
   | { open: "communicate" }
   | { open: "quotation-wizard" }
   | { open: "status-change" }
+  | { open: "confirm-transition" }
   | { open: "owner" }
   | { open: "due-date" };
 
@@ -25,6 +26,7 @@ type LeadModalsValue = {
   openCommunicate: () => void;
   openQuotationWizard: () => void;
   openStatusChange: () => void;
+  openConfirmTransition: () => void;
   openOwner: () => void;
   openDueDate: () => void;
   close: () => void;
@@ -55,6 +57,10 @@ export function LeadModalsProvider({ children }: { children: ReactNode }) {
     setState({ open: "status-change" });
   }, []);
 
+  const openConfirmTransition = useCallback(() => {
+    setState({ open: "confirm-transition" });
+  }, []);
+
   const openOwner = useCallback(() => {
     setState({ open: "owner" });
   }, []);
@@ -75,6 +81,7 @@ export function LeadModalsProvider({ children }: { children: ReactNode }) {
       openCommunicate,
       openQuotationWizard,
       openStatusChange,
+      openConfirmTransition,
       openOwner,
       openDueDate,
       close,
@@ -86,6 +93,7 @@ export function LeadModalsProvider({ children }: { children: ReactNode }) {
       openCommunicate,
       openQuotationWizard,
       openStatusChange,
+      openConfirmTransition,
       openOwner,
       openDueDate,
       close,

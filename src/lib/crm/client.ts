@@ -3,6 +3,7 @@ import type {
   Lead,
   LeadConversationChannel,
   LeadConversationItem,
+  LeadStatus,
 } from "@/types";
 import type { CrmCtx } from "./ctx";
 import type {
@@ -26,6 +27,16 @@ export interface CrmClient {
     list(filters: LeadFilters | undefined, ctx: CrmCtx): Promise<Lead[]>;
     get(id: string, ctx: CrmCtx): Promise<Lead | undefined>;
     update(id: string, updates: Partial<Lead>, ctx: CrmCtx): Promise<Lead>;
+    /**
+     * Direct status override (admin/cs only). Requires `ctx.actor` and `ctx.note`.
+     * Cancels open system tasks tied to the previous status and spawns the new
+     * status's tasks via `reconcileSystemTasksAfterStatusJump`.
+     */
+    setStatus(
+      leadId: string,
+      toStatus: LeadStatus,
+      ctx: CrmCtx,
+    ): Promise<Lead>;
     addTask(leadId: string, input: AddLeadTaskInput, ctx: CrmCtx): Promise<Lead>;
     updateTask(
       leadId: string,

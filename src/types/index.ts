@@ -182,7 +182,10 @@ export type LeadDocument = {
 
 export type PackageTier = "normal" | "silver" | "gold" | "vip";
 
-/** Optional fields captured in the self-serve estimate wizard (provisional request). */
+/**
+ * Intake / provisional request payload on a lead (wizard + portal; mirrors future REST).
+ * Populated from patient onboarding or manual CRM entry; UI reads `Lead.provisionalRequest`.
+ */
 export type ProvisionalRequest = {
   accommodationTier?: PackageTier;
   travelDateStart?: string;
@@ -194,6 +197,23 @@ export type ProvisionalRequest = {
   freeTextNote?: string;
   /** Line item ids toggled off at review (mock). */
   excludedLineKeys?: string[];
+  /** Care path aligned with patient portal (`PatientCareRequest.path`). */
+  requestPath?: "estimate" | "talk" | "book";
+  /** Preferred treatment timing bucket from onboarding (`PatientCareRequest.timing`). */
+  timing?: "asap" | "one_month" | "three_months";
+  /** Estimate-builder toggles (`PatientCareRequest.include*`). */
+  includeFlights?: boolean;
+  includeAccommodation?: boolean;
+  includeTransport?: boolean;
+  preferredContactWindow?: string;
+  /** When the patient submitted this request (ISO; server-authoritative later). */
+  submittedAt?: string;
+  /** Mirrors {@link PatientCareRequest.doctorId} (preference at intake; not quotation selection). */
+  doctorId?: string;
+  /** Mirrors {@link PatientCareRequest.hospitalId}. */
+  hospitalId?: string;
+  /** Consultation / callback reference when `requestPath` is `book`. */
+  bookingReference?: string;
 };
 
 export type ContactNudgeRule = {
@@ -215,10 +235,12 @@ export type QuotationItem = {
 /** Stable id for idempotent system task creation (usually equals `kind` for system tasks). */
 export type LeadTaskTemplateKey =
   | "lead_qualification"
+  | "await_patient_estimate"
   | "collect_documents"
   | "initial_consultation"
   | "consultant_review"
   | "prepare_quotation"
+  | "await_patient_quote_response"
   | "send_contract"
   | "confirm_payment"
   | "create_order"
@@ -235,7 +257,11 @@ export type LeadTaskCompletedReason =
   | "quotation_sent"
   | "lead_rejected"
   /** User marked a system task complete; it triggered applyTransition. */
-  | "task_drove_transition";
+  | "task_drove_transition"
+  /** CRM-on-behalf or patient-portal completion of an "Awaiting patient" task. */
+  | "patient_action"
+  /** System task cancelled because the lead status jumped over its home status. */
+  | "status_skipped";
 
 export type LeadTaskResolution =
   | "open"
@@ -281,6 +307,14 @@ export type LeadTask = {
   creationTypeId?: LeadTaskCreationTypeId;
   creationFields?: Record<string, string>;
   attachments?: LeadTaskAttachment[];
+  /**
+   * Multi-outcome resolution for tasks like `await_patient_quote_response`.
+   * Drives which transition the task triggers on completion.
+   */
+  completionOutcome?: "accepted" | "changes_requested";
+  /** When known (e.g. CRM completion with actor), shown on the lead timeline. */
+  completedByUserId?: string;
+  completedByRole?: ActorRole;
 };
 
 export type LeadConversationChannel = "whatsapp" | "email" | "call" | "sms";

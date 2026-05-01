@@ -5,12 +5,15 @@ import { LeadAddTaskDialog } from "./lead-add-task-dialog";
 import { LeadQuotationWizardDialog } from "./lead-quotation-wizard-dialog";
 import { LeadQuotationViewDialog } from "./lead-quotation-view-dialog";
 import { LeadTaskDetailDialog } from "./lead-task-detail-dialog";
+import { LeadConfirmTransitionDialog } from "./lead-confirm-transition-dialog";
 import { useLeadModals } from "@/lib/crm/hooks/use-lead-modals";
 import type {
   Lead,
   LeadConversationItem,
+  LeadStatus,
   MockSession,
   Quotation,
+  StateTransition,
 } from "@/types";
 import { type Dispatch, type SetStateAction } from "react";
 
@@ -26,6 +29,12 @@ type LeadDetailModalsProps = {
   quotationWizardKey: number;
   onSuccessFlash: () => void;
   onTaskError: (msg: string | null) => void;
+  /** Confirm-transition modal wiring (typed transition or direct skip). */
+  pendingTransition: StateTransition | null;
+  pendingSkip: { from: LeadStatus; to: LeadStatus } | null;
+  confirmTransitionSaving: boolean;
+  onConfirmTransition: (note: string) => void | Promise<void>;
+  onCancelTransition: () => void;
 };
 
 export function LeadDetailModals({
@@ -40,6 +49,11 @@ export function LeadDetailModals({
   quotationWizardKey,
   onSuccessFlash,
   onTaskError,
+  pendingTransition,
+  pendingSkip,
+  confirmTransitionSaving,
+  onConfirmTransition,
+  onCancelTransition,
 }: LeadDetailModalsProps) {
   const taskDetailOpen = modals.state.open === "task-detail";
   const taskDetailTaskId =
@@ -131,6 +145,19 @@ export function LeadDetailModals({
         onLeadUpdated={setLead}
         onSuccess={onSuccessFlash}
         onError={onTaskError}
+      />
+
+      <LeadConfirmTransitionDialog
+        open={modals.state.open === "confirm-transition"}
+        onOpenChange={(o) => {
+          if (!o) onCancelTransition();
+        }}
+        locale={locale}
+        pendingTransition={pendingTransition}
+        pendingSkip={pendingSkip}
+        saving={confirmTransitionSaving}
+        onConfirm={onConfirmTransition}
+        onCancel={onCancelTransition}
       />
     </>
   );

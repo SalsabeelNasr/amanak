@@ -179,6 +179,80 @@ export function canTransition(
   );
 }
 
+/**
+ * Statuses reachable as a direct override jump from the dropdown's "Skip to..." section.
+ * Excludes the current status itself and any destinations already covered by a typed
+ * transition (those appear under "Next step" instead).
+ *
+ * Returns `[]` for terminal statuses (`completed`, `lost`).
+ */
+export function getReachableStatusesForSkip(
+  currentStatus: LeadStatus,
+  role: ActorRole,
+): LeadStatus[] {
+  if (!isAllowedSkipRole(role)) return [];
+  if (isTerminalState(currentStatus)) return [];
+  const adjacent = new Set(
+    getAvailableTransitions(currentStatus, role).map((tr) => tr.to),
+  );
+  return ORDERED_STATES.filter(
+    (s) => s !== currentStatus && !adjacent.has(s),
+  );
+}
+
+function isAllowedSkipRole(role: ActorRole): boolean {
+  return role === "admin" || role === "cs";
+}
+
+/**
+ * Direct status override (admin/cs only). Bypasses the typed transition graph and
+ * appends a `SET_STATUS` history entry with the actor's required note. Task
+ * reconciliation is handled separately by `reconcileSystemTasksAfterStatusJump`.
+ */
+export function applySetStatus(
+  lead: Lead,
+  toStatus: LeadStatus,
+  actor: MockUser,
+  note: string,
+): Lead {
+  if (!isAllowedSkipRole(actor.role)) {
+    throw new Error(
+      `applySetStatus: role ${actor.role} cannot override lead status`,
+    );
+  }
+  if (isTerminalState(lead.status)) {
+    throw new Error(
+      `applySetStatus: cannot override status from terminal state ${lead.status}`,
+    );
+  }
+  if (toStatus === lead.status) {
+    throw new Error(`applySetStatus: target status must differ from current`);
+  }
+  if (!ORDERED_STATES.includes(toStatus)) {
+    throw new Error(`applySetStatus: unknown target status ${toStatus}`);
+  }
+  if (!note?.trim()) {
+    throw new Error(`applySetStatus: a non-empty note is required`);
+  }
+
+  const entry: StatusHistoryEntry = {
+    from: lead.status,
+    to: toStatus,
+    action: "SET_STATUS",
+    actorRole: actor.role,
+    actorId: actor.id,
+    note: note.trim(),
+    timestamp: new Date().toISOString(),
+  };
+
+  return {
+    ...lead,
+    status: toStatus,
+    statusHistory: [...lead.statusHistory, entry],
+    updatedAt: entry.timestamp,
+  };
+}
+
 export function applyTransition(
   lead: Lead,
   action: string,

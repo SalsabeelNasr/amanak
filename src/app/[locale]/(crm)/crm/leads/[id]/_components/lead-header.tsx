@@ -17,7 +17,7 @@ import { statusOverviewBadgeClass } from "@/components/crm/status-badge";
 import { useLeadModals } from "@/lib/crm/hooks/use-lead-modals";
 import { CRM_TASK_ASSIGNEE_IDS } from "@/lib/crm/client.types";
 import { getStatusLabel } from "@/lib/services/state-machine.service";
-import type { Lead, StateTransition } from "@/types";
+import type { Lead, LeadStatus, StateTransition } from "@/types";
 import { cn } from "@/lib/utils";
 import { crmTeamMemberName } from "./lead-task-badges";
 import { Clock, ChevronDown, UserPlus } from "lucide-react";
@@ -28,7 +28,10 @@ type LeadHeaderProps = {
   /** Align overdue checks with task rows (`leadTaskDueBadge`). */
   nowMs: number;
   availableTransitions: StateTransition[];
+  /** Statuses reachable as a direct override; rendered under a "Skip to" section. */
+  skipToStatuses: LeadStatus[];
   onPendingTransitionSelect: (tr: StateTransition) => void;
+  onPendingSkipSelect: (toStatus: LeadStatus) => void;
   onUpdateOwner: (ownerId: string) => void | Promise<void>;
   onUpdateDueDate: (date: string) => void | Promise<void>;
 };
@@ -38,7 +41,9 @@ export function LeadHeader({
   locale,
   nowMs,
   availableTransitions,
+  skipToStatuses,
   onPendingTransitionSelect,
+  onPendingSkipSelect,
   onUpdateOwner,
   onUpdateDueDate,
 }: LeadHeaderProps) {
@@ -88,24 +93,61 @@ export function LeadHeader({
                 <DialogHeader>
                   <DialogTitle>{t("changeStatus")}</DialogTitle>
                 </DialogHeader>
-                <DialogBody className="grid gap-2 py-4">
-                  {availableTransitions.length === 0 ? (
+                <DialogBody className="space-y-5 py-4">
+                  {availableTransitions.length === 0 && skipToStatuses.length === 0 ? (
                     <p className="py-4 text-center text-xs text-muted-foreground">{t("noActions")}</p>
-                  ) : (
-                    availableTransitions.map((tr) => (
-                      <Button
-                        key={tr.action}
-                        variant="outline"
-                        className="justify-start text-sm font-medium"
-                        onClick={() => {
-                          onPendingTransitionSelect(tr);
-                          modals.close();
-                        }}
-                      >
-                        {tr.label[langKey]}
-                      </Button>
-                    ))
-                  )}
+                  ) : null}
+
+                  {availableTransitions.length > 0 ? (
+                    <section className="space-y-2">
+                      <p className="amanak-app-field-label text-muted-foreground">
+                        {t("nextStepSection")}
+                      </p>
+                      <div className="grid gap-2">
+                        {availableTransitions.map((tr) => (
+                          <Button
+                            key={tr.action}
+                            variant="outline"
+                            className="justify-start text-sm font-medium"
+                            onClick={() => {
+                              onPendingTransitionSelect(tr);
+                              modals.close();
+                            }}
+                          >
+                            {tr.label[langKey]}
+                          </Button>
+                        ))}
+                      </div>
+                    </section>
+                  ) : null}
+
+                  {skipToStatuses.length > 0 ? (
+                    <section className="space-y-2">
+                      <div className="flex items-baseline justify-between gap-3">
+                        <p className="amanak-app-field-label text-muted-foreground">
+                          {t("skipToSection")}
+                        </p>
+                        <p className="text-[10px] font-medium uppercase tracking-wide text-amber-700/80 dark:text-amber-400/80">
+                          {t("skipToSectionHint")}
+                        </p>
+                      </div>
+                      <div className="grid gap-2">
+                        {skipToStatuses.map((s) => (
+                          <Button
+                            key={s}
+                            variant="ghost"
+                            className="justify-start text-sm font-medium border border-dashed border-border/60 hover:border-amber-500/40 hover:bg-amber-500/5"
+                            onClick={() => {
+                              onPendingSkipSelect(s);
+                              modals.close();
+                            }}
+                          >
+                            {t("skipToEntry", { status: getStatusLabel(s)[langKey] })}
+                          </Button>
+                        ))}
+                      </div>
+                    </section>
+                  ) : null}
                 </DialogBody>
               </DialogContent>
             </Dialog>

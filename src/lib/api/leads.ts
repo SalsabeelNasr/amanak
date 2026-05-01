@@ -20,8 +20,12 @@ import type {
 import {
   getTransitionActionForSystemTaskCompletion,
   processLeadTasks,
+  reconcileSystemTasksAfterStatusJump,
 } from "@/lib/services/lead-task-rules";
-import { applyTransition } from "@/lib/services/state-machine.service";
+import {
+  applySetStatus,
+  applyTransition,
+} from "@/lib/services/state-machine.service";
 import { resolveConsultationSlotById } from "@/lib/api/consultation-booking";
 import { mergeCreationAttachmentsIntoLeadDocuments } from "@/lib/lead-task-creation-documents";
 import {
@@ -91,7 +95,7 @@ export type AddLeadTaskInput = {
 };
 
 export type UpdateLeadTaskPatch = Partial<
-  Pick<LeadTask, "title" | "completed" | "dueAt" | "assigneeId">
+  Pick<LeadTask, "title" | "completed" | "dueAt" | "assigneeId" | "completionOutcome">
 > & {
   /** Merged with existing task `creationFields`. */
   creationFields?: Record<string, string>;
@@ -506,6 +510,11 @@ function buildMergedTaskFromPatch(
   }
   if (attachments?.length === 0) attachments = undefined;
 
+  const completionOutcome =
+    patch.completionOutcome !== undefined
+      ? patch.completionOutcome
+      : prev.completionOutcome;
+
   return {
     ...prev,
     title,
@@ -513,6 +522,7 @@ function buildMergedTaskFromPatch(
     assigneeId,
     creationFields,
     attachments,
+    completionOutcome,
     updatedAt: ts,
   };
 }
@@ -694,6 +704,12 @@ export async function updateLeadTask(
         completedReason: "task_drove_transition",
         resolution: "completed_manual",
         updatedAt: ts,
+        ...(options?.actor
+          ? {
+              completedByUserId: options.actor.id,
+              completedByRole: options.actor.role,
+            }
+          : {}),
       };
       const tasks = transitioned.tasks.map((t) =>
         t.id === taskId ? completedTask : t,
@@ -713,6 +729,12 @@ export async function updateLeadTask(
       completedReason: "user",
       resolution: "completed_manual",
       updatedAt: ts,
+      ...(options?.actor
+        ? {
+            completedByUserId: options.actor.id,
+            completedByRole: options.actor.role,
+          }
+        : {}),
     };
     const tasks = [...existing.tasks];
     tasks[idx] = completedTask;
@@ -726,6 +748,8 @@ export async function updateLeadTask(
       completed: false,
       completedReason: undefined,
       resolution: "open",
+      completedByUserId: undefined,
+      completedByRole: undefined,
       updatedAt: ts,
     };
     const tasks = [...existing.tasks];
@@ -897,4 +921,42 @@ export async function updateLead(
   return persistProcessedLead(existing, updated, at, {
     followUpActor: options?.actor,
   });
+}
+
+export type SetLeadStatusOptions = {
+  actor: MockUser;
+  note: string;
+  simulateDelay?: boolean;
+};
+
+/**
+ * Direct status override. Appends a `SET_STATUS` history entry, cancels open
+ * system tasks tied to the previous status (`status_skipped`), then ensures the
+ * tasks for the new status exist. See `applySetStatus` for validation rules.
+ */
+export async function setLeadStatus(
+  id: string,
+  toStatus: LeadStatus,
+  options: SetLeadStatusOptions,
+): Promise<Lead> {
+  await applyMockDelay(options.simulateDelay);
+  const existing = STORE.get(id);
+  if (!existing) {
+    throw new Error(`Lead ${id} not found`);
+  }
+  const transitioned = applySetStatus(
+    existing,
+    toStatus,
+    options.actor,
+    options.note,
+  );
+  const at = transitioned.updatedAt;
+  const reconciled = reconcileSystemTasksAfterStatusJump(
+    existing,
+    transitioned,
+    at,
+  );
+  const synced = applyFollowUpDueSync(existing, reconciled, at, options.actor);
+  STORE.set(synced.id, synced);
+  return synced;
 }

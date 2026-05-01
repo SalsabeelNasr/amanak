@@ -18,15 +18,23 @@ import type {
 import { getStateIndex } from "@/lib/services/state-machine.service";
 
 /**
+ * Pseudo-assignee id used by "Awaiting patient" system tasks. Not a CRM teammate
+ * (`CRM_TASK_ASSIGNEE_IDS`); the UI renders a "Patient" badge for it instead.
+ */
+export const LEAD_PATIENT_ASSIGNEE_ID = "patient" as const;
+
+/**
  * Legacy static titles kept for seed/test modules that need deterministic labels
  * outside of React i18n context.
  */
 export const LEAD_TASK_TEMPLATE_TITLES: Record<LeadTaskTemplateKey, string> = {
   lead_qualification: "Lead qualification — validate request and contact",
+  await_patient_estimate: "Awaiting patient — estimate request submission",
   collect_documents: "Collect and verify required documents",
   initial_consultation: "Initial consultation with patient / coordinator",
   consultant_review: "Clinical / coordinator review",
   prepare_quotation: "Prepare or deliver formal quotation",
+  await_patient_quote_response: "Awaiting patient — quotation response",
   send_contract: "Follow up on quotation and next steps",
   confirm_payment: "Confirm payment received",
   create_order: "Coordinate booking and logistics",
@@ -61,10 +69,17 @@ export function getTransitionActionForSystemTaskCompletion(
   switch (key) {
     case "lead_qualification":
       return status === "new" ? "BEGIN_INTAKE" : null;
+    case "await_patient_estimate":
+      return status === "interested" ? "SUBMIT_ESTIMATE" : null;
     case "prepare_quotation":
       if (status === "estimate_requested") return "REVIEW_ESTIMATE";
       if (status === "estimate_reviewed") return "DELIVER_QUOTATION";
       if (status === "changes_requested") return "DELIVER_QUOTATION_REVISION";
+      return null;
+    case "await_patient_quote_response":
+      if (status !== "quotation_sent") return null;
+      if (task.completionOutcome === "accepted") return "PATIENT_ACCEPTS_QUOTATION";
+      if (task.completionOutcome === "changes_requested") return "PATIENT_REQUESTS_CHANGES";
       return null;
     case "treatment_followup":
       return status === "in_treatment" ? "COMPLETE_TREATMENT" : null;
@@ -226,6 +241,14 @@ export function ensureSystemTasks(lead: Lead, at: string): Lead {
     if (qualDone && settings.taskRules.spawnInitialConsultation && docsOkForInitial) {
       pushIf("initial_consultation", true, lead.ownerId);
     }
+
+    if (st === "interested" && qualDone) {
+      pushIf("await_patient_estimate", true, LEAD_PATIENT_ASSIGNEE_ID);
+    }
+  }
+
+  if (st === "quotation_sent" && quotationSent(lead)) {
+    pushIf("await_patient_quote_response", true, LEAD_PATIENT_ASSIGNEE_ID);
   }
 
   const canPrep = canSpawnPrepareQuotation(lead, settings);
@@ -295,6 +318,9 @@ export function resolveLeadTasksAfterLeadChange(
     if (key === "lead_qualification" && next.status !== "new") {
       return patchTask(task, at, "completed_rule", "status_transition");
     }
+    if (key === "await_patient_estimate" && next.status !== "interested") {
+      return patchTask(task, at, "completed_rule", "patient_action");
+    }
     if (key === "prepare_quotation") {
       if (quotationSent(next) && statusAtLeast(next.status, "quotation_sent")) {
         return patchTask(
@@ -306,6 +332,9 @@ export function resolveLeadTasksAfterLeadChange(
             : "status_transition",
         );
       }
+    }
+    if (key === "await_patient_quote_response" && next.status !== "quotation_sent") {
+      return patchTask(task, at, "completed_rule", "patient_action");
     }
     if (key === "treatment_followup" && next.status === "completed") {
       return patchTask(task, at, "completed_rule", "status_transition");
@@ -331,13 +360,88 @@ export function processLeadTasks(prev: Lead, next: Lead, at: string): Lead {
   return resolveLeadTasksAfterLeadChange(prev, ensured, at);
 }
 
+/**
+ * Statuses each system-task template "lives in" — the statuses where it can
+ * legitimately be open. Used by {@link reconcileSystemTasksAfterStatusJump} to
+ * cancel tasks orphaned by a direct `SET_STATUS` override (forward or backward).
+ */
+export const TEMPLATE_HOME_STATUSES: Record<LeadTaskTemplateKey, LeadStatus[]> = {
+  lead_qualification: [
+    "new",
+    "interested",
+    "estimate_requested",
+    "estimate_reviewed",
+    "changes_requested",
+    "quotation_sent",
+  ],
+  await_patient_estimate: ["interested"],
+  collect_documents: [
+    "interested",
+    "estimate_requested",
+    "estimate_reviewed",
+    "changes_requested",
+    "quotation_sent",
+  ],
+  initial_consultation: [
+    "interested",
+    "estimate_requested",
+    "estimate_reviewed",
+    "changes_requested",
+    "quotation_sent",
+  ],
+  consultant_review: [
+    "estimate_requested",
+    "estimate_reviewed",
+    "changes_requested",
+  ],
+  prepare_quotation: [
+    "estimate_requested",
+    "estimate_reviewed",
+    "changes_requested",
+  ],
+  await_patient_quote_response: ["quotation_sent"],
+  send_contract: ["quotation_sent", "changes_requested", "arrived"],
+  confirm_payment: ["quotation_accepted"],
+  create_order: ["quotation_accepted"],
+  assign_specialist: ["booking"],
+  treatment_followup: ["in_treatment"],
+};
+
+/**
+ * Cancel any open system task whose template's "home" no longer includes the
+ * lead's new status, then ensure the new status's tasks exist. Use this after a
+ * direct `applySetStatus` jump (forward or backward); manual tasks are left
+ * untouched. Previously-completed tasks are not reopened on backward skips.
+ */
+export function reconcileSystemTasksAfterStatusJump(
+  prev: Lead,
+  next: Lead,
+  at: string,
+): Lead {
+  const tasks = next.tasks.map((task) => {
+    if (task.completed) return task;
+    if (!isSystemTask(task) || !task.templateKey) return task;
+    const home = TEMPLATE_HOME_STATUSES[task.templateKey];
+    if (home && home.includes(next.status)) return task;
+    return patchTask(task, at, "cancelled", "status_skipped");
+  });
+
+  const reconciled: Lead = { ...next, tasks };
+  if (next.status === "lost") {
+    return reconciled;
+  }
+  return ensureSystemTasks(reconciled, at);
+}
+
 export function listLeadTaskTemplateKeys(): LeadTaskTemplateKey[] {
   return [
     "lead_qualification",
+    "await_patient_estimate",
     "collect_documents",
     "initial_consultation",
     "consultant_review",
     "prepare_quotation",
+    "await_patient_quote_response",
     "send_contract",
     "confirm_payment",
     "create_order",
